@@ -32,25 +32,45 @@ object GenerateAst {
         }
 
         val writer = PrintWriter(path, "UTF-8")
+        writer.println("package ast\n")
         writer.println("import core.Token\n")
         writer.println("sealed class $baseName {")
+        defineVisitor(writer, baseName, types)
+
+        writer.println("    abstract fun<R> accept( visitor: Visitor<R>)\n")
+
         for (type in types) {
             val className = type.split(":")[0].trim()
             val fields = type.split(":")[1].trim()
-            defineType(writer, className, fields)
+            defineType(writer, className, baseName, fields)
         }
         writer.println("}")
         writer.close()
     }
 
-    private fun defineType(writer: PrintWriter, className: String, fieldList: String) {
+    private fun defineType(writer: PrintWriter, className: String, baseName: String, fieldList: String) {
         writer.println("    class $className (")
         val fields = fieldList.split(", ")
         for (field in fields) {
             val fieldData = field.split(" ")
             writer.println("        val ${fieldData[1]} : ${fieldData[0]},")
         }
-        writer.println("    )\n")
+        writer.println("    ) {")
+        writer.println("        @Override")
+        writer.println("        fun<R> accept(visitor: Visitor<R>) = visitor.visit$className$baseName(this)")
+        writer.println("    }\n")
+    }
+
+    private fun defineVisitor(writer: PrintWriter, baseName: String, types: List<String>) {
+        writer.println("    interface Visitor<R> {")
+
+        for (type in types) {
+            val typeName = type.split(":")[0].trim()
+            writer.println("        fun visit$typeName$baseName(${baseName.lowercase()}: $typeName) : R")
+        }
+
+        writer.println("    }")
+        writer.println()
     }
 }
 
