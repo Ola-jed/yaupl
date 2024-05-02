@@ -1,6 +1,6 @@
-package tools
+package ast
 
-import tools.GenerateAst.defineAst
+import ast.GenerateAst.defineAst
 import java.io.File
 import java.io.PrintWriter
 import kotlin.system.exitProcess
@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
         outputDir, "Expr", listOf(
             "Binary : Expr left, Token operator, Expr right",
             "Grouping : Expr expression",
-            "Literal : Any value",
+            "Literal : Any? value",
             "Unary : Token operator, Expr right"
         )
     )
@@ -37,7 +37,7 @@ object GenerateAst {
         writer.println("sealed class $baseName {")
         defineVisitor(writer, baseName, types)
 
-        writer.println("    abstract fun<R> accept( visitor: Visitor<R>)\n")
+        writer.println("    abstract fun<R> accept( visitor: Visitor<R>) : R\n")
 
         for (type in types) {
             val className = type.split(":")[0].trim()
@@ -55,9 +55,8 @@ object GenerateAst {
             val fieldData = field.split(" ")
             writer.println("        val ${fieldData[1]} : ${fieldData[0]},")
         }
-        writer.println("    ) {")
-        writer.println("        @Override")
-        writer.println("        fun<R> accept(visitor: Visitor<R>) = visitor.visit$className$baseName(this)")
+        writer.println("    ) : Expr() {")
+        writer.println("        override fun<R> accept(visitor: Visitor<R>) = visitor.visit$className$baseName(this)")
         writer.println("    }\n")
     }
 

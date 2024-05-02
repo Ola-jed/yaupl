@@ -10,37 +10,33 @@ sealed class Expr {
         fun visitUnaryExpr(expr: Unary) : R
     }
 
-    abstract fun<R> accept( visitor: Visitor<R>)
+    abstract fun<R> accept( visitor: Visitor<R>) : R
 
     class Binary (
         val left : Expr,
         val operator : Token,
         val right : Expr,
-    ) {
-        @Override
-        fun<R> accept(visitor: Visitor<R>) = visitor.visitBinaryExpr(this)
+    ) : Expr() {
+        override fun<R> accept(visitor: Visitor<R>) = visitor.visitBinaryExpr(this)
     }
 
     class Grouping (
         val expression : Expr,
-    ) {
-        @Override
-        fun<R> accept(visitor: Visitor<R>) = visitor.visitGroupingExpr(this)
+    ) : Expr() {
+        override fun<R> accept(visitor: Visitor<R>) = visitor.visitGroupingExpr(this)
     }
 
     class Literal (
-        val value : Any,
-    ) {
-        @Override
-        fun<R> accept(visitor: Visitor<R>) = visitor.visitLiteralExpr(this)
+        val value : Any?,
+    ) : Expr() {
+        override fun<R> accept(visitor: Visitor<R>) = visitor.visitLiteralExpr(this)
     }
 
     class Unary (
         val operator : Token,
         val right : Expr,
-    ) {
-        @Override
-        fun<R> accept(visitor: Visitor<R>) = visitor.visitUnaryExpr(this)
+    ) : Expr() {
+        override fun<R> accept(visitor: Visitor<R>) = visitor.visitUnaryExpr(this)
     }
 
 }
