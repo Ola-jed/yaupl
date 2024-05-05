@@ -33,7 +33,7 @@ object GenerateAst {
 
         val writer = PrintWriter(path, "UTF-8")
         writer.println("package ast\n")
-        writer.println("import core.Token\n")
+        writer.println("import core.scanner.Token\n")
         writer.println("sealed class $baseName {")
         defineVisitor(writer, baseName, types)
 

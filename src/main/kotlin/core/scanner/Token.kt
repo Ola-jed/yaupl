@@ -1,4 +1,4 @@
-package core
+package core.scanner
 
 import core.enum.TokenType
 

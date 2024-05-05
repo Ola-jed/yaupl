@@ -1,6 +1,6 @@
 package ast
 
-import core.Token
+import core.scanner.Token
 
 sealed class Expr {
     interface Visitor<R> {

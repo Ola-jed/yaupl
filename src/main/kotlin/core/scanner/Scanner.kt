@@ -1,4 +1,4 @@
-package core
+package core.scanner
 
 import core.`object`.Keywords
 import core.enum.TokenType

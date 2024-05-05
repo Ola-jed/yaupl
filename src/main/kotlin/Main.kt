@@ -1,4 +1,3 @@
-import core.Runner
 import error.ConsoleErrorReporter
 import kotlin.system.exitProcess
 
