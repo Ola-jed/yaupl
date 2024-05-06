@@ -8,7 +8,7 @@ A small interpreted language written in Kotlin
 ```shell
 git clone https://github.com/Ola-jed/yaupl
 cd yaupl
-./gradlew run --console=plain
+./gradlew run --console=plain [file.y]
 ```
 
 ## Language's description
