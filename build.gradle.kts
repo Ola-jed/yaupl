@@ -18,8 +18,12 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.getByName<JavaExec>("run") {
+    standardInput = System.`in`
+}
+
 application {
-    mainClass.set("MainKt")
+    mainClass = "MainKt"
 }
 
 kotlin {
