@@ -1,4 +1,5 @@
 import ast.AstPrinter
+import ast.ReversePolishConverter
 import core.parser.Parser
 import core.scanner.Scanner
 import error.reporter.ErrorReporter
@@ -48,6 +49,7 @@ class Runner(private val errorReporter: ErrorReporter) {
             println("No expression generated")
         } else {
             println("Ast : ${AstPrinter().print(expression)}")
+            println("Ast (Reverse Polish notation) : ${expression.accept(ReversePolishConverter())}")
             interpreter.interpret(expression)
         }
     }
@@ -61,4 +63,3 @@ class Runner(private val errorReporter: ErrorReporter) {
         hadError = true
     }
 }
-
