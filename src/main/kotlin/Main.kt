@@ -1,4 +1,4 @@
-import error.ConsoleErrorReporter
+import error.reporter.ConsoleErrorReporter
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {

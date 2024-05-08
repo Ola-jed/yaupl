@@ -1,7 +1,8 @@
-package error
+package error.reporter
 
 import core.enum.TokenType
 import core.scanner.Token
+import error.types.RuntimeError
 
 class ConsoleErrorReporter : ErrorReporter {
     override fun report(line: Int, message: String, where: String) {
@@ -16,5 +17,9 @@ class ConsoleErrorReporter : ErrorReporter {
         } else {
             report(token.line, message, " at '${token.lexeme}'")
         }
+    }
+
+    override fun reportRuntimeError(error: RuntimeError) {
+        report(error.token.line, error.message, "")
     }
 }

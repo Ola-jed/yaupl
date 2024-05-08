@@ -3,8 +3,8 @@ package core.parser
 import ast.Expr
 import core.enum.TokenType
 import core.scanner.Token
-import error.ErrorReporter
-import error.ParseError
+import error.reporter.ErrorReporter
+import error.types.ParseError
 
 
 class Parser(private val tokens: List<Token>, private val errorReporter: ErrorReporter, private var current: Int = 0) {
@@ -43,6 +43,17 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     }
 
     private fun term(): Expr {
+        var expr = factor()
+        while (match(TokenType.MINUS, TokenType.PLUS)) {
+            val operator = previous()
+            val right = factor()
+            expr = Expr.Binary(expr, operator, right)
+        }
+
+        return expr
+    }
+
+    private fun factor(): Expr {
         var expr = unary()
         while (match(TokenType.SLASH, TokenType.STAR)) {
             val operator = previous()

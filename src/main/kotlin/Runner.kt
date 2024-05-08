@@ -1,12 +1,24 @@
-import ast.AstPrinter
 import core.parser.Parser
 import core.scanner.Scanner
-import error.ErrorReporter
+import error.reporter.ErrorReporter
+import interpreter.Interpreter
 import java.io.File
+import kotlin.system.exitProcess
 
-class Runner(private val errorReporter: ErrorReporter, private var hadError: Boolean = false) {
+class Runner(private val errorReporter: ErrorReporter) {
+    private var hadError: Boolean = false
+    private var hadRuntimeError: Boolean = false
+
     fun runFile(path: String) {
         run(File(path).readText())
+
+        if (hadError) {
+            exitProcess(65)
+        }
+
+        if (hadRuntimeError) {
+            exitProcess(70)
+        }
     }
 
     fun runPrompt() {
@@ -20,17 +32,21 @@ class Runner(private val errorReporter: ErrorReporter, private var hadError: Boo
 
     private fun run(source: String) {
         val scanner = Scanner(source = source, errorReporter = errorReporter)
+        val interpreter = Interpreter(
+            errorReporter = errorReporter,
+            onRuntimeErrorReported = { hadRuntimeError = true }
+        )
         val tokens = scanner.scanTokens()
+
         println("Tokens :")
         tokens.forEach(::println)
 
         val parser = Parser(tokens, errorReporter)
         val expression = parser.parse()
-        println("Expression")
         if (expression == null) {
             println("No expression generated")
         } else {
-            println(AstPrinter().print(expression))
+            interpreter.interpret(expression)
         }
     }
 
