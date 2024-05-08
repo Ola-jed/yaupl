@@ -44,7 +44,7 @@ class Interpreter(
                 return if (left is Number && right is Number) {
                     (left as Double) + (right as Double)
                 } else {
-                    "${left as String}${right as String}"
+                    "${stringify(left)}${stringify(right)}"
                 }
             }
 
@@ -156,7 +156,7 @@ class Interpreter(
             var text = value.toString()
 
             if (text.endsWith(".0")) {
-                text = text.substring(0..text.length - 2)
+                text = text.removeSuffix(".0")
             }
 
             return text

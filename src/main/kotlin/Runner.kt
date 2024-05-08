@@ -1,3 +1,4 @@
+import ast.AstPrinter
 import core.parser.Parser
 import core.scanner.Scanner
 import error.reporter.ErrorReporter
@@ -46,6 +47,7 @@ class Runner(private val errorReporter: ErrorReporter) {
         if (expression == null) {
             println("No expression generated")
         } else {
+            println("Ast : ${AstPrinter().print(expression)}")
             interpreter.interpret(expression)
         }
     }
