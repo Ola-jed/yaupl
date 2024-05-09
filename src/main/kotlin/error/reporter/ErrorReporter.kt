@@ -1,5 +1,6 @@
 package error.reporter
 
+import core.enum.TokenType
 import core.scanner.Token
 import error.types.RuntimeError
 
@@ -15,11 +16,17 @@ interface ErrorReporter {
     fun reportTokenError(
         token: Token,
         message: String
-    )
+    ) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, message, "at end")
+        } else {
+            report(token.line, message, " at '${token.lexeme}'")
+        }
+    }
 
-    fun reportRuntimeError(
-        error: RuntimeError
-    )
+    fun reportRuntimeError(error: RuntimeError) {
+        report(error.token.line, error.message, "")
+    }
 }
 
 // TODO : Maybe a file error reporter ?
