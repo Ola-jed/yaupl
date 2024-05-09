@@ -1,6 +1,7 @@
 package core.parser
 
 import ast.Expr
+import ast.Stmt
 import core.enum.TokenType
 import core.scanner.Token
 import error.reporter.ErrorReporter
@@ -8,12 +9,33 @@ import error.types.ParseError
 
 
 class Parser(private val tokens: List<Token>, private val errorReporter: ErrorReporter, private var current: Int = 0) {
-    fun parse(): Expr? {
-        return try {
-            expression()
-        } catch (error: ParseError) {
-            null
+    fun parse(): List<Stmt> {
+        val statements = mutableListOf<Stmt>()
+        while(!isAtEnd()) {
+            statements.add(statement())
         }
+
+        return statements
+    }
+
+    private fun statement(): Stmt {
+        if(match(TokenType.PRINT)) {
+            return printStatement()
+        }
+
+        return expressionStatement()
+    }
+
+    private fun printStatement(): Stmt {
+        val value = expression()
+        consume(TokenType.SEMICOLON, "Expect ; after the value")
+        return Stmt.Print(value)
+    }
+
+    private fun expressionStatement(): Stmt {
+        val value = expression()
+        consume(TokenType.SEMICOLON, "Expect ; after the value")
+        return Stmt.Expression(value)
     }
 
     private fun expression(): Expr {

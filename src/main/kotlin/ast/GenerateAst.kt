@@ -5,6 +5,7 @@ import java.io.File
 import java.io.PrintWriter
 import kotlin.system.exitProcess
 
+// Tool to generate the needed classes for the ast
 fun main(args: Array<String>) {
     if (args.size != 1) {
         System.err.println("Usage: generate_ast <output directory>")
@@ -18,6 +19,13 @@ fun main(args: Array<String>) {
             "Grouping : Expr expression",
             "Literal : Any? value",
             "Unary : Token operator, Expr right"
+        )
+    )
+
+    defineAst(
+        outputDir, "Stmt", listOf(
+            "Expression : Expr expression",
+            "Print : Expr expression"
         )
     )
 }
@@ -37,7 +45,7 @@ object GenerateAst {
         writer.println("sealed class $baseName {")
         defineVisitor(writer, baseName, types)
 
-        writer.println("    abstract fun<R> accept( visitor: Visitor<R>) : R\n")
+        writer.println("    abstract fun <R> accept( visitor: Visitor<R>) : R\n")
 
         for (type in types) {
             val className = type.split(":")[0].trim()
@@ -55,7 +63,7 @@ object GenerateAst {
             val fieldData = field.split(" ")
             writer.println("        val ${fieldData[1]} : ${fieldData[0]},")
         }
-        writer.println("    ) : Expr() {")
+        writer.println("    ) : $baseName() {")
         writer.println("        override fun<R> accept(visitor: Visitor<R>) = visitor.visit$className$baseName(this)")
         writer.println("    }\n")
     }

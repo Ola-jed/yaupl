@@ -1,6 +1,7 @@
 package interpreter
 
 import ast.Expr
+import ast.Stmt
 import core.enum.TokenType
 import core.scanner.Token
 import error.reporter.ErrorReporter
@@ -9,15 +10,22 @@ import error.types.RuntimeError
 class Interpreter(
     private val errorReporter: ErrorReporter,
     private val onRuntimeErrorReported: () -> Unit
-) : Expr.Visitor<Any?> {
-    fun interpret(expression: Expr) {
+) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
+    fun interpret(statements: List<Stmt>) {
         try {
-            val value = evaluate(expression)
-            println(stringify(value))
+            statements.forEach(::executeStatement)
         } catch (error: RuntimeError) {
             errorReporter.reportRuntimeError(error)
             onRuntimeErrorReported()
         }
+    }
+
+    override fun visitExpressionStmt(stmt: Stmt.Expression) {
+        evaluate(stmt.expression)
+    }
+
+    override fun visitPrintStmt(stmt: Stmt.Print) {
+        println(stringify(evaluate(stmt.expression)))
     }
 
     override fun visitBinaryExpr(expr: Expr.Binary): Any? {
@@ -79,7 +87,7 @@ class Interpreter(
     }
 
     override fun visitGroupingExpr(expr: Expr.Grouping): Any? {
-        return expr.accept(this)
+        return expr.expression.accept(this)
     }
 
     override fun visitLiteralExpr(expr: Expr.Literal): Any? {
@@ -90,13 +98,17 @@ class Interpreter(
         val right = evaluate(expr.right)
 
         if (expr.operator.type == TokenType.MINUS) {
-            checkNumber(expr.operator, right);
+            checkNumber(expr.operator, right)
             return -1 * (right as Double)
         } else if (expr.operator.type == TokenType.BANG) {
             return !isTruthy(right)
         }
 
         return null
+    }
+
+    private fun executeStatement(statement: Stmt) {
+        statement.accept(this)
     }
 
     private fun evaluate(expr: Expr): Any? {
@@ -109,7 +121,7 @@ class Interpreter(
         }
 
         if (value is Boolean) {
-            return value as Boolean
+            return value
         }
 
         if (value is Number) {

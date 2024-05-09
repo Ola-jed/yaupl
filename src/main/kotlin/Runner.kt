@@ -1,5 +1,3 @@
-import ast.AstPrinter
-import ast.ReversePolishConverter
 import core.parser.Parser
 import core.scanner.Scanner
 import error.reporter.ErrorReporter
@@ -25,7 +23,7 @@ class Runner(private val errorReporter: ErrorReporter) {
 
     fun runPrompt() {
         while (true) {
-            print("> ")
+            print("ypl : ")
             val input = readlnOrNull() ?: break
             run(input)
             hadError = false
@@ -38,19 +36,15 @@ class Runner(private val errorReporter: ErrorReporter) {
             errorReporter = errorReporter,
             onRuntimeErrorReported = { hadRuntimeError = true }
         )
-        val tokens = scanner.scanTokens()
 
-        println("Tokens :")
-        tokens.forEach(::println)
-
-        val parser = Parser(tokens, errorReporter)
-        val expression = parser.parse()
-        if (expression == null) {
-            println("No expression generated")
-        } else {
-            println("Ast : ${AstPrinter().print(expression)}")
-            println("Ast (Reverse Polish notation) : ${expression.accept(ReversePolishConverter())}")
-            interpreter.interpret(expression)
+        try {
+            val tokens = scanner.scanTokens()
+            val parser = Parser(tokens, errorReporter)
+            val statements = parser.parse()
+            interpreter.interpret(statements)
+        } catch (ex: Exception) {
+            hadError = true
+            return
         }
     }
 
