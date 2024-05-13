@@ -11,15 +11,40 @@ import error.types.ParseError
 class Parser(private val tokens: List<Token>, private val errorReporter: ErrorReporter, private var current: Int = 0) {
     fun parse(): List<Stmt> {
         val statements = mutableListOf<Stmt>()
-        while(!isAtEnd()) {
-            statements.add(statement())
+        while (!isAtEnd()) {
+            declaration()?.let { statements.add(it) }
         }
 
         return statements
     }
 
+    private fun declaration(): Stmt? {
+        try {
+            if (match(TokenType.LET)) {
+                return variableDeclaration()
+            }
+
+            return statement()
+        } catch (error: ParseError) {
+            synchronize()
+            return null
+        }
+    }
+
+    private fun variableDeclaration(): Stmt {
+        val name = consume(TokenType.IDENTIFIER, "Expect variable name")
+
+        var initializer: Expr = Expr.Literal(null)
+        if (match(TokenType.EQUAL)) {
+            initializer = expression()
+        }
+
+        consume(TokenType.SEMICOLON, "Expect ';' after variable declaration")
+        return Stmt.VariableDeclaration(name, initializer)
+    }
+
     private fun statement(): Stmt {
-        if(match(TokenType.PRINT)) {
+        if (match(TokenType.PRINT)) {
             return printStatement()
         }
 
@@ -97,29 +122,20 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     }
 
     private fun primary(): Expr {
-        if (match(TokenType.FALSE)) {
-            return Expr.Literal(false)
-        }
+        when {
+            match(TokenType.FALSE) -> return Expr.Literal(false)
+            match(TokenType.TRUE) -> return Expr.Literal(true)
+            match(TokenType.NULL) -> return Expr.Literal(null)
+            match(TokenType.NUMBER, TokenType.STRING) -> return Expr.Literal(previous().literal)
+            match(TokenType.IDENTIFIER) -> return Expr.Variable(previous())
+            match(TokenType.LEFT_PAREN) -> {
+                val expr = expression()
+                consume(TokenType.RIGHT_PAREN, "Expected ')' after expression")
+                return Expr.Grouping(expr)
+            }
 
-        if (match(TokenType.TRUE)) {
-            return Expr.Literal(true)
+            else -> throw error(peek(), "Unexpected token")
         }
-
-        if (match(TokenType.NULL)) {
-            return Expr.Literal(null)
-        }
-
-        if (match(TokenType.NUMBER, TokenType.STRING)) {
-            return Expr.Literal(previous().literal)
-        }
-
-        if (match(TokenType.LEFT_PAREN)) {
-            val expr = expression()
-            consume(TokenType.RIGHT_PAREN, "Expected ')' after expression")
-            return Expr.Grouping(expr)
-        }
-
-        throw error(peek(), "Unexpected token")
     }
 
     private fun consume(tokenType: TokenType, message: String): Token {
