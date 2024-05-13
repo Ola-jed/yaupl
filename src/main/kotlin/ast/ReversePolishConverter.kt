@@ -2,7 +2,7 @@ package ast
 
 import core.enum.TokenType
 
-class ReversePolishConverter: Expr.Visitor<String> {
+class ReversePolishConverter : Expr.Visitor<String> {
     override fun visitBinaryExpr(expr: Expr.Binary): String {
         return "${expr.left.accept(this)} ${expr.right.accept(this)} ${expr.operator.lexeme}"
     }
@@ -16,12 +16,16 @@ class ReversePolishConverter: Expr.Visitor<String> {
     }
 
     override fun visitUnaryExpr(expr: Expr.Unary): String {
-        val lexemeValue = when(expr.operator.type) {
+        val lexemeValue = when (expr.operator.type) {
             TokenType.MINUS -> "NEGATE"
             TokenType.BANG -> "NOT"
             else -> expr.operator.literal
         }
 
         return "${expr.right.accept(this)} $lexemeValue"
+    }
+
+    override fun visitVariableExpr(expr: Expr.Variable): String {
+        return "var(${expr.accept(this)})"
     }
 }
