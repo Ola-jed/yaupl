@@ -6,11 +6,14 @@ import core.enum.TokenType
 import core.scanner.Token
 import error.reporter.ErrorReporter
 import error.types.RuntimeError
+import memory.Memory
 
 class Interpreter(
     private val errorReporter: ErrorReporter,
     private val onRuntimeErrorReported: () -> Unit
 ) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
+    private val memory = Memory()
+
     fun interpret(statements: List<Stmt>) {
         try {
             statements.forEach(::executeStatement)
@@ -29,7 +32,8 @@ class Interpreter(
     }
 
     override fun visitVariableDeclarationStmt(stmt: Stmt.VariableDeclaration) {
-        TODO("Not yet implemented")
+        val value = evaluate(stmt.initializer)
+        memory.define(stmt.name.lexeme, value)
     }
 
     override fun visitBinaryExpr(expr: Expr.Binary): Any? {
@@ -112,7 +116,7 @@ class Interpreter(
     }
 
     override fun visitVariableExpr(expr: Expr.Variable): Any? {
-        TODO("Not yet implemented")
+        return memory.get(expr.name)
     }
 
     private fun executeStatement(statement: Stmt) {
