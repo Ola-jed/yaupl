@@ -28,6 +28,10 @@ class Interpreter(
         println(stringify(evaluate(stmt.expression)))
     }
 
+    override fun visitVariableDeclarationStmt(stmt: Stmt.VariableDeclaration) {
+        TODO("Not yet implemented")
+    }
+
     override fun visitBinaryExpr(expr: Expr.Binary): Any? {
         val left = evaluate(expr.left)
         val right = evaluate(expr.right)
@@ -105,6 +109,10 @@ class Interpreter(
         }
 
         return null
+    }
+
+    override fun visitVariableExpr(expr: Expr.Variable): Any? {
+        TODO("Not yet implemented")
     }
 
     private fun executeStatement(statement: Stmt) {
