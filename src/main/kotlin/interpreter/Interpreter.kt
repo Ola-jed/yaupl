@@ -36,6 +36,12 @@ class Interpreter(
         memory.define(stmt.name.lexeme, value)
     }
 
+    override fun visitAssignExpr(expr: Expr.Assign): Any? {
+        val value = evaluate(expr.value)
+        memory.assign(expr.name, value)
+        return value
+    }
+
     override fun visitBinaryExpr(expr: Expr.Binary): Any? {
         val left = evaluate(expr.left)
         val right = evaluate(expr.right)

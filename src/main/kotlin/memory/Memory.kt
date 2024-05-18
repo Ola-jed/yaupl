@@ -20,6 +20,14 @@ class Memory {
         bindings[name] = value
     }
 
+    fun assign(name: Token, value: Any?) {
+        if (bindings.containsKey(name.lexeme)) {
+            bindings[name.lexeme] = value
+        } else {
+            throw RuntimeError(name, "Undefined variable ${name.lexeme}.")
+        }
+    }
+
     fun clear() {
         bindings.clear()
     }

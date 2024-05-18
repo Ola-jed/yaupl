@@ -3,6 +3,10 @@ package ast
 import core.enum.TokenType
 
 class ReversePolishConverter : Expr.Visitor<String> {
+    override fun visitAssignExpr(expr: Expr.Assign): String {
+        return "assign(${expr.name.lexeme}, ${expr.value.accept(this)})"
+    }
+
     override fun visitBinaryExpr(expr: Expr.Binary): String {
         return "${expr.left.accept(this)} ${expr.right.accept(this)} ${expr.operator.lexeme}"
     }
