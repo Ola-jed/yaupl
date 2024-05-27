@@ -53,6 +53,12 @@ class Interpreter(
         environment.define(stmt.name, value)
     }
 
+    override fun visitWhileStmt(stmt: Stmt.While) {
+        while (isTruthy(evaluate(stmt.condition))) {
+            executeStatement(stmt.body)
+        }
+    }
+
     override fun visitAssignExpr(expr: Expr.Assign): Any? {
         val value = evaluate(expr.value)
         environment.assign(expr.name, value)

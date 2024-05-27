@@ -45,19 +45,13 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     }
 
     private fun statement(): Stmt {
-        if (match(TokenType.IF)) {
-            return ifStatement()
+        return when {
+            match(TokenType.IF) -> ifStatement()
+            match(TokenType.WHILE) -> whileStatement()
+            match(TokenType.PRINT) -> printStatement()
+            match(TokenType.LEFT_BRACE) -> statementsBlock()
+            else -> expressionStatement()
         }
-
-        if (match(TokenType.PRINT)) {
-            return printStatement()
-        }
-
-        if (match(TokenType.LEFT_BRACE)) {
-            return statementsBlock()
-        }
-
-        return expressionStatement()
     }
 
     private fun ifStatement(): Stmt {
@@ -73,6 +67,14 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         }
 
         return Stmt.If(condition, thenBranch, elseBranch)
+    }
+
+    private fun whileStatement(): Stmt {
+        consume(TokenType.LEFT_PAREN, "Expect '(' after while")
+        val condition = expression()
+        consume(TokenType.RIGHT_PAREN, "Expect ')' after while's condition")
+        val body = statement()
+        return Stmt.While(condition, body)
     }
 
     private fun printStatement(): Stmt {

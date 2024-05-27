@@ -7,7 +7,7 @@ import kotlin.system.exitProcess
 fun main(args: Array<String>) {
     val argParser = ArgsParser(args)
 
-    if(argParser.hasOption(ArgsParser.OPTION_HELP)) {
+    if (argParser.hasOption(ArgsParser.OPTION_HELP)) {
         // To Improve
         println("Usage : yaupl [script] [--help] [--error-log=logfile.log]")
         exitProcess(0)
@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
     val runner = Runner(errorReporter)
     val fileToRun = argParser.getFileToRun()
 
-    if(fileToRun == null) {
+    if (fileToRun == null) {
         runner.runPrompt()
     } else {
         runner.runFile(fileToRun)
