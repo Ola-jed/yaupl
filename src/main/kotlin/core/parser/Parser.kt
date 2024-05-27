@@ -3,6 +3,7 @@ package core.parser
 import ast.Expr
 import ast.Stmt
 import core.enum.TokenType
+import core.`object`.Undefined
 import core.scanner.Token
 import error.reporter.ErrorReporter
 import error.types.ParseError
@@ -34,7 +35,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     private fun variableDeclaration(): Stmt {
         val name = consume(TokenType.IDENTIFIER, "Expect variable name")
 
-        var initializer: Expr = Expr.Literal(null)
+        var initializer: Expr = Expr.Literal(Undefined)
         if (match(TokenType.EQUAL)) {
             initializer = expression()
         }

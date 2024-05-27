@@ -1,5 +1,6 @@
 package runtime
 
+import core.`object`.Undefined
 import core.scanner.Token
 import error.types.RuntimeError
 
@@ -10,12 +11,18 @@ class Environment(private val outer: Environment? = null) {
 
     fun get(name: Token): Any? {
         if (bindings.containsKey(name.lexeme)) {
+            if (bindings[name.lexeme] == Undefined) {
+                throw RuntimeError(name, "Variable ${name.lexeme} used before initialization.")
+            }
+
             return bindings[name.lexeme]
         }
 
         if (outer != null) {
             return outer.get(name)
         }
+
+
 
         throw RuntimeError(name, "Undefined variable ${name.lexeme}.")
     }
