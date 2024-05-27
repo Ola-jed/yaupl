@@ -19,6 +19,10 @@ class ReversePolishConverter : Expr.Visitor<String> {
         return if (expr.value == null) "null" else expr.value.toString()
     }
 
+    override fun visitLogicalExpr(expr: Expr.Logical): String {
+        return "${expr.left.accept(this)} ${expr.right.accept(this)} ${expr.operator.lexeme}"
+    }
+
     override fun visitUnaryExpr(expr: Expr.Unary): String {
         val lexemeValue = when (expr.operator.type) {
             TokenType.MINUS -> "NEGATE"

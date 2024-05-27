@@ -1,0 +1,5 @@
+if(true) {
+    print "Basic";
+} else {
+    print "Should never happen";
+}

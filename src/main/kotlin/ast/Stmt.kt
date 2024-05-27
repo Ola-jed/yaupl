@@ -6,11 +6,12 @@ sealed class Stmt {
     interface Visitor<R> {
         fun visitBlockStmt(stmt: Block) : R
         fun visitExpressionStmt(stmt: Expression) : R
+        fun visitIfStmt(stmt: If): R
         fun visitPrintStmt(stmt: Print) : R
         fun visitVariableDeclarationStmt(stmt: VariableDeclaration) : R
     }
 
-    abstract fun <R> accept( visitor: Visitor<R>) : R
+    abstract fun <R> accept(visitor: Visitor<R>): R
 
     class Block (
         val statements : List<Stmt>,
@@ -22,6 +23,14 @@ sealed class Stmt {
         val expression : Expr,
     ) : Stmt() {
         override fun<R> accept(visitor: Visitor<R>) = visitor.visitExpressionStmt(this)
+    }
+
+    class If(
+        val condition: Expr,
+        val thenBranch: Stmt,
+        val elseBranch: Stmt?,
+    ) : Stmt() {
+        override fun <R> accept(visitor: Visitor<R>) = visitor.visitIfStmt(this)
     }
 
     class Print (

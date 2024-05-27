@@ -74,7 +74,7 @@ class Scanner(
             '"' -> string()
             ' ', '\r', '\t', '\n' -> {}
             'o' -> {
-                if (peek() == 'r') {
+                if (match('r')) {
                     addToken(TokenType.OR)
                 }
             }

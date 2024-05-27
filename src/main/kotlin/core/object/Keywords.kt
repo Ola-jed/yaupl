@@ -5,6 +5,7 @@ import core.enum.TokenType
 object Keywords {
     val all = mapOf(
         "and" to TokenType.AND,
+        "or" to TokenType.OR,
         "class" to TokenType.CLASS,
         "else" to TokenType.ELSE,
         "false" to TokenType.FALSE,

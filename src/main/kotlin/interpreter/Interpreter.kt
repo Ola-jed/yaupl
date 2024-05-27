@@ -36,6 +36,14 @@ class Interpreter(
         }
     }
 
+    override fun visitIfStmt(stmt: Stmt.If) {
+        if (isTruthy(stmt.condition)) {
+            executeStatement(stmt.thenBranch)
+        } else if (stmt.elseBranch != null) {
+            executeStatement(stmt.elseBranch)
+        }
+    }
+
     override fun visitPrintStmt(stmt: Stmt.Print) {
         println(stringify(evaluate(stmt.expression)))
     }
@@ -115,6 +123,20 @@ class Interpreter(
 
     override fun visitLiteralExpr(expr: Expr.Literal): Any? {
         return expr.value
+    }
+
+    override fun visitLogicalExpr(expr: Expr.Logical): Any? {
+        val left = evaluate(expr.left)
+
+        if (expr.operator.type == TokenType.OR) {
+            if (isTruthy(left)) {
+                return left
+            }
+        } else if (!isTruthy(left)) {
+            return left
+        }
+
+        return evaluate(expr.right)
     }
 
     override fun visitUnaryExpr(expr: Expr.Unary): Any? {
