@@ -6,13 +6,13 @@ import core.enum.TokenType
 import core.scanner.Token
 import error.reporter.ErrorReporter
 import error.types.RuntimeError
-import memory.Memory
+import runtime.Environment
 
 class Interpreter(
     private val errorReporter: ErrorReporter,
     private val onRuntimeErrorReported: () -> Unit
 ) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
-    private val memory = Memory()
+    private var environment = Environment()
 
     fun interpret(statements: List<Stmt>) {
         try {
@@ -21,6 +21,10 @@ class Interpreter(
             errorReporter.reportRuntimeError(error)
             onRuntimeErrorReported()
         }
+    }
+
+    override fun visitBlockStmt(stmt: Stmt.Block) {
+        executeBlock(stmt.statements, Environment(environment))
     }
 
     override fun visitExpressionStmt(stmt: Stmt.Expression) {
@@ -33,12 +37,12 @@ class Interpreter(
 
     override fun visitVariableDeclarationStmt(stmt: Stmt.VariableDeclaration) {
         val value = evaluate(stmt.initializer)
-        memory.define(stmt.name.lexeme, value)
+        environment.define(stmt.name.lexeme, value)
     }
 
     override fun visitAssignExpr(expr: Expr.Assign): Any? {
         val value = evaluate(expr.value)
-        memory.assign(expr.name, value)
+        environment.assign(expr.name, value)
         return value
     }
 
@@ -122,11 +126,24 @@ class Interpreter(
     }
 
     override fun visitVariableExpr(expr: Expr.Variable): Any? {
-        return memory.get(expr.name)
+        return environment.get(expr.name)
     }
 
     private fun executeStatement(statement: Stmt) {
         statement.accept(this)
+    }
+
+    private fun executeBlock(statements: List<Stmt>, environment: Environment) {
+        val outer = environment
+
+        try {
+            this.environment = environment
+            for (statement in statements) {
+                executeStatement(statement)
+            }
+        } finally {
+            this.environment = outer
+        }
     }
 
     private fun evaluate(expr: Expr): Any? {
