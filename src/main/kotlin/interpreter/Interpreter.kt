@@ -31,7 +31,7 @@ class Interpreter(
     override fun visitExpressionStmt(stmt: Stmt.Expression) {
         val result = evaluate(stmt.expression)
 
-        if(replMode) {
+        if (replMode) {
             println(stringify(result))
         }
     }
@@ -42,7 +42,7 @@ class Interpreter(
 
     override fun visitVariableDeclarationStmt(stmt: Stmt.VariableDeclaration) {
         val value = evaluate(stmt.initializer)
-        environment.define(stmt.name.lexeme, value)
+        environment.define(stmt.name, value)
     }
 
     override fun visitAssignExpr(expr: Expr.Assign): Any? {

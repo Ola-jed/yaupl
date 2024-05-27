@@ -22,13 +22,15 @@ class Environment(private val outer: Environment? = null) {
             return outer.get(name)
         }
 
-
-
         throw RuntimeError(name, "Undefined variable ${name.lexeme}.")
     }
 
-    fun define(name: String, value: Any?) {
-        bindings[name] = value
+    fun define(name: Token, value: Any?) {
+        if (bindings.containsKey(name.lexeme)) {
+            throw RuntimeError(name, "Cannot redeclare variable ${name.lexeme}.")
+        }
+
+        bindings[name.lexeme] = value
     }
 
     fun assign(name: Token, value: Any?) {
