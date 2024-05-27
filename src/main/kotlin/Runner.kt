@@ -10,7 +10,7 @@ class Runner(private val errorReporter: ErrorReporter) {
     private var hadRuntimeError: Boolean = false
 
     fun runFile(path: String) {
-        run(File(path).readText())
+        run(File(path).readText(), replMode = false)
 
         if (hadError) {
             exitProcess(65)
@@ -25,12 +25,12 @@ class Runner(private val errorReporter: ErrorReporter) {
         while (true) {
             print("ypl : ")
             val input = readlnOrNull() ?: break
-            run(input)
+            run(input, replMode = true)
             hadError = false
         }
     }
 
-    private fun run(source: String) {
+    private fun run(source: String, replMode: Boolean) {
         val scanner = Scanner(source = source, errorReporter = errorReporter)
         val interpreter = Interpreter(
             errorReporter = errorReporter,
@@ -42,6 +42,8 @@ class Runner(private val errorReporter: ErrorReporter) {
             val parser = Parser(tokens, errorReporter)
             val statements = parser.parse()
             interpreter.interpret(statements)
+
+
         } catch (ex: Exception) {
             hadError = true
             return

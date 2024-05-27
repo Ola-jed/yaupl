@@ -49,7 +49,7 @@ object GenerateAst {
         writer.println("sealed class $baseName {")
         defineVisitor(writer, baseName, types)
 
-        writer.println("    abstract fun <R> accept( visitor: Visitor<R>) : R\n")
+        writer.println("    abstract fun <R> accept(visitor: Visitor<R>) : R\n")
 
         for (type in types) {
             val className = type.split(":")[0].trim()
