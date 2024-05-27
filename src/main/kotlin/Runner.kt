@@ -34,7 +34,8 @@ class Runner(private val errorReporter: ErrorReporter) {
         val scanner = Scanner(source = source, errorReporter = errorReporter)
         val interpreter = Interpreter(
             errorReporter = errorReporter,
-            onRuntimeErrorReported = { hadRuntimeError = true }
+            onRuntimeErrorReported = { hadRuntimeError = true },
+            replMode = replMode
         )
 
         try {
@@ -42,8 +43,6 @@ class Runner(private val errorReporter: ErrorReporter) {
             val parser = Parser(tokens, errorReporter)
             val statements = parser.parse()
             interpreter.interpret(statements)
-
-
         } catch (ex: Exception) {
             hadError = true
             return

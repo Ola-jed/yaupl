@@ -10,7 +10,8 @@ import runtime.Environment
 
 class Interpreter(
     private val errorReporter: ErrorReporter,
-    private val onRuntimeErrorReported: () -> Unit
+    private val onRuntimeErrorReported: () -> Unit,
+    private val replMode: Boolean
 ) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
     private var environment = Environment()
 
@@ -28,7 +29,11 @@ class Interpreter(
     }
 
     override fun visitExpressionStmt(stmt: Stmt.Expression) {
-        evaluate(stmt.expression)
+        val result = evaluate(stmt.expression)
+
+        if(replMode) {
+            println(stringify(result))
+        }
     }
 
     override fun visitPrintStmt(stmt: Stmt.Print) {
