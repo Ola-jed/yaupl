@@ -46,6 +46,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
 
     private fun statement(): Stmt {
         return when {
+            peek().type == TokenType.BREAK -> breakStatement()
             match(TokenType.FOR) -> forStatement()
             match(TokenType.IF) -> ifStatement()
             match(TokenType.WHILE) -> whileStatement()
@@ -105,6 +106,12 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         consume(TokenType.RIGHT_PAREN, "Expect ')' after while's condition")
         val body = statement()
         return Stmt.While(condition, body)
+    }
+
+    private fun breakStatement(): Stmt {
+        val breakStatement = Stmt.Break(consume(TokenType.BREAK, "Expected 'break';"))
+        advance()
+        return breakStatement
     }
 
     private fun printStatement(): Stmt {

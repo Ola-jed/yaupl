@@ -6,13 +6,14 @@ sealed class Stmt {
     interface Visitor<R> {
         fun visitBlockStmt(stmt: Block) : R
         fun visitExpressionStmt(stmt: Expression) : R
-        fun visitIfStmt(stmt: If): R
+        fun visitIfStmt(stmt: If) : R
         fun visitPrintStmt(stmt: Print) : R
         fun visitVariableDeclarationStmt(stmt: VariableDeclaration) : R
-        fun visitWhileStmt(stmt: While): R
+        fun visitWhileStmt(stmt: While) : R
+        fun visitBreakStmt(stmt: Break) : R
     }
 
-    abstract fun <R> accept(visitor: Visitor<R>): R
+    abstract fun <R> accept(visitor: Visitor<R>) : R
 
     class Block (
         val statements : List<Stmt>,
@@ -26,12 +27,12 @@ sealed class Stmt {
         override fun<R> accept(visitor: Visitor<R>) = visitor.visitExpressionStmt(this)
     }
 
-    class If(
-        val condition: Expr,
-        val thenBranch: Stmt,
-        val elseBranch: Stmt?,
+    class If (
+        val condition : Expr,
+        val thenBranch : Stmt,
+        val elseBranch : Stmt?,
     ) : Stmt() {
-        override fun <R> accept(visitor: Visitor<R>) = visitor.visitIfStmt(this)
+        override fun<R> accept(visitor: Visitor<R>) = visitor.visitIfStmt(this)
     }
 
     class Print (
@@ -47,11 +48,17 @@ sealed class Stmt {
         override fun<R> accept(visitor: Visitor<R>) = visitor.visitVariableDeclarationStmt(this)
     }
 
-    class While(
-        val condition: Expr,
-        val body: Stmt,
+    class While (
+        val condition : Expr,
+        val body : Stmt,
     ) : Stmt() {
-        override fun <R> accept(visitor: Visitor<R>) = visitor.visitWhileStmt(this)
+        override fun<R> accept(visitor: Visitor<R>) = visitor.visitWhileStmt(this)
+    }
+
+    class Break (
+        val item : Token,
+    ) : Stmt() {
+        override fun<R> accept(visitor: Visitor<R>) = visitor.visitBreakStmt(this)
     }
 
 }

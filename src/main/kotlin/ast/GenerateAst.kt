@@ -6,13 +6,10 @@ import java.io.PrintWriter
 import kotlin.system.exitProcess
 
 // Tool to generate the needed classes for the ast
-fun main(args: Array<String>) {
-    if (args.size != 1) {
-        System.err.println("Usage: generate_ast <output directory>")
-        exitProcess(64)
-    }
+// To add a new expression or statement type, just add it to the list and run (change thed output dir if needed)
+fun main() {
+    val outputDir = "src/main/kotlin/ast"
 
-    val outputDir = args[0]
     defineAst(
         outputDir, "Expr", listOf(
             "Assign : Token name, Expr value",
@@ -32,7 +29,8 @@ fun main(args: Array<String>) {
             "If : Expr condition, Stmt thenBranch, Stmt? elseBranch",
             "Print : Expr expression",
             "VariableDeclaration : Token name, Expr initializer",
-            "While : Expr condition, Stmt body"
+            "While : Expr condition, Stmt body",
+            "Break: Token item"
         )
     )
 }
@@ -51,26 +49,32 @@ object GenerateAst {
         writer.println("import core.scanner.Token\n")
         writer.println("sealed class $baseName {")
         defineVisitor(writer, baseName, types)
-
         writer.println("    abstract fun <R> accept(visitor: Visitor<R>) : R\n")
 
         for (type in types) {
-            val className = type.split(":")[0].trim()
-            val fields = type.split(":")[1].trim()
-            defineType(writer, className, baseName, fields)
+            val components = type.split(":")
+            val className = components[0].trim()
+            val fieldList = components.getOrNull(1)?.trim()
+            defineType(writer, className, baseName, fieldList)
         }
+
         writer.println("}")
         writer.close()
     }
 
-    private fun defineType(writer: PrintWriter, className: String, baseName: String, fieldList: String) {
-        writer.println("    class $className (")
-        val fields = fieldList.split(", ")
-        for (field in fields) {
-            val fieldData = field.split(" ")
-            writer.println("        val ${fieldData[1]} : ${fieldData[0]},")
+    private fun defineType(writer: PrintWriter, className: String, baseName: String, fieldList: String?) {
+        if (fieldList != null) {
+            writer.println("    class $className (")
+            val fields = fieldList.split(", ")
+            for (field in fields) {
+                val fieldData = field.split(" ")
+                writer.println("        val ${fieldData[1]} : ${fieldData[0]},")
+            }
+            writer.println("    ) : $baseName() {")
+        } else {
+            writer.println("    class $className () : $baseName() {")
         }
-        writer.println("    ) : $baseName() {")
+
         writer.println("        override fun<R> accept(visitor: Visitor<R>) = visitor.visit$className$baseName(this)")
         writer.println("    }\n")
     }

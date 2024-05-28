@@ -3,6 +3,7 @@ package core.scanner
 import core.`object`.Keywords
 import core.enum.TokenType
 import error.reporter.ErrorReporter
+import kotlin.math.cbrt
 
 
 class Scanner(
@@ -173,6 +174,7 @@ class Scanner(
             val text = source.substring(start, current)
             tokens.add(Token(type, text, literal, line))
         }
+
         // Just ignore everything
     }
 

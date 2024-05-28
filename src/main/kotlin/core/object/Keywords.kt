@@ -19,6 +19,7 @@ object Keywords {
         "super" to TokenType.SUPER,
         "this" to TokenType.THIS,
         "true" to TokenType.TRUE,
-        "while" to TokenType.WHILE
+        "while" to TokenType.WHILE,
+        "break" to TokenType.BREAK
     )
 }

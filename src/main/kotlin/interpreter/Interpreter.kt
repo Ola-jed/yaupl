@@ -14,6 +14,7 @@ class Interpreter(
     private val replMode: Boolean
 ) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
     private var environment = Environment()
+    private var isInLoop: Boolean = false
 
     fun interpret(statements: List<Stmt>) {
         try {
@@ -37,7 +38,7 @@ class Interpreter(
     }
 
     override fun visitIfStmt(stmt: Stmt.If) {
-        if (isTruthy(stmt.condition)) {
+        if (isTruthy(evaluate(stmt.condition))) {
             executeStatement(stmt.thenBranch)
         } else if (stmt.elseBranch != null) {
             executeStatement(stmt.elseBranch)
@@ -54,9 +55,19 @@ class Interpreter(
     }
 
     override fun visitWhileStmt(stmt: Stmt.While) {
-        while (isTruthy(evaluate(stmt.condition))) {
+        isInLoop = true
+        while (isInLoop && isTruthy(evaluate(stmt.condition))) {
             executeStatement(stmt.body)
         }
+        isInLoop = false
+    }
+
+    override fun visitBreakStmt(stmt: Stmt.Break) {
+        if (!isInLoop) {
+            throw RuntimeError(stmt.item, "'Break' statement only allowed in a loop.")
+        }
+
+        isInLoop = false
     }
 
     override fun visitAssignExpr(expr: Expr.Assign): Any? {
@@ -168,10 +179,14 @@ class Interpreter(
 
     private fun executeBlock(statements: List<Stmt>, environment: Environment) {
         val outer = environment
+        val isLoop = isInLoop
 
         try {
             this.environment = environment
             for (statement in statements) {
+                if (isLoop && !isInLoop) {
+                    break
+                }
                 executeStatement(statement)
             }
         } finally {
