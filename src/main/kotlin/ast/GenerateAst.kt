@@ -3,7 +3,6 @@ package ast
 import ast.GenerateAst.defineAst
 import java.io.File
 import java.io.PrintWriter
-import kotlin.system.exitProcess
 
 // Tool to generate the needed classes for the ast
 // To add a new expression or statement type, just add it to the list and run (change thed output dir if needed)
