@@ -29,7 +29,8 @@ fun main() {
             "Print : Expr expression",
             "VariableDeclaration : Token name, Expr initializer",
             "While : Expr condition, Stmt body",
-            "Break: Token item"
+            "Break: Token item",
+            "Continue: Token item",
         )
     )
 }

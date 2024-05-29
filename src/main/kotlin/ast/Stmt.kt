@@ -11,6 +11,7 @@ sealed class Stmt {
         fun visitVariableDeclarationStmt(stmt: VariableDeclaration) : R
         fun visitWhileStmt(stmt: While) : R
         fun visitBreakStmt(stmt: Break) : R
+        fun visitContinueStmt(stmt: Continue) : R
     }
 
     abstract fun <R> accept(visitor: Visitor<R>) : R
@@ -59,6 +60,12 @@ sealed class Stmt {
         val item : Token,
     ) : Stmt() {
         override fun<R> accept(visitor: Visitor<R>) = visitor.visitBreakStmt(this)
+    }
+
+    class Continue (
+        val item : Token,
+    ) : Stmt() {
+        override fun<R> accept(visitor: Visitor<R>) = visitor.visitContinueStmt(this)
     }
 
 }

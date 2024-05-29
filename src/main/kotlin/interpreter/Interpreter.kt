@@ -15,6 +15,7 @@ class Interpreter(
 ) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
     private var environment = Environment()
     private var isInLoop: Boolean = false
+    private var continueFound: Boolean = false
 
     fun interpret(statements: List<Stmt>) {
         try {
@@ -64,10 +65,18 @@ class Interpreter(
 
     override fun visitBreakStmt(stmt: Stmt.Break) {
         if (!isInLoop) {
-            throw RuntimeError(stmt.item, "'Break' statement only allowed in a loop.")
+            throw RuntimeError(stmt.item, "'break' statement only allowed in a loop.")
         }
 
         isInLoop = false
+    }
+
+    override fun visitContinueStmt(stmt: Stmt.Continue) {
+        if (!isInLoop) {
+            throw RuntimeError(stmt.item, "'continue' statement only allowed in a loop.")
+        }
+
+        continueFound = true
     }
 
     override fun visitAssignExpr(expr: Expr.Assign): Any? {
@@ -187,6 +196,12 @@ class Interpreter(
                 if (isLoop && !isInLoop) {
                     break
                 }
+
+                if (isLoop && continueFound) {
+                    continueFound = false
+                    break
+                }
+
                 executeStatement(statement)
             }
         } finally {
