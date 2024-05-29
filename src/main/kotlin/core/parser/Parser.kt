@@ -225,7 +225,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
 
     private fun factor(): Expr {
         var expr = unary()
-        while (match(TokenType.SLASH, TokenType.STAR)) {
+        while (match(TokenType.SLASH, TokenType.STAR, TokenType.MODULO)) {
             val operator = previous()
             val right = unary()
             expr = Expr.Binary(expr, operator, right)

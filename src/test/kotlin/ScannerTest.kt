@@ -21,4 +21,12 @@ class ScannerTest {
         assertEquals(TokenType.EQUAL, tokens[0].type)
         assertEquals("=", tokens[0].lexeme)
     }
+
+    @Test
+    fun shouldScanModuloOperation() {
+        val scanner = Scanner("4 % 2", EmptyErrorReporter())
+        val tokens = scanner.scanTokens()
+        assertEquals(4, tokens.size)
+        assertEquals(TokenType.MODULO, tokens[1].type)
+    }
 }

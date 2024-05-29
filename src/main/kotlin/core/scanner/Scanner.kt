@@ -3,7 +3,6 @@ package core.scanner
 import core.`object`.Keywords
 import core.enum.TokenType
 import error.reporter.ErrorReporter
-import kotlin.math.cbrt
 
 
 class Scanner(
@@ -38,6 +37,7 @@ class Scanner(
             '.' -> addToken(TokenType.DOT)
             '+' -> addToken(TokenType.PLUS)
             '-' -> addToken(TokenType.MINUS)
+            '%' -> addToken(TokenType.MODULO)
             ';' -> addToken(TokenType.SEMICOLON)
             '!' -> addToken(if (match('=')) TokenType.BANG_EQUAL else TokenType.BANG)
             '=' -> addToken(if (match('=')) TokenType.EQUAL_EQUAL else TokenType.EQUAL)
@@ -155,8 +155,8 @@ class Scanner(
         while (isDigit(peek())) advance()
 
         if (peek() == '.' && isDigit(peekNext())) {
-            advance();
-            while (isDigit(peek())) advance();
+            advance()
+            while (isDigit(peek())) advance()
         }
 
         addToken(TokenType.NUMBER, source.substring(start, current).toDouble())

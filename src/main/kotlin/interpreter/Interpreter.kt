@@ -105,6 +105,11 @@ class Interpreter(
                 return (left as Double) / (right as Double)
             }
 
+            TokenType.MODULO -> {
+                checkNumbers(expr.operator, left, right)
+                return (left as Double).toInt() % (right as Double).toInt()
+            }
+
             TokenType.PLUS -> {
                 return if (left is Number && right is Number) {
                     (left as Double) + (right as Double)
