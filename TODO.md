@@ -1,5 +1,4 @@
 Features to add
-- More logical operators (`XOR`, `NAND`, `NOR`)
 - The bitwise operators ( `<<`, `^`, ...)
 - Functions
 - Classes
