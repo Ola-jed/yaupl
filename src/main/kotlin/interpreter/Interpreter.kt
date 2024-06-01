@@ -157,17 +157,87 @@ class Interpreter(
     }
 
     override fun visitLogicalExpr(expr: Expr.Logical): Any? {
-        val left = evaluate(expr.left)
 
-        if (expr.operator.type == TokenType.OR) {
-            if (isTruthy(left)) {
-                return left
+        when (expr.operator.type) {
+            TokenType.OR -> {
+                val left = evaluate(expr.left)
+
+                if (isTruthy(left)) {
+                    return left
+                }
+
+                return evaluate(expr.right)
             }
-        } else if (!isTruthy(left)) {
-            return left
-        }
 
-        return evaluate(expr.right)
+            TokenType.AND -> {
+                val left = evaluate(expr.left)
+
+                if (!isTruthy(left)) {
+                    return left
+                }
+
+                return evaluate(expr.right)
+            }
+
+            TokenType.XOR -> {
+                // A xor B = (A and NOT B) OR (NOT A and B)
+
+                val xorExpression = Expr.Logical(
+                    left = Expr.Logical(
+                        left = expr.left,
+                        operator = expr.operator.copy(type = TokenType.AND, lexeme = "and"),
+                        right = Expr.Unary(
+                            operator = expr.operator.copy(type = TokenType.BANG, lexeme = "!"),
+                            right = expr.right
+                        )
+                    ),
+                    operator = expr.operator.copy(type = TokenType.OR, lexeme = "or"),
+                    right = Expr.Logical(
+                        left = Expr.Unary(
+                            operator = expr.operator.copy(type = TokenType.BANG, lexeme = "!"),
+                            right = expr.left
+                        ),
+                        operator = expr.operator.copy(type = TokenType.AND, lexeme = "and"),
+                        right = expr.right
+                    ),
+                )
+
+                return xorExpression.accept(this)
+            }
+
+            TokenType.NOR -> {
+                // A nor B =  not (A or B)
+
+                val xorExpression = Expr.Unary(
+                    operator = expr.operator.copy(type = TokenType.BANG, lexeme = "!"),
+                    right = Expr.Logical(
+                        left = expr.left,
+                        operator = expr.operator.copy(type = TokenType.OR, lexeme = "or"),
+                        right = expr.right
+                    ),
+                )
+
+                return xorExpression.accept(this)
+            }
+
+            TokenType.NAND -> {
+                // A nand B =  not (A and B)
+
+                val xorExpression = Expr.Unary(
+                    operator = expr.operator.copy(type = TokenType.BANG, lexeme = "!"),
+                    right = Expr.Logical(
+                        left = expr.left,
+                        operator = expr.operator.copy(type = TokenType.AND, lexeme = "and"),
+                        right = expr.right
+                    ),
+                )
+
+                return xorExpression.accept(this)
+            }
+
+
+            else -> throw RuntimeError(expr.operator, "Unsupported logical operator")
+        }
     }
 
     override fun visitUnaryExpr(expr: Expr.Unary): Any? {

@@ -6,6 +6,9 @@ object Keywords {
     val all = mapOf(
         "and" to TokenType.AND,
         "or" to TokenType.OR,
+        "nand" to TokenType.NAND,
+        "nor" to TokenType.NOR,
+        "xor" to TokenType.XOR,
         "class" to TokenType.CLASS,
         "else" to TokenType.ELSE,
         "false" to TokenType.FALSE,

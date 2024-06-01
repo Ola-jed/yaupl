@@ -179,7 +179,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     }
 
     private fun and(): Expr {
-        var expr = equality()
+        var expr = xor()
 
         while (match(TokenType.AND)) {
             val operator = previous()
@@ -189,6 +189,43 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
 
         return expr
     }
+
+    private fun xor(): Expr {
+        var expr = nor()
+
+        while (match(TokenType.XOR)) {
+            val operator = previous()
+            val right = equality()
+            expr = Expr.Logical(expr, operator, right)
+        }
+
+        return expr
+    }
+
+    private fun nor(): Expr {
+        var expr = nand()
+
+        while (match(TokenType.NOR)) {
+            val operator = previous()
+            val right = equality()
+            expr = Expr.Logical(expr, operator, right)
+        }
+
+        return expr
+    }
+
+    private fun nand(): Expr {
+        var expr = equality()
+
+        while (match(TokenType.NAND)) {
+            val operator = previous()
+            val right = equality()
+            expr = Expr.Logical(expr, operator, right)
+        }
+
+        return expr
+    }
+
 
     private fun equality(): Expr {
         var expr = comparison()
