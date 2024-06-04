@@ -1,0 +1,16 @@
+fun fib(n) {
+    print "n = "+ n;
+
+    if (n <= 1) return n;
+
+
+    let nMinus2 = fib(n - 2);
+
+
+    let nMinus1 = fib(n - 1);
+
+
+    return nMinus1 + nMinus2;
+}
+
+print fib(4);

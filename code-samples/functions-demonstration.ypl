@@ -1,0 +1,10 @@
+fun hello() {
+    print "Hello world";
+}
+
+fun sayHello(name) {
+    print "Hello " + name;
+}
+
+hello();
+sayHello("OlaJed");

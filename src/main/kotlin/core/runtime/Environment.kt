@@ -1,14 +1,13 @@
-package runtime
+package core.runtime
 
 import core.`object`.Undefined
 import core.scanner.Token
-import error.types.RuntimeError
+import core.error.types.RuntimeError
 
-class Environment(private val outer: Environment? = null) {
-    companion object {
-        private val bindings = mutableMapOf<String, Any?>()
-    }
-
+data class Environment(
+    private val outer: Environment? = null,
+    val bindings: MutableMap<String, Any?> = mutableMapOf()
+) {
     fun get(name: Token): Any? {
         if (bindings.containsKey(name.lexeme)) {
             if (bindings[name.lexeme] == Undefined) {
@@ -41,9 +40,5 @@ class Environment(private val outer: Environment? = null) {
         } else {
             throw RuntimeError(name, "Undefined variable ${name.lexeme}.")
         }
-    }
-
-    fun clear() {
-        bindings.clear()
     }
 }

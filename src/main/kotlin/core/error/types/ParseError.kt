@@ -1,3 +1,3 @@
-package error.types
+package core.error.types
 
 class ParseError : RuntimeException()

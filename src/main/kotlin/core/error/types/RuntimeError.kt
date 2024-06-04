@@ -1,4 +1,4 @@
-package error.types
+package core.error.types
 
 import core.scanner.Token
 

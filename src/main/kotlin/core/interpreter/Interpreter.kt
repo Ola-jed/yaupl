@@ -1,21 +1,30 @@
-package interpreter
+package core.interpreter
 
 import ast.Expr
 import ast.Stmt
 import core.enum.TokenType
 import core.scanner.Token
-import error.reporter.ErrorReporter
-import error.types.RuntimeError
-import runtime.Environment
+import core.types.YCallable
+import core.types.native.Clock
+import core.types.native.YFunction
+import core.error.reporter.ErrorReporter
+import core.error.types.RuntimeError
+import core.runtime.Environment
+import core.`object`.Return
 
 class Interpreter(
     private val errorReporter: ErrorReporter,
     private val onRuntimeErrorReported: () -> Unit,
     private val replMode: Boolean
 ) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
-    private var environment = Environment()
+    private var globals = Environment()
+    private var environment = Environment(globals)
     private var isInLoop: Boolean = false
     private var continueFound: Boolean = false
+
+    init {
+        globals.define(Clock.token, Clock)
+    }
 
     fun interpret(statements: List<Stmt>) {
         try {
@@ -38,6 +47,11 @@ class Interpreter(
         }
     }
 
+    override fun visitFunctionStmt(stmt: Stmt.Function) {
+        val function = YFunction(stmt, environment)
+        globals.define(function.declaration.name, function)
+    }
+
     override fun visitIfStmt(stmt: Stmt.If) {
         if (isTruthy(evaluate(stmt.condition))) {
             executeStatement(stmt.thenBranch)
@@ -48,6 +62,15 @@ class Interpreter(
 
     override fun visitPrintStmt(stmt: Stmt.Print) {
         println(stringify(evaluate(stmt.expression)))
+    }
+
+    override fun visitReturnStmt(stmt: Stmt.Return) {
+        var value: Any? = null
+        if (stmt.value != null) {
+            value = evaluate(stmt.value)
+        }
+
+        throw Return(value)
     }
 
     override fun visitVariableDeclarationStmt(stmt: Stmt.VariableDeclaration) {
@@ -148,6 +171,25 @@ class Interpreter(
         return null
     }
 
+    override fun visitCallExpr(expr: Expr.Call): Any? {
+        val callee = evaluate(expr.callee)
+
+        val arguments = mutableListOf<Any?>()
+        for (argument in expr.arguments) {
+            arguments.add(evaluate(argument))
+        }
+
+        if (callee !is YCallable) {
+            throw RuntimeError(expr.paren, "Code block not callable")
+        }
+
+        if (callee.arity != arguments.size) {
+            throw RuntimeError(expr.paren, "Expected ${callee.arity} arguments but got ${arguments.size} arguments")
+        }
+
+        return callee.call(this, arguments)
+    }
+
     override fun visitGroupingExpr(expr: Expr.Grouping): Any? {
         return expr.expression.accept(this)
     }
@@ -157,7 +199,6 @@ class Interpreter(
     }
 
     override fun visitLogicalExpr(expr: Expr.Logical): Any? {
-
         when (expr.operator.type) {
             TokenType.OR -> {
                 val left = evaluate(expr.left)
@@ -261,8 +302,8 @@ class Interpreter(
         statement.accept(this)
     }
 
-    private fun executeBlock(statements: List<Stmt>, environment: Environment) {
-        val outer = environment
+    fun executeBlock(statements: List<Stmt>, environment: Environment) {
+        val previous = this.environment
         val isLoop = isInLoop
 
         try {
@@ -280,7 +321,7 @@ class Interpreter(
                 executeStatement(statement)
             }
         } finally {
-            this.environment = outer
+            this.environment = previous
         }
     }
 

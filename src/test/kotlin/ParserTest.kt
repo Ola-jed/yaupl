@@ -2,7 +2,7 @@ import ast.Stmt
 import core.enum.TokenType
 import core.parser.Parser
 import core.scanner.Token
-import error.reporter.EmptyErrorReporter
+import core.error.reporter.EmptyErrorReporter
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs

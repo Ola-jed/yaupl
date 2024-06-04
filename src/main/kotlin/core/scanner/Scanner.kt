@@ -2,7 +2,7 @@ package core.scanner
 
 import core.`object`.Keywords
 import core.enum.TokenType
-import error.reporter.ErrorReporter
+import core.error.reporter.ErrorReporter
 
 
 class Scanner(

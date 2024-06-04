@@ -1,6 +1,6 @@
 import cmd.ArgsParser
-import error.reporter.ConsoleErrorReporter
-import error.reporter.FileErrorReporter
+import core.error.reporter.ConsoleErrorReporter
+import core.error.reporter.FileErrorReporter
 import kotlin.system.exitProcess
 
 

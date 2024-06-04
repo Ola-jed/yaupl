@@ -1,7 +1,7 @@
 import core.parser.Parser
 import core.scanner.Scanner
-import error.reporter.ErrorReporter
-import interpreter.Interpreter
+import core.error.reporter.ErrorReporter
+import core.interpreter.Interpreter
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -10,7 +10,22 @@ class Runner(private val errorReporter: ErrorReporter) {
     private var hadRuntimeError: Boolean = false
 
     fun runFile(path: String) {
-        run(File(path).readText(), replMode = false)
+        val content = File(path).readText()
+        val scanner = Scanner(source = content, errorReporter = errorReporter)
+        val interpreter = Interpreter(
+            errorReporter = errorReporter,
+            onRuntimeErrorReported = { hadRuntimeError = true },
+            replMode = false
+        )
+
+        try {
+            val tokens = scanner.scanTokens()
+            val parser = Parser(tokens, errorReporter)
+            val statements = parser.parse()
+            interpreter.interpret(statements)
+        } catch (ex: Exception) {
+            hadError = true
+        }
 
         if (hadError) {
             exitProcess(65)
@@ -22,30 +37,26 @@ class Runner(private val errorReporter: ErrorReporter) {
     }
 
     fun runPrompt() {
-        while (true) {
-            print("ypl : ")
-            val input = readlnOrNull() ?: break
-            run(input, replMode = true)
-            hadError = false
-        }
-    }
-
-    private fun run(source: String, replMode: Boolean) {
-        val scanner = Scanner(source = source, errorReporter = errorReporter)
         val interpreter = Interpreter(
             errorReporter = errorReporter,
             onRuntimeErrorReported = { hadRuntimeError = true },
-            replMode = replMode
+            replMode = true
         )
 
-        try {
-            val tokens = scanner.scanTokens()
-            val parser = Parser(tokens, errorReporter)
-            val statements = parser.parse()
-            interpreter.interpret(statements)
-        } catch (ex: Exception) {
-            hadError = true
-            return
+        while (true) {
+            print("ypl : ")
+            val input = readlnOrNull() ?: break
+            val scanner = Scanner(source = input, errorReporter = errorReporter)
+            try {
+                val tokens = scanner.scanTokens()
+                val parser = Parser(tokens, errorReporter)
+                val statements = parser.parse()
+                interpreter.interpret(statements)
+            } catch (ex: Exception) {
+                hadError = true
+            }
+
+            hadError = false
         }
     }
 

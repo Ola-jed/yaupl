@@ -1,4 +1,4 @@
-package error.reporter
+package core.error.reporter
 
 import java.io.File
 

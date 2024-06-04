@@ -1,8 +1,8 @@
-package error.reporter
+package core.error.reporter
 
 import core.enum.TokenType
 import core.scanner.Token
-import error.types.RuntimeError
+import core.error.types.RuntimeError
 
 interface ErrorReporter {
     fun report(

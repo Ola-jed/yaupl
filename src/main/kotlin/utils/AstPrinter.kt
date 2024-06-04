@@ -1,4 +1,6 @@
-package ast
+package utils
+
+import ast.Expr
 
 class AstPrinter : Expr.Visitor<String> {
     fun print(expr: Expr): String {
@@ -11,6 +13,10 @@ class AstPrinter : Expr.Visitor<String> {
 
     override fun visitBinaryExpr(expr: Expr.Binary): String {
         return parenthesize(expr.operator.lexeme, expr.left, expr.right)
+    }
+
+    override fun visitCallExpr(expr: Expr.Call): String {
+        return expr.callee.accept(this) + parenthesize("", *(expr.arguments.toTypedArray()))
     }
 
     override fun visitGroupingExpr(expr: Expr.Grouping): String {

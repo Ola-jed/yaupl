@@ -1,5 +1,6 @@
-package ast
+package utils
 
+import ast.Expr
 import core.enum.TokenType
 
 class ReversePolishConverter : Expr.Visitor<String> {
@@ -9,6 +10,10 @@ class ReversePolishConverter : Expr.Visitor<String> {
 
     override fun visitBinaryExpr(expr: Expr.Binary): String {
         return "${expr.left.accept(this)} ${expr.right.accept(this)} ${expr.operator.lexeme}"
+    }
+
+    override fun visitCallExpr(expr: Expr.Call): String {
+        return "function call ${expr.callee.accept(this)} (${expr.arguments.joinToString(",") { it.accept(this) }})"
     }
 
     override fun visitGroupingExpr(expr: Expr.Grouping): String {
