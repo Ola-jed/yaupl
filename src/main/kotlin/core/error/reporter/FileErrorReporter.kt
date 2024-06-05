@@ -11,7 +11,14 @@ class FileErrorReporter(filepath: String) : ErrorReporter {
         }
     }
 
-    override fun report(line: Int, message: String, where: String) {
-        file.appendText("ypl : [line ${line + 1}] $where Error : $message\n")
+    override fun report(line: Int?, message: String, where: String) {
+        var out = ""
+        if (line != null) {
+            out += "[line ${line + 1}] "
+        }
+
+        out += "$where Error : $message"
+
+        file.appendText(out)
     }
 }

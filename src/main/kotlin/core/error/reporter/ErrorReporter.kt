@@ -6,9 +6,7 @@ import core.error.types.RuntimeError
 
 interface ErrorReporter {
     fun report(
-        // We assume that the lines indexes start at 0
-        // But the user should not be hindered by this information so increment before printing
-        line: Int,
+        line: Int? = null,
         message: String,
         where: String = ""
     )
@@ -28,7 +26,3 @@ interface ErrorReporter {
         report(error.token.line, error.message, "")
     }
 }
-
-// TODO : Maybe a file error reporter ?
-// When running lox we can pass the argument to the file where errors will be reported
-// ex : run --error-log=error.log

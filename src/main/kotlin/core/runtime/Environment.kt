@@ -4,9 +4,9 @@ import core.`object`.Undefined
 import core.scanner.Token
 import core.error.types.RuntimeError
 
-data class Environment(
+class Environment(
     private val outer: Environment? = null,
-    val bindings: MutableMap<String, Any?> = mutableMapOf()
+    private val bindings: MutableMap<String, Any?> = mutableMapOf()
 ) {
     fun get(name: Token): Any? {
         if (bindings.containsKey(name.lexeme)) {
@@ -22,6 +22,10 @@ data class Environment(
         }
 
         throw RuntimeError(name, "Undefined variable ${name.lexeme}.")
+    }
+
+    fun get(name: Token, distance: Int): Any? {
+        return ancestor(distance).get(name)
     }
 
     fun define(name: Token, value: Any?) {
@@ -40,5 +44,15 @@ data class Environment(
         } else {
             throw RuntimeError(name, "Undefined variable ${name.lexeme}.")
         }
+    }
+
+    private fun ancestor(distance: Int): Environment {
+        var env = this
+
+        for(i in 0 ..<distance) {
+            env = env.outer!!
+        }
+
+        return env
     }
 }

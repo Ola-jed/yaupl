@@ -19,8 +19,9 @@ class Interpreter(
 ) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
     private var globals = Environment()
     private var environment = Environment(globals)
-    private var isInLoop: Boolean = false
-    private var continueFound: Boolean = false
+    private var isInLoop = false
+    private var continueFound = false
+    private val locals = mutableMapOf<Expr, Int>()
 
     init {
         globals.define(Clock.token, Clock)
@@ -49,7 +50,7 @@ class Interpreter(
 
     override fun visitFunctionStmt(stmt: Stmt.Function) {
         val function = YFunction(stmt, environment)
-        globals.define(function.declaration.name, function)
+        environment.define(function.declaration.name, function)
     }
 
     override fun visitIfStmt(stmt: Stmt.If) {
@@ -295,7 +296,21 @@ class Interpreter(
     }
 
     override fun visitVariableExpr(expr: Expr.Variable): Any? {
-        return environment.get(expr.name)
+        return lookUpVariable(expr.name, expr)
+    }
+
+    fun resolve(expression: Expr, depth: Int) {
+        locals[expression] = depth
+    }
+
+    private fun lookUpVariable(name: Token, expression: Expr): Any? {
+        val distance = locals[expression]
+
+        return if (distance != null) {
+            environment.get(name, distance)
+        } else {
+            environment.get(name)
+        }
     }
 
     private fun executeStatement(statement: Stmt) {

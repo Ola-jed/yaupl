@@ -2,6 +2,7 @@ import core.parser.Parser
 import core.scanner.Scanner
 import core.error.reporter.ErrorReporter
 import core.interpreter.Interpreter
+import core.interpreter.Resolver
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -18,10 +19,17 @@ class Runner(private val errorReporter: ErrorReporter) {
             replMode = false
         )
 
+        val resolver = Resolver(
+            interpreter = interpreter,
+            errorReporter = errorReporter,
+            onRuntimeErrorReported = { hadRuntimeError = true }
+        )
+
         try {
             val tokens = scanner.scanTokens()
             val parser = Parser(tokens, errorReporter)
             val statements = parser.parse()
+            resolver.resolve(statements)
             interpreter.interpret(statements)
         } catch (ex: Exception) {
             hadError = true
@@ -43,6 +51,12 @@ class Runner(private val errorReporter: ErrorReporter) {
             replMode = true
         )
 
+        val resolver = Resolver(
+            interpreter = interpreter,
+            errorReporter = errorReporter,
+            onRuntimeErrorReported = { hadRuntimeError = true }
+        )
+
         while (true) {
             print("ypl : ")
             val input = readlnOrNull() ?: break
@@ -51,6 +65,7 @@ class Runner(private val errorReporter: ErrorReporter) {
                 val tokens = scanner.scanTokens()
                 val parser = Parser(tokens, errorReporter)
                 val statements = parser.parse()
+                resolver.resolve(statements)
                 interpreter.interpret(statements)
             } catch (ex: Exception) {
                 hadError = true
