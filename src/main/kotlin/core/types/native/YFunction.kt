@@ -7,7 +7,7 @@ import core.`object`.Return
 import core.runtime.Environment
 
 
-class YFunction(val declaration: Stmt.Function, private val closure: Environment) : YCallable {
+class YFunction(private val declaration: Stmt.Function, private val closure: Environment) : YCallable {
     override val arity: Int
         get() = declaration.params.size
 

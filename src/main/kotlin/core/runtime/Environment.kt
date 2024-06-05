@@ -46,6 +46,10 @@ class Environment(
         }
     }
 
+    fun assign(name: Token, value: Any?, distance: Int) {
+        ancestor(distance).assign(name, value)
+    }
+
     private fun ancestor(distance: Int): Environment {
         var env = this
 

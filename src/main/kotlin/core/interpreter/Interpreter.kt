@@ -18,7 +18,7 @@ class Interpreter(
     private val replMode: Boolean
 ) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
     private var globals = Environment()
-    private var environment = Environment(globals)
+    private var environment = globals
     private var isInLoop = false
     private var continueFound = false
     private val locals = mutableMapOf<Expr, Int>()
@@ -50,7 +50,7 @@ class Interpreter(
 
     override fun visitFunctionStmt(stmt: Stmt.Function) {
         val function = YFunction(stmt, environment)
-        environment.define(function.declaration.name, function)
+        environment.define(stmt.name, function)
     }
 
     override fun visitIfStmt(stmt: Stmt.If) {
@@ -105,7 +105,14 @@ class Interpreter(
 
     override fun visitAssignExpr(expr: Expr.Assign): Any? {
         val value = evaluate(expr.value)
-        environment.assign(expr.name, value)
+        val distance = locals[expr]
+
+        if (distance != null) {
+            environment.assign(expr.name, value, distance)
+        } else {
+            globals.assign(expr.name, value)
+        }
+
         return value
     }
 
@@ -305,11 +312,10 @@ class Interpreter(
 
     private fun lookUpVariable(name: Token, expression: Expr): Any? {
         val distance = locals[expression]
-
         return if (distance != null) {
             environment.get(name, distance)
         } else {
-            environment.get(name)
+            globals.get(name)
         }
     }
 

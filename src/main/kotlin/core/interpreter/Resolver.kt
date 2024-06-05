@@ -5,7 +5,7 @@ import ast.Stmt
 import core.enum.FunctionType
 import core.error.reporter.ErrorReporter
 import core.scanner.Token
-import java.util.Stack
+import java.util.*
 
 class Resolver(
     private val interpreter: Interpreter,
@@ -52,7 +52,12 @@ class Resolver(
     }
 
     override fun visitVariableExpr(expr: Expr.Variable) {
-        // Nothing
+        if (!scopes.isEmpty() && scopes.peek()[expr.name.lexeme] == false) {
+            errorReporter.reportTokenError(expr.name, "Can't read local variable in its own initializer.")
+            onRuntimeErrorReported()
+        }
+
+        resolveLocal(expr, expr.name)
     }
 
     override fun visitBlockStmt(stmt: Stmt.Block) {
@@ -84,7 +89,7 @@ class Resolver(
     }
 
     override fun visitReturnStmt(stmt: Stmt.Return) {
-        if(currentFunction == FunctionType.NONE) {
+        if (currentFunction == FunctionType.NONE) {
             errorReporter.reportTokenError(stmt.keyword, "Can't return outside a function.")
         }
 
@@ -94,7 +99,9 @@ class Resolver(
     }
 
     override fun visitVariableDeclarationStmt(stmt: Stmt.VariableDeclaration) {
-        // Nothing
+        declare(stmt.name)
+        resolve(stmt.initializer)
+        define(stmt.name)
     }
 
     override fun visitWhileStmt(stmt: Stmt.While) {
@@ -143,6 +150,7 @@ class Resolver(
             declare(param)
             define(param)
         }
+
         resolve(function.body)
         endScope()
         currentFunction = enclosingFunction
@@ -154,8 +162,7 @@ class Resolver(
         }
 
         val scope = scopes.peek()
-
-        if(scope.contains(name.lexeme)) {
+        if (scope.contains(name.lexeme)) {
             errorReporter.reportTokenError(token = name, message = "Already a variable with this name in this scope.")
             onRuntimeErrorReported()
         }
