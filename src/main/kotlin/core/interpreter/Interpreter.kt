@@ -11,6 +11,8 @@ import core.error.reporter.ErrorReporter
 import core.error.types.RuntimeError
 import core.runtime.Environment
 import core.`object`.Return
+import core.types.native.YClass
+import core.types.native.YInstance
 
 class Interpreter(
     private val errorReporter: ErrorReporter,
@@ -38,6 +40,12 @@ class Interpreter(
 
     override fun visitBlockStmt(stmt: Stmt.Block) {
         executeBlock(stmt.statements, Environment(environment))
+    }
+
+    override fun visitClassStmt(stmt: Stmt.Class) {
+        environment.define(stmt.name, null)
+        val clazz = YClass(stmt.name.lexeme)
+        environment.assign(stmt.name, clazz)
     }
 
     override fun visitExpressionStmt(stmt: Stmt.Expression) {
@@ -198,6 +206,15 @@ class Interpreter(
         return callee.call(this, arguments)
     }
 
+    override fun visitGetExpr(expr: Expr.Get): Any? {
+        val value = evaluate(expr.obj)
+        if (value is YInstance) {
+            return value.get(expr.name)
+        }
+
+        throw RuntimeError(expr.name, "Only instances have properties.")
+    }
+
     override fun visitGroupingExpr(expr: Expr.Grouping): Any? {
         return expr.expression.accept(this)
     }
@@ -287,6 +304,17 @@ class Interpreter(
 
             else -> throw RuntimeError(expr.operator, "Unsupported logical operator")
         }
+    }
+
+    override fun visitSetExpr(expr: Expr.Set): Any? {
+        val obj = evaluate(expr.obj)
+        if(obj !is YInstance) {
+            throw RuntimeError(expr.name, "Only class instances have fields.")
+        }
+
+        val value = evaluate(expr.value)
+        obj.set(expr.name, value)
+        return value
     }
 
     override fun visitUnaryExpr(expr: Expr.Unary): Any? {

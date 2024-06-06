@@ -7,9 +7,11 @@ sealed class Expr {
         fun visitAssignExpr(expr: Assign) : R
         fun visitBinaryExpr(expr: Binary) : R
         fun visitCallExpr(expr: Call) : R
+        fun visitGetExpr(expr: Get) : R
         fun visitGroupingExpr(expr: Grouping) : R
         fun visitLiteralExpr(expr: Literal) : R
         fun visitLogicalExpr(expr: Logical) : R
+        fun visitSetExpr(expr: Set) : R
         fun visitUnaryExpr(expr: Unary) : R
         fun visitVariableExpr(expr: Variable) : R
     }
@@ -39,6 +41,13 @@ sealed class Expr {
         override fun<R> accept(visitor: Visitor<R>) = visitor.visitCallExpr(this)
     }
 
+    class Get (
+        val obj : Expr,
+        val name : Token,
+    ) : Expr() {
+        override fun<R> accept(visitor: Visitor<R>) = visitor.visitGetExpr(this)
+    }
+
     class Grouping (
         val expression : Expr,
     ) : Expr() {
@@ -57,6 +66,14 @@ sealed class Expr {
         val right : Expr,
     ) : Expr() {
         override fun<R> accept(visitor: Visitor<R>) = visitor.visitLogicalExpr(this)
+    }
+
+    class Set (
+        val obj : Expr,
+        val name : Token,
+        val value : Expr,
+    ) : Expr() {
+        override fun<R> accept(visitor: Visitor<R>) = visitor.visitSetExpr(this)
     }
 
     class Unary (

@@ -1,0 +1,8 @@
+class Dummy {
+    foo() {
+        return "Hello";
+    }
+}
+let dummy = Dummy();
+print Dummy;
+print dummy;

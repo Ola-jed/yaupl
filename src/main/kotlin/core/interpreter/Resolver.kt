@@ -34,6 +34,10 @@ class Resolver(
         expr.arguments.forEach(::resolve)
     }
 
+    override fun visitGetExpr(expr: Expr.Get) {
+        resolve(expr.obj)
+    }
+
     override fun visitGroupingExpr(expr: Expr.Grouping) {
         resolve(expr.expression)
     }
@@ -45,6 +49,11 @@ class Resolver(
     override fun visitLogicalExpr(expr: Expr.Logical) {
         resolve(expr.left)
         resolve(expr.right)
+    }
+
+    override fun visitSetExpr(expr: Expr.Set) {
+        resolve(expr.value)
+        resolve(expr.obj)
     }
 
     override fun visitUnaryExpr(expr: Expr.Unary) {
@@ -64,6 +73,11 @@ class Resolver(
         beginScope()
         resolve(stmt.statements)
         endScope()
+    }
+
+    override fun visitClassStmt(stmt: Stmt.Class) {
+        declare(stmt.name)
+        define(stmt.name)
     }
 
     override fun visitExpressionStmt(stmt: Stmt.Expression) {

@@ -5,6 +5,7 @@ import core.scanner.Token
 sealed class Stmt {
     interface Visitor<R> {
         fun visitBlockStmt(stmt: Block) : R
+        fun visitClassStmt(stmt: Class) : R
         fun visitExpressionStmt(stmt: Expression) : R
         fun visitFunctionStmt(stmt: Function) : R
         fun visitIfStmt(stmt: If) : R
@@ -22,6 +23,13 @@ sealed class Stmt {
         val statements : List<Stmt>,
     ) : Stmt() {
         override fun<R> accept(visitor: Visitor<R>) = visitor.visitBlockStmt(this)
+    }
+
+    class Class (
+        val name : Token,
+        val methods : List<Stmt.Function>,
+    ) : Stmt() {
+        override fun<R> accept(visitor: Visitor<R>) = visitor.visitClassStmt(this)
     }
 
     class Expression (
