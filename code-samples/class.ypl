@@ -1,8 +1,6 @@
-class Dummy {
-    foo() {
-        return "Hello";
+class Bacon {
+    eat() {
+        print "Crunch crunch crunch!";
     }
 }
-let dummy = Dummy();
-print Dummy;
-print dummy;
+Bacon().eat();

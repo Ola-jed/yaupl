@@ -11,6 +11,11 @@ class YInstance(private val clazz: YClass) {
             return fields[name.lexeme]
         }
 
+        val method = clazz.findMethod(name.lexeme)
+        if(method != null) {
+            return method.bind(this)
+        }
+
         throw RuntimeError(name, "Undefined property ${name.lexeme}.")
     }
 

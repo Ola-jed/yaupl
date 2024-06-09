@@ -375,6 +375,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
             match(TokenType.TRUE) -> return Expr.Literal(true)
             match(TokenType.NULL) -> return Expr.Literal(null)
             match(TokenType.NUMBER, TokenType.STRING) -> return Expr.Literal(previous().literal)
+            match(TokenType.THIS) -> return Expr.This(previous())
             match(TokenType.IDENTIFIER) -> return Expr.Variable(previous())
             match(TokenType.LEFT_PAREN) -> {
                 val expr = expression()

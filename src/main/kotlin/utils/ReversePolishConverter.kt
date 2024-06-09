@@ -36,6 +36,10 @@ class ReversePolishConverter : Expr.Visitor<String> {
         return "set (${expr.obj.accept(this)}.${expr.name.lexeme}) ${expr.value.accept(this)}"
     }
 
+    override fun visitThisExpr(expr: Expr.This): String {
+        return "this"
+    }
+
     override fun visitUnaryExpr(expr: Expr.Unary): String {
         val lexemeValue = when (expr.operator.type) {
             TokenType.MINUS -> "NEGATE"

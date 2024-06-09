@@ -44,7 +44,13 @@ class Interpreter(
 
     override fun visitClassStmt(stmt: Stmt.Class) {
         environment.define(stmt.name, null)
-        val clazz = YClass(stmt.name.lexeme)
+        val methods = mutableMapOf<String, YFunction>()
+        for (method in stmt.methods) {
+            val function = YFunction(method, environment, method.name.lexeme == "init")
+            methods[method.name.lexeme] = function
+        }
+
+        val clazz = YClass(stmt.name.lexeme, methods)
         environment.assign(stmt.name, clazz)
     }
 
@@ -57,7 +63,7 @@ class Interpreter(
     }
 
     override fun visitFunctionStmt(stmt: Stmt.Function) {
-        val function = YFunction(stmt, environment)
+        val function = YFunction(stmt, environment, false)
         environment.define(stmt.name, function)
     }
 
@@ -308,13 +314,17 @@ class Interpreter(
 
     override fun visitSetExpr(expr: Expr.Set): Any? {
         val obj = evaluate(expr.obj)
-        if(obj !is YInstance) {
+        if (obj !is YInstance) {
             throw RuntimeError(expr.name, "Only class instances have fields.")
         }
 
         val value = evaluate(expr.value)
         obj.set(expr.name, value)
         return value
+    }
+
+    override fun visitThisExpr(expr: Expr.This): Any? {
+        return lookUpVariable(expr.keyword, expr)
     }
 
     override fun visitUnaryExpr(expr: Expr.Unary): Any? {

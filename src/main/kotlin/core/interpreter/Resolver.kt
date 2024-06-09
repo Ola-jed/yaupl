@@ -2,6 +2,7 @@ package core.interpreter
 
 import ast.Expr
 import ast.Stmt
+import core.enum.ClassType
 import core.enum.FunctionType
 import core.error.reporter.ErrorReporter
 import core.scanner.Token
@@ -14,6 +15,7 @@ class Resolver(
 ) : Expr.Visitor<Unit>, Stmt.Visitor<Unit> {
     private val scopes: Stack<MutableMap<String, Boolean>> = Stack()
     private var currentFunction = FunctionType.NONE
+    private var currentClass = ClassType.NONE
 
     fun resolve(statements: List<Stmt>) {
         statements.forEach(::resolve)
@@ -56,6 +58,14 @@ class Resolver(
         resolve(expr.obj)
     }
 
+    override fun visitThisExpr(expr: Expr.This) {
+        if (currentClass == ClassType.NONE) {
+            errorReporter.reportTokenError(expr.keyword, "Can't use 'this' outside of a class.")
+        }
+
+        resolveLocal(expr, expr.keyword)
+    }
+
     override fun visitUnaryExpr(expr: Expr.Unary) {
         resolve(expr.right)
     }
@@ -76,8 +86,24 @@ class Resolver(
     }
 
     override fun visitClassStmt(stmt: Stmt.Class) {
+        val enclosingClass = currentClass
+        currentClass = ClassType.CLASS
         declare(stmt.name)
         define(stmt.name)
+        beginScope()
+        scopes.peek()["this"] = true
+
+        for (method in stmt.methods) {
+            var declaration = FunctionType.METHOD
+            if (method.name.lexeme == "init") {
+                declaration = FunctionType.INITIALIZER
+            }
+
+            resolveFunction(method, declaration)
+        }
+
+        endScope()
+        currentClass = enclosingClass
     }
 
     override fun visitExpressionStmt(stmt: Stmt.Expression) {
@@ -108,6 +134,10 @@ class Resolver(
         }
 
         if (stmt.value != null) {
+            if (currentFunction == FunctionType.INITIALIZER) {
+                errorReporter.reportTokenError(stmt.keyword, "Can't return a value from an initializer.")
+            }
+
             resolve(stmt.value)
         }
     }
