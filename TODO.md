@@ -1,6 +1,5 @@
 Features to add
 - The bitwise operators ( `<<`, `^`, ...)
-- Classes
 - Exceptions ?
 - Arrays / Lists
 - Imports
