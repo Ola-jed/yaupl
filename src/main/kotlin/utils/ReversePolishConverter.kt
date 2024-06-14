@@ -36,6 +36,10 @@ class ReversePolishConverter : Expr.Visitor<String> {
         return "set (${expr.obj.accept(this)}.${expr.name.lexeme}) ${expr.value.accept(this)}"
     }
 
+    override fun visitSuperExpr(expr: Expr.Super): String {
+        return "super"
+    }
+
     override fun visitThisExpr(expr: Expr.This): String {
         return "this"
     }

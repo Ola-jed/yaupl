@@ -58,9 +58,22 @@ class Resolver(
         resolve(expr.obj)
     }
 
+    override fun visitSuperExpr(expr: Expr.Super) {
+        if (currentClass == ClassType.NONE) {
+            errorReporter.reportTokenError(expr.keyword, "Can't use 'super' outside of a class.")
+            onRuntimeErrorReported()
+        } else if (currentClass != ClassType.SUBCLASS) {
+            errorReporter.reportTokenError(expr.keyword, "Can't use 'super' in a class with no superclass.")
+            onRuntimeErrorReported()
+        }
+
+        resolveLocal(expr, expr.keyword)
+    }
+
     override fun visitThisExpr(expr: Expr.This) {
         if (currentClass == ClassType.NONE) {
             errorReporter.reportTokenError(expr.keyword, "Can't use 'this' outside of a class.")
+            onRuntimeErrorReported()
         }
 
         resolveLocal(expr, expr.keyword)
@@ -90,6 +103,19 @@ class Resolver(
         currentClass = ClassType.CLASS
         declare(stmt.name)
         define(stmt.name)
+
+        if (stmt.superclass != null && stmt.name.lexeme == stmt.superclass.name.lexeme) {
+            errorReporter.reportTokenError(stmt.name, "A class can't inherit from itself.")
+            onRuntimeErrorReported()
+        }
+
+        if (stmt.superclass != null) {
+            currentClass = ClassType.SUBCLASS
+            resolve(stmt.superclass)
+            beginScope()
+            scopes.peek()["super"] = true
+        }
+
         beginScope()
         scopes.peek()["this"] = true
 
@@ -103,6 +129,11 @@ class Resolver(
         }
 
         endScope()
+
+        if (stmt.superclass != null) {
+            endScope()
+        }
+
         currentClass = enclosingClass
     }
 

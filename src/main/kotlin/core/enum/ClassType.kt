@@ -2,5 +2,6 @@ package core.enum
 
 enum class ClassType {
     NONE,
-    CLASS
+    CLASS,
+    SUBCLASS
 }

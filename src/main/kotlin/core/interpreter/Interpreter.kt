@@ -14,6 +14,7 @@ import core.`object`.Return
 import core.types.native.YClass
 import core.types.native.YInstance
 
+
 class Interpreter(
     private val errorReporter: ErrorReporter,
     private val onRuntimeErrorReported: () -> Unit,
@@ -43,14 +44,32 @@ class Interpreter(
     }
 
     override fun visitClassStmt(stmt: Stmt.Class) {
+        var superClass: Any? = null
+
+        if (stmt.superclass != null) {
+            superClass = evaluate(stmt.superclass)
+            if (superClass !is YClass) {
+                throw RuntimeError(stmt.superclass.name, "Superclass must be a class.")
+            }
+        }
+
         environment.define(stmt.name, null)
+        if (stmt.superclass != null) {
+            environment = Environment(environment)
+            environment.define(Token(type = TokenType.SUPER, lexeme = "super"), superClass)
+        }
+
         val methods = mutableMapOf<String, YFunction>()
         for (method in stmt.methods) {
             val function = YFunction(method, environment, method.name.lexeme == "init")
             methods[method.name.lexeme] = function
         }
 
-        val clazz = YClass(stmt.name.lexeme, methods)
+        val clazz = YClass(stmt.name.lexeme, superClass as? YClass, methods)
+        if (superClass != null) {
+            environment = environment.outer!!
+        }
+
         environment.assign(stmt.name, clazz)
     }
 
@@ -321,6 +340,16 @@ class Interpreter(
         val value = evaluate(expr.value)
         obj.set(expr.name, value)
         return value
+    }
+
+    override fun visitSuperExpr(expr: Expr.Super): Any? {
+        val distance = locals[expr]!!
+        val superClass = environment.get(Token(lexeme = "super", type = TokenType.SUPER), distance) as YClass
+        val instance = environment.get(Token(lexeme = "this", type = TokenType.THIS), distance - 1) as YInstance
+        val method = superClass.findMethod(expr.method.lexeme)
+            ?: throw RuntimeError(expr.method, "Undefined property '${expr.method.lexeme}'.")
+
+        return method.bind(instance)
     }
 
     override fun visitThisExpr(expr: Expr.This): Any? {

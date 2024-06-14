@@ -39,6 +39,10 @@ class AstPrinter : Expr.Visitor<String> {
         return "${parenthesize("set", expr.obj)}${expr.name.lexeme} = ${expr.value.accept(this)}"
     }
 
+    override fun visitSuperExpr(expr: Expr.Super): String {
+        return "super"
+    }
+
     override fun visitThisExpr(expr: Expr.This): String {
         return "this"
     }
@@ -62,5 +66,4 @@ class AstPrinter : Expr.Visitor<String> {
         sb.append(')')
         return sb.toString()
     }
-
 }

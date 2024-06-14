@@ -1,0 +1,9 @@
+class Cook {
+    cook() {
+        print "Medium rare.";
+    }
+}
+
+class Ramsay : Cook {}
+Ramsay().cook();
+

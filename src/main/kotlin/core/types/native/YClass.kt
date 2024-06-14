@@ -3,12 +3,12 @@ package core.types.native
 import core.interpreter.Interpreter
 import core.types.YCallable
 
-class YClass(val name: String, private val methods: Map<String, YFunction>) : YCallable {
+class YClass(val name: String, private val superclass: YClass?, private val methods: Map<String, YFunction>) : YCallable {
     override val arity: Int
         get() = findMethod("init")?.arity ?: 0
 
     fun findMethod(name: String): YFunction? {
-        return methods[name]
+        return methods[name] ?: superclass?.findMethod(name)
     }
 
     override fun call(interpreter: Interpreter, arguments: List<Any?>): Any? {

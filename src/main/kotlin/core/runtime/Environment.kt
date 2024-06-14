@@ -5,7 +5,7 @@ import core.scanner.Token
 import core.error.types.RuntimeError
 
 class Environment(
-    private val outer: Environment? = null,
+    val outer: Environment? = null,
     private val bindings: MutableMap<String, Any?> = mutableMapOf()
 ) {
     fun get(name: Token): Any? {
