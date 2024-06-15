@@ -9,6 +9,8 @@ A small interpreted language written in Kotlin
 git clone https://github.com/Ola-jed/yaupl
 cd yaupl
 ./gradlew run --console=plain [file.y]
+# Or run the jar directly at the repository's root
+java -jar yaupl.main.jar <options>
 ```
 
 ## Language's description
