@@ -1,0 +1,18 @@
+class Humain {
+    sePresenter() {
+        print "Humain";
+    }
+}
+
+class Etudiant: Humain {
+    sePresenter() {
+        super.sePresenter();
+        print "Etudiant";
+    }
+}
+
+let humain = Humain();
+humain.sePresenter();
+
+let etudiant = Etudiant();
+etudiant.sePresenter();

@@ -5,4 +5,7 @@ fun fib(n) {
     return nMinus1 + nMinus2;
 }
 
-print fib(4);
+for (let a = 0; a < 20; a = a + 1) {
+    print fib(a);
+}
+
