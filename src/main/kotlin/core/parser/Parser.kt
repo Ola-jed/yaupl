@@ -311,8 +311,19 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     }
 
     private fun comparison(): Expr {
-        var expr = term()
+        var expr = bitwise()
         while (match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)) {
+            val operator = previous()
+            val right = bitwise()
+            expr = Expr.Binary(expr, operator, right)
+        }
+
+        return expr
+    }
+
+    private fun bitwise(): Expr {
+        var expr = term()
+        while (match(TokenType.LSHIFT, TokenType.RSHIFT)) {
             val operator = previous()
             val right = term()
             expr = Expr.Binary(expr, operator, right)

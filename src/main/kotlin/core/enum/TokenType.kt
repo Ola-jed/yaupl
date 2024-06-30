@@ -11,6 +11,7 @@ enum class TokenType {
     EQUAL, EQUAL_EQUAL,
     GREATER, GREATER_EQUAL,
     LESS, LESS_EQUAL,
+    LSHIFT, RSHIFT,
 
     // Literals.
     IDENTIFIER, STRING, NUMBER,

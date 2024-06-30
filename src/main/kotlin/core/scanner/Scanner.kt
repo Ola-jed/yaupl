@@ -43,8 +43,26 @@ class Scanner(
             ':' -> addToken(TokenType.COLON)
             '!' -> addToken(if (match('=')) TokenType.BANG_EQUAL else TokenType.BANG)
             '=' -> addToken(if (match('=')) TokenType.EQUAL_EQUAL else TokenType.EQUAL)
-            '>' -> addToken(if (match('=')) TokenType.GREATER_EQUAL else TokenType.GREATER)
-            '<' -> addToken(if (match('=')) TokenType.LESS_EQUAL else TokenType.LESS)
+            '>' -> addToken(
+                if (match('=')) {
+                    TokenType.GREATER_EQUAL
+                } else if (match('>')) {
+                    TokenType.RSHIFT
+                } else {
+                    TokenType.GREATER
+                }
+            )
+
+            '<' -> addToken(
+                if (match('=')) {
+                    TokenType.LESS_EQUAL
+                } else if (match('<')) {
+                    TokenType.LSHIFT
+                } else {
+                    TokenType.LESS
+                }
+            )
+
             '*' -> {
                 if (isInMultilineComment && match('/')) {
                     isInMultilineComment = false

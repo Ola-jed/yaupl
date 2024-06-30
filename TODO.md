@@ -1,5 +1,4 @@
 Features to add
-- The bitwise operators ( `<<`, `^`, ...)
 - Exceptions ?
 - Arrays / Lists
 - Imports

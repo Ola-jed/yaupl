@@ -196,6 +196,17 @@ class Interpreter(
                 }
             }
 
+            // Bitwise operations
+            TokenType.LSHIFT -> {
+                checkNumbers(expr.operator, left, right)
+                return (left as Double).toInt() shl (right as Double).toInt()
+            }
+
+            TokenType.RSHIFT -> {
+                checkNumbers(expr.operator, left, right)
+                return (left as Double).toInt() shr (right as Double).toInt()
+            }
+
             // Comparisons
             TokenType.GREATER -> {
                 checkNumbers(expr.operator, left, right)
