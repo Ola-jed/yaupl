@@ -7,6 +7,8 @@
 <class-declaration>    ::= "class" <identifier> [" : " <identifier>] | "{" {<function>} "}"
 <function-declaration> ::= "fun" <function>
 <variable-declaration> ::= "let" <identifier> [ "="  <expression> ] ";"
+<function>             ::= <identifier> "(" [parameters] ")" <statement-block>
+<parameters>           ::= <identifier> {"," <identifier>}
 
 
 <statement>            ::= <expression-statement> | <for-statement>    | <if-statement>
@@ -28,6 +30,33 @@
 <statement-block>      ::= "{" {<declaration>} "}"
 
 
-<expression>           ::= 
+<expression>           ::= assignment";"
+<assignment>           ::= [<call> "."] <identifier> "=" assignment | <or>
+<or>                   ::= <and>        { "or"   <and>}
+<and>                  ::= <xor>        { "and"  <xor>}
+<xor>                  ::= <nor>        { "xor"  <nor>}
+<nor>                  ::= <nand>       { "nor"  <nand>}
+<nand>                 ::= <equality>   { "nand" <equality>}
+<equality>             ::= <comparison> { "==" | "!=" <comparison> }
+<comparison>           ::= <term>       { ">" | ">=" | "<" | "<=" <term>}
+<term>                 ::= <factor>     { "+" | "-" <factor>}
+<factor>               ::= <unary>      { "/" | "*" | "%" <unary>}
+<unary>                ::= ( "!" | "-") <unary> | <call>
+<call>                 ::= <primary> { "(" [<arguments>] ")" | "." <identifier> }
+<primary>              ::= "true"       | "false"              | "null"
+                         | "this"       | <number>             | <string>
+                         | <identifier> | "(" <expression> ")" | "super" "." <identifier>
+<arguments>            ::= <expression> { "," <expression>}
+
+
+<number>               ::= { <digit> } ["." { <digit> }]
+<string>               ::= "\"" <chars != "\""> "\""
+<identifier>           ::= <alpha> { <alpha> | <digit> }
+<alpha>                ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m"
+                               | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y"
+                               | "z" | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K"
+                               | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W"
+                               | "X" | "Y" | "Z" | "_"
+<digit>                ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
 ```
