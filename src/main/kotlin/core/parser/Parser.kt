@@ -98,6 +98,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
             match(TokenType.FOR) -> forStatement()
             match(TokenType.IF) -> ifStatement()
             match(TokenType.WHILE) -> whileStatement()
+            match(TokenType.DO) -> doWhileStatement()
             match(TokenType.PRINT) -> printStatement()
             match(TokenType.RETURN) -> returnStatement()
             match(TokenType.LEFT_BRACE) -> statementsBlock()
@@ -155,6 +156,16 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         consume(TokenType.RIGHT_PAREN, "Expect ')' after while's condition.")
         val body = statement()
         return Stmt.While(condition, body)
+    }
+
+    private fun doWhileStatement(): Stmt {
+        val body = statement()
+        consume(TokenType.WHILE, "Expect 'while' after do while's statements block.")
+        consume(TokenType.LEFT_PAREN, "Expect '(' after while.")
+        val condition = expression()
+        consume(TokenType.RIGHT_PAREN, "Expect ')' after while's condition.")
+        consume(TokenType.SEMICOLON, "Expect ';' after do while.")
+        return Stmt.DoWhile(condition, body)
     }
 
     private fun breakStatement(): Stmt {

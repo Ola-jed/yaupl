@@ -184,6 +184,11 @@ class Resolver(
         resolve(stmt.body)
     }
 
+    override fun visitDoWhileStmt(stmt: Stmt.DoWhile) {
+        resolve(stmt.body)
+        resolve(stmt.condition)
+    }
+
     override fun visitBreakStmt(stmt: Stmt.Break) {
         // Nothing
     }

@@ -120,6 +120,14 @@ class Interpreter(
         isInLoop = false
     }
 
+    override fun visitDoWhileStmt(stmt: Stmt.DoWhile) {
+        isInLoop = true
+        do {
+            executeStatement(stmt.body)
+        } while (isInLoop && isTruthy(evaluate(stmt.condition)))
+        isInLoop = false
+    }
+
     override fun visitBreakStmt(stmt: Stmt.Break) {
         if (!isInLoop) {
             throw RuntimeError(stmt.item, "'break' statement only allowed in a loop.")

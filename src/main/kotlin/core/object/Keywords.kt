@@ -23,6 +23,7 @@ object Keywords {
         "this" to TokenType.THIS,
         "true" to TokenType.TRUE,
         "while" to TokenType.WHILE,
+        "do" to TokenType.DO,
         "break" to TokenType.BREAK,
         "continue" to TokenType.CONTINUE
     )

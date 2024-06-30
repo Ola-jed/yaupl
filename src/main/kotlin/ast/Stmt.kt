@@ -13,6 +13,7 @@ sealed class Stmt {
         fun visitReturnStmt(stmt: Return) : R
         fun visitVariableDeclarationStmt(stmt: VariableDeclaration) : R
         fun visitWhileStmt(stmt: While) : R
+        fun visitDoWhileStmt(stmt: DoWhile) : R
         fun visitBreakStmt(stmt: Break) : R
         fun visitContinueStmt(stmt: Continue) : R
     }
@@ -80,6 +81,13 @@ sealed class Stmt {
         val body : Stmt,
     ) : Stmt() {
         override fun<R> accept(visitor: Visitor<R>) = visitor.visitWhileStmt(this)
+    }
+
+    class DoWhile (
+        val condition : Expr,
+        val body : Stmt,
+    ) : Stmt() {
+        override fun<R> accept(visitor: Visitor<R>) = visitor.visitDoWhileStmt(this)
     }
 
     class Break (

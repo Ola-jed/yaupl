@@ -1,0 +1,9 @@
+let sum = 0;
+let number = 1;
+
+do {
+    sum = sum + number;
+    number = number + 1;
+} while (number <= 10);
+
+print "The sum of numbers from 1 to 10 is: " + sum;
