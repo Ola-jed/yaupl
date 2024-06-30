@@ -40,7 +40,8 @@
 <equality>             ::= <comparison> { "==" | "!=" <comparison> }
 <comparison>           ::= <term>       { ">" | ">=" | "<" | "<=" <term>}
 <term>                 ::= <factor>     { "+" | "-" <factor>}
-<factor>               ::= <unary>      { "/" | "*" | "%" <unary>}
+<factor>               ::= <exponent>   { "/" | "*" | "%" <exponent>}
+<exponent>             ::= <unary>      { "^" <unary>}
 <unary>                ::= ( "!" | "-") <unary> | <call>
 <call>                 ::= <primary> { "(" [<arguments>] ")" | "." <identifier> }
 <primary>              ::= "true"       | "false"              | "null"

@@ -13,6 +13,7 @@ import core.runtime.Environment
 import core.`object`.Return
 import core.types.native.YClass
 import core.types.native.YInstance
+import kotlin.math.pow
 
 
 class Interpreter(
@@ -165,6 +166,11 @@ class Interpreter(
             TokenType.MINUS -> {
                 checkNumbers(expr.operator, left, right)
                 return (left as Double) - (right as Double)
+            }
+
+            TokenType.EXPONENT -> {
+                checkNumbers(expr.operator, left, right)
+                return (left as Double).pow(right as Double)
             }
 
             TokenType.STAR -> {

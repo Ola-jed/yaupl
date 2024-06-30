@@ -13,6 +13,5 @@ cd yaupl
 java -jar yaupl.main.jar <options>
 ```
 
-## Language's description
-
-(Later)
+## Language description
+- [Grammar](https://github.com/Ola-jed/yaupl/blob/master/grammar.md)

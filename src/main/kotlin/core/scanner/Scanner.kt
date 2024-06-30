@@ -38,6 +38,7 @@ class Scanner(
             '+' -> addToken(TokenType.PLUS)
             '-' -> addToken(TokenType.MINUS)
             '%' -> addToken(TokenType.MODULO)
+            '^' -> addToken(TokenType.EXPONENT)
             ';' -> addToken(TokenType.SEMICOLON)
             ':' -> addToken(TokenType.COLON)
             '!' -> addToken(if (match('=')) TokenType.BANG_EQUAL else TokenType.BANG)

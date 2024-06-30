@@ -333,8 +333,19 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     }
 
     private fun factor(): Expr {
-        var expr = unary()
+        var expr = exponent()
         while (match(TokenType.SLASH, TokenType.STAR, TokenType.MODULO)) {
+            val operator = previous()
+            val right = exponent()
+            expr = Expr.Binary(expr, operator, right)
+        }
+
+        return expr
+    }
+
+    private fun exponent(): Expr {
+        var expr = unary()
+        while (match(TokenType.EXPONENT)) {
             val operator = previous()
             val right = unary()
             expr = Expr.Binary(expr, operator, right)
