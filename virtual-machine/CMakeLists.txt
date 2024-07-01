@@ -4,4 +4,8 @@ project(virtual_machine)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(virtual_machine main.cpp
-        src/include/chunk.h)
+        src/include/chunk.h
+        src/include/opcode.h
+        src/include/value.h
+        src/include/memory.h
+)
