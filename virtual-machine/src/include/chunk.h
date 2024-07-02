@@ -1,7 +1,6 @@
 #ifndef CHUNK_H
 #define CHUNK_H
 
-#include <concepts>
 #include <cstdint>
 #include <cstdlib>
 #include <iomanip>
@@ -17,23 +16,27 @@ struct Chunk
     int count;
     int capacity;
     uint8_t *code;
+    int *lines;
     ValueArray constants;
 
-    Chunk(): count(0), capacity(0), code(nullptr)
+    Chunk(): count(0), capacity(0), code(nullptr), lines(nullptr)
     {
         constants = ValueArray{};
     }
 
-    void write(const uint8_t opcode)
+    void write(const uint8_t opcode, const int line)
     {
         if (capacity < count + 1)
         {
             const auto oldCapacity = capacity;
             capacity = growCapacity(oldCapacity);
             code = growArray(code, oldCapacity, capacity);
+            lines = growArray(lines, oldCapacity, capacity);
         }
 
-        code[count++] = opcode;
+        code[count] = opcode;
+        lines[count] = line;
+        count++;
     }
 
     int addConstant(const Value &value)
@@ -46,6 +49,7 @@ struct Chunk
     {
         constants.free();
         freeArray(code, capacity);
+        freeArray(lines, capacity);
         count = 0;
         capacity = 0;
         code = nullptr;
@@ -62,7 +66,17 @@ struct Chunk
 
     [[nodiscard]] int disassembleInstruction(const int offset) const
     {
-        std::cout << std::setw(4) << std::setfill('0') << offset << std::endl;
+        std::cout << std::setw(4) << std::setfill('0') << offset << " ";
+
+        if (offset > 0 && lines[offset] == lines[offset - 1])
+        {
+            std::cout << "     |   ";
+        }
+        else
+        {
+            std::cout << std::setw(4) << std::setfill('0') << lines[offset] << " ";
+        }
+
 
         switch (const auto instruction = code[offset])
         {
@@ -85,7 +99,7 @@ struct Chunk
     [[nodiscard]] int constantInstruction(const std::string &name, const int offset) const
     {
         const auto constant = code[offset + 1];
-        std::cout << name << "(" << std::setw(4) << std::setfill('0') << constant << ") ";
+        std::cout << name << "(" << +constant << ") ";
         printValue(constants.values[constant]);
         std::cout << "\n";
         return offset + 2;
