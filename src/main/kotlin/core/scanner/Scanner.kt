@@ -139,6 +139,10 @@ class Scanner(
 
     private fun advance(): Char {
         current++
+        if (source[current - 1] == '\n') {
+            line++
+        }
+
         return source[current - 1]
     }
 
@@ -162,7 +166,7 @@ class Scanner(
         }
 
         if (isAtEnd()) {
-            errorReporter.report(line, "Unterminated string")
+            errorReporter.report(line, "Unterminated string.")
         }
 
         advance()

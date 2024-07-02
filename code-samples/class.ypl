@@ -3,4 +3,5 @@ class Bacon {
         print "Crunch crunch crunch!";
     }
 }
+
 Bacon().eat();
