@@ -32,6 +32,7 @@ class Runner(private val errorReporter: ErrorReporter) {
             resolver.resolve(statements)
             interpreter.interpret(statements)
         } catch (ex: Exception) {
+            println("${ANSI_RED}Fatal error : ${ex.message}$ANSI_RESET")
             hadError = true
         }
 

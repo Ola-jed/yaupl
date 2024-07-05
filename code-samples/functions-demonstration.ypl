@@ -2,9 +2,9 @@ fun hello() {
     print "Hello world";
 }
 
-fun sayHello(name) {
-    print "Hello " + name;
+fun sayHello(name, title) {
+    print "Hello " + name + title;
 }
 
 hello();
-sayHello("OlaJed");
+sayHello("OlaJed", " dev");

@@ -33,7 +33,7 @@ class Scanner(
             ')' -> addToken(TokenType.RIGHT_PAREN)
             '{' -> addToken(TokenType.LEFT_BRACE)
             '}' -> addToken(TokenType.RIGHT_BRACE)
-            ',' -> addToken(TokenType.LEFT_PAREN)
+            ',' -> addToken(TokenType.COMMA)
             '.' -> addToken(TokenType.DOT)
             '+' -> addToken(TokenType.PLUS)
             '-' -> addToken(TokenType.MINUS)

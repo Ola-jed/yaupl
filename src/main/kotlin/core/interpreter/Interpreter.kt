@@ -11,8 +11,10 @@ import core.error.reporter.ErrorReporter
 import core.error.types.RuntimeError
 import core.runtime.Environment
 import core.`object`.Return
+import core.types.native.Array
 import core.types.native.YClass
 import core.types.native.YInstance
+import utils.Stringifier
 import kotlin.math.pow
 
 
@@ -29,6 +31,7 @@ class Interpreter(
 
     init {
         globals.define(Clock.token, Clock)
+        globals.define(Array.token, Array)
     }
 
     fun interpret(statements: List<Stmt>) {
@@ -78,7 +81,7 @@ class Interpreter(
         val result = evaluate(stmt.expression)
 
         if (replMode) {
-            println(stringify(result))
+            println(Stringifier.stringify(result))
         }
     }
 
@@ -96,7 +99,7 @@ class Interpreter(
     }
 
     override fun visitPrintStmt(stmt: Stmt.Print) {
-        println(stringify(evaluate(stmt.expression)))
+        println(Stringifier.stringify(evaluate(stmt.expression)))
     }
 
     override fun visitReturnStmt(stmt: Stmt.Return) {
@@ -192,7 +195,7 @@ class Interpreter(
                 return if (left is Number && right is Number) {
                     (left as Double) + (right as Double)
                 } else {
-                    "${stringify(left)}${stringify(right)}"
+                    "${Stringifier.stringify(left)}${Stringifier.stringify(right)}"
                 }
             }
 
@@ -484,23 +487,5 @@ class Interpreter(
         }
 
         throw RuntimeError(operator, "Operands must both be numbers")
-    }
-
-    private fun stringify(value: Any?): String {
-        if (value == null) {
-            return "null"
-        }
-
-        if (value is Double) {
-            var text = value.toString()
-
-            if (text.endsWith(".0")) {
-                text = text.removeSuffix(".0")
-            }
-
-            return text
-        }
-
-        return value.toString()
     }
 }

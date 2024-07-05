@@ -1,0 +1,12 @@
+let arr = Array(3);
+
+arr.set(0, 1);
+arr.set(0, 2);
+arr.set(0, 3);
+
+print(arr);
+
+print(arr.get(0));
+print(arr.get(1));
+print(arr.get(2));
+print(arr.get(21));
