@@ -9,6 +9,7 @@
 
 #include "memory.h"
 #include "opcode.h"
+#include "util.h"
 #include "value.h"
 
 struct Chunk
@@ -100,14 +101,9 @@ struct Chunk
     {
         const auto constant = code[offset + 1];
         std::cout << name << "(" << +constant << ") ";
-        printValue(constants.values[constant]);
+        util::printValue(constants.values[constant]);
         std::cout << "\n";
         return offset + 2;
-    }
-
-    static void printValue(const Value value)
-    {
-        std::cout << value << " ";
     }
 };
 

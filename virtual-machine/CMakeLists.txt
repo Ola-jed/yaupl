@@ -8,4 +8,9 @@ add_executable(virtual_machine main.cpp
         src/include/opcode.h
         src/include/value.h
         src/include/memory.h
+        src/include/vm.h
+        src/include/interpret_result.h
+        src/source/vm.cpp
+        src/include/util.h
+        src/include/common.h
 )
