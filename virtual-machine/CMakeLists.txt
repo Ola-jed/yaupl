@@ -13,4 +13,5 @@ add_executable(virtual_machine main.cpp
         src/source/vm.cpp
         src/include/util.h
         src/include/common.h
+        src/source/chunk.cpp
 )

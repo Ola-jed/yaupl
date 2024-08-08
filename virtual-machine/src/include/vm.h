@@ -1,5 +1,7 @@
 #ifndef VM_H
 #define VM_H
+#include <functional>
+
 #include "chunk.h"
 #include "interpret_result.h"
 
@@ -25,6 +27,23 @@ struct VM
     void push(Value value);
 
     Value pop();
+
+    uint8_t readByte()
+    {
+        return *instructionPointer++;
+    }
+
+    Value readConstant()
+    {
+        return chunk->constants.values[readByte()];
+    }
+
+    void binaryOp(const std::function<Value(Value, Value)> &op)
+    {
+        const Value b = pop();
+        const Value a = pop();
+        push(op(a, b));
+    }
 };
 
 #endif //VM_H

@@ -1,10 +1,20 @@
 #include "../include/common.h"
+#include "../include/opcode.h"
+#include "../include/util.h"
 #include "../include/vm.h"
+
+#include <iostream>
+#include <valarray>
 
 VM::VM()
 {
     resetStack();
 }
+
+VM::~VM()
+{
+}
+
 
 InterpretResult VM::interpret(Chunk *chunk)
 {
@@ -15,8 +25,6 @@ InterpretResult VM::interpret(Chunk *chunk)
 
 InterpretResult VM::run()
 {
-#define READ_BYTE() (*instructionPointer++)
-#define READ_CONSTANT() (chunk->constants.values[READ_BYTE()])
     for (;;)
     {
 #ifdef DEBUG_TRACE_EXECUTION
@@ -34,14 +42,63 @@ InterpretResult VM::run()
 #endif
 
         uint8_t instruction;
-        switch (instruction = READ_BYTE())
+        switch (instruction = readByte())
         {
             case static_cast<uint8_t>(OpCode::OP_CONSTANT):
             {
-                auto const constant = READ_CONSTANT();
+                auto const constant = readConstant();
                 push(constant);
                 util::printValue(constant);
                 std::cout << "\n";
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_NEGATE):
+            {
+                push(-pop());
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_ADD):
+            {
+                binaryOp([](auto a, auto b) { return a + b; });
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_SUBTRACT):
+            {
+                binaryOp([](auto a, auto b) { return a - b; });
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_MULTIPLY):
+            {
+                binaryOp([](auto a, auto b) { return a * b; });
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_DIVIDE):
+            {
+                binaryOp([](auto a, auto b) { return a / b; });
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_EXPONENT):
+            {
+                binaryOp([](auto a, auto b) { return std::pow(a, b); });
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_LSHIFT):
+            {
+                binaryOp([](auto a, auto b) {
+                    return static_cast<double>(static_cast<long>(a) << static_cast<long>(b));
+                });
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_RSHIFT):
+            {
+                binaryOp([](auto a, auto b) {
+                    return static_cast<double>(static_cast<long>(a) >> static_cast<long>(b));
+                });
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_MODULO):
+            {
+                binaryOp([](auto a, auto b) { return static_cast<long>(a) % static_cast<long>(b); });
                 break;
             }
             case static_cast<uint8_t>(OpCode::OP_RETURN):
@@ -50,10 +107,9 @@ InterpretResult VM::run()
                 std::cout << "\n";
                 return InterpretResult::OK;
             }
+            default: ;
         }
     }
-#undef READ_BYTE
-#undef READ_CONSTANT
 }
 
 void VM::resetStack()

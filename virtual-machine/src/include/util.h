@@ -7,7 +7,7 @@
 
 namespace util
 {
-    void printValue(const Value value)
+    inline void printValue(const Value value)
     {
         std::cout << value << " ";
     }
