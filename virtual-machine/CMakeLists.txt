@@ -14,4 +14,11 @@ add_executable(virtual_machine main.cpp
         src/include/util.h
         src/include/common.h
         src/source/chunk.cpp
+        runner.h
+        src/include/compiler.h
+        src/source/compiler.cpp
+        src/include/scanner.h
+        src/include/token_type.h
+        src/include/token.h
+        src/source/scanner.cpp
 )
