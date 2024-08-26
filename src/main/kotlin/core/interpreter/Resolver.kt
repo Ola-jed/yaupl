@@ -92,6 +92,10 @@ class Resolver(
         resolveLocal(expr, expr.name)
     }
 
+    override fun visitArrayLiteralExpr(expr: Expr.ArrayLiteral) {
+        // Nothing
+    }
+
     override fun visitBlockStmt(stmt: Stmt.Block) {
         beginScope()
         resolve(stmt.statements)

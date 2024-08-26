@@ -5,15 +5,12 @@ import ast.Stmt
 import core.enum.TokenType
 import core.scanner.Token
 import core.types.YCallable
-import core.types.native.Clock
-import core.types.native.YFunction
 import core.error.reporter.ErrorReporter
 import core.error.types.RuntimeError
 import core.runtime.Environment
 import core.`object`.Return
+import core.types.native.*
 import core.types.native.Array
-import core.types.native.YClass
-import core.types.native.YInstance
 import utils.Stringifier
 import kotlin.math.pow
 
@@ -399,6 +396,11 @@ class Interpreter(
 
     override fun visitVariableExpr(expr: Expr.Variable): Any? {
         return lookUpVariable(expr.name, expr)
+    }
+
+    override fun visitArrayLiteralExpr(expr: Expr.ArrayLiteral): Any? {
+        val arrayElements = expr.elements.map { it?.let(this::evaluate) }.toTypedArray()
+        return YArray(arrayElements)
     }
 
     fun resolve(expression: Expr, depth: Int) {

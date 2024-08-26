@@ -55,6 +55,22 @@ class AstPrinter : Expr.Visitor<String> {
         return "var(${expr.accept(this)})"
     }
 
+    override fun visitArrayLiteralExpr(expr: Expr.ArrayLiteral): String {
+        val sb = StringBuilder()
+        sb.append("Array [")
+
+        for ((index, element) in expr.elements.withIndex()) {
+            sb.append(element?.accept(this) ?: "null")
+
+            if (index != expr.elements.lastIndex) {
+                sb.append(", ")
+            }
+        }
+
+        sb.append(']')
+        return sb.toString()
+    }
+
     private fun parenthesize(name: String, vararg expressions: Expr): String {
         val sb = StringBuilder()
         sb.append("($name")

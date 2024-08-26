@@ -10,6 +10,10 @@ import kotlin.Array
 class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
     private val elements: Array<Any?> = Array(size) { null }
 
+    constructor(elements: Array<Any?>) : this(elements.size) {
+        elements.copyInto(this.elements)
+    }
+
     override fun get(name: Token): Any {
         when (name.lexeme) {
             "get" -> return object : YCallable {
@@ -22,7 +26,11 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
                         throw RuntimeError(name, "Array index $index is out of bounds.")
                     }
 
-                    return elements[index]
+                    if (index < 0) {
+                        return elements[elements.size + index]
+                    } else {
+                        return elements[index]
+                    }
                 }
             }
 
@@ -54,11 +62,13 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
 
     override fun toString(): String {
         val stringBuilder = StringBuilder()
-        stringBuilder.append('[')
+        stringBuilder.append("Array [")
+        for ((index, element) in elements.withIndex()) {
+            stringBuilder.append(Stringifier.stringify(element))
 
-        for (i in elements.indices) {
-            stringBuilder.append(Stringifier.stringify(elements[i]) + " ")
-
+            if (index != elements.lastIndex) {
+                stringBuilder.append(", ")
+            }
         }
 
         stringBuilder.append(']')

@@ -5,7 +5,7 @@ import java.io.File
 import java.io.PrintWriter
 
 // Tool to generate the needed classes for the ast
-// To add a new expression or statement type, just add it to the list and run (change thed output dir if needed)
+// To add a new expression or statement type, just add it to the list and run (change the output dir if needed)
 fun main() {
     val outputDir = "src/main/kotlin/ast"
 
@@ -22,7 +22,8 @@ fun main() {
             "Super : Token keyword, Token method",
             "This : Token keyword",
             "Unary : Token operator, Expr right",
-            "Variable : Token name"
+            "Variable : Token name",
+            "ArrayLiteral : List<Expr?> elements"
         )
     )
 

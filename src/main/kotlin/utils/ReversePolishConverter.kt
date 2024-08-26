@@ -57,4 +57,20 @@ class ReversePolishConverter : Expr.Visitor<String> {
     override fun visitVariableExpr(expr: Expr.Variable): String {
         return "var(${expr.accept(this)})"
     }
+
+    override fun visitArrayLiteralExpr(expr: Expr.ArrayLiteral): String {
+        val sb = StringBuilder()
+        sb.append("Array [")
+
+        for ((index, element) in expr.elements.withIndex()) {
+            sb.append(element?.accept(this) ?: "null")
+
+            if (index != expr.elements.lastIndex) {
+                sb.append(", ")
+            }
+        }
+
+        sb.append(']')
+        return sb.toString()
+    }
 }

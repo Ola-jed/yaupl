@@ -430,6 +430,22 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
                 return Expr.Grouping(expr)
             }
 
+            match(TokenType.LEFT_SQUARE_BRACKET) -> {
+                val elements = mutableListOf<Expr>()
+                if (peek().type != TokenType.RIGHT_SQUARE_BRACKET) {
+                    do {
+                        if (peek().type == TokenType.RIGHT_SQUARE_BRACKET) {
+                            break
+                        }
+
+                        elements.add(expression())
+                    } while (match(TokenType.COMMA))
+                }
+
+                consume(TokenType.RIGHT_SQUARE_BRACKET, "Expect ']' after array literal.")
+                return Expr.ArrayLiteral(elements)
+            }
+
             else -> throw error(peek(), "Unexpected token.")
         }
     }
