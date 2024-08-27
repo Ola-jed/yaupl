@@ -7,7 +7,6 @@ import core.`object`.Undefined
 import core.scanner.Token
 import core.error.reporter.ErrorReporter
 import core.error.types.ParseError
-import kotlin.math.exp
 
 
 class Parser(private val tokens: List<Token>, private val errorReporter: ErrorReporter, private var current: Int = 0) {
