@@ -16,6 +16,7 @@ object Keywords {
         "fun" to TokenType.FUN,
         "if" to TokenType.IF,
         "let" to TokenType.LET,
+        "const" to TokenType.CONST,
         "null" to TokenType.NULL,
         "print" to TokenType.PRINT,
         "return" to TokenType.RETURN,

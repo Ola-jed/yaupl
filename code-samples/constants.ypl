@@ -1,0 +1,6 @@
+const pi = [3.14];
+print pi;
+
+// triggers an error
+
+pi = [5];

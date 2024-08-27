@@ -37,6 +37,7 @@ fun main() {
             "Print : Expr expression",
             "Return : Token keyword, Expr? value",
             "VariableDeclaration : Token name, Expr initializer",
+            "ConstantDeclaration : Token name, Expr initializer",
             "While : Expr condition, Stmt body",
             "DoWhile : Expr condition, Stmt body",
             "Break: Token item",
@@ -59,7 +60,7 @@ object GenerateAst {
         writer.println("import core.scanner.Token\n")
         writer.println("sealed class $baseName {")
         defineVisitor(writer, baseName, types)
-        writer.println("    abstract fun <R> accept(visitor: Visitor<R>) : R\n")
+        writer.println("    abstract fun <R> accept(visitor: Visitor<R>): R\n")
 
         for (type in types) {
             val components = type.split(":")
@@ -74,18 +75,18 @@ object GenerateAst {
 
     private fun defineType(writer: PrintWriter, className: String, baseName: String, fieldList: String?) {
         if (fieldList != null) {
-            writer.println("    class $className (")
+            writer.println("    class $className(")
             val fields = fieldList.split(", ")
             for (field in fields) {
                 val fieldData = field.split(" ")
-                writer.println("        val ${fieldData[1]} : ${fieldData[0]},")
+                writer.println("        val ${fieldData[1]}: ${fieldData[0]},")
             }
             writer.println("    ) : $baseName() {")
         } else {
-            writer.println("    class $className () : $baseName() {")
+            writer.println("    class $className (): $baseName() {")
         }
 
-        writer.println("        override fun<R> accept(visitor: Visitor<R>) = visitor.visit$className$baseName(this)")
+        writer.println("        override fun <R> accept(visitor: Visitor<R>) = visitor.visit$className$baseName(this)")
         writer.println("    }\n")
     }
 
@@ -94,7 +95,7 @@ object GenerateAst {
 
         for (type in types) {
             val typeName = type.split(":")[0].trim()
-            writer.println("        fun visit$typeName$baseName(${baseName.lowercase()}: $typeName) : R")
+            writer.println("        fun visit$typeName$baseName(${baseName.lowercase()}: $typeName): R")
         }
 
         writer.println("    }")

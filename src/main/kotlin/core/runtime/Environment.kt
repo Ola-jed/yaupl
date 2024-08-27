@@ -6,7 +6,8 @@ import core.error.types.RuntimeError
 
 class Environment(
     val outer: Environment? = null,
-    private val bindings: MutableMap<String, Any?> = mutableMapOf()
+    private val bindings: MutableMap<String, Any?> = mutableMapOf(),
+    private val constants: MutableSet<String> = mutableSetOf()
 ) {
     fun get(name: Token): Any? {
         if (bindings.containsKey(name.lexeme)) {
@@ -28,16 +29,21 @@ class Environment(
         return ancestor(distance).get(name)
     }
 
-    fun define(name: Token, value: Any?) {
+    fun define(name: Token, value: Any?, constant: Boolean = false) {
         if (bindings.containsKey(name.lexeme)) {
             throw RuntimeError(name, "Cannot redeclare variable ${name.lexeme}.")
         }
 
         bindings[name.lexeme] = value
+        if (constant) {
+            constants.add(name.lexeme)
+        }
     }
 
     fun assign(name: Token, value: Any?) {
-        if (bindings.containsKey(name.lexeme)) {
+        if (constants.contains(name.lexeme)) {
+            throw RuntimeError(name, "Cannot reassign constant ${name.lexeme}.")
+        } else if (bindings.containsKey(name.lexeme)) {
             bindings[name.lexeme] = value
         } else if (outer != null) {
             outer.assign(name, value)
@@ -53,7 +59,7 @@ class Environment(
     private fun ancestor(distance: Int): Environment {
         var env = this
 
-        for(i in 0 ..<distance) {
+        for (i in 0..<distance) {
             env = env.outer!!
         }
 

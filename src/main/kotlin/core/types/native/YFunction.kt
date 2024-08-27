@@ -19,7 +19,7 @@ class YFunction(
 
     fun bind(instance: YInstance): YFunction {
         val env = Environment(closure)
-        env.define(Token(lexeme = "this", type = TokenType.THIS), instance)
+        env.define(Token(lexeme = "this", type = TokenType.THIS), instance, constant = true)
         return YFunction(declaration, env, isInitializer)
     }
 

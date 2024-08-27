@@ -6,7 +6,10 @@
 <declaration>          ::= <class-declaration> | <function-declaration> | <variable-declaration> | <statement>
 <class-declaration>    ::= "class" <identifier> [" : " <identifier>] | "{" {<function>} "}"
 <function-declaration> ::= "fun" <function>
-<variable-declaration> ::= "let" <identifier> [ "="  <expression> ] ";"
+<variable-declaration> ::= "let"   <identifier> [ "="  <expression> ] ";"
+<constant-declaration> ::= "const" <identifier> [ "="  <expression> ] ";"
+
+
 <function>             ::= <identifier> "(" [parameters] ")" <statement-block>
 <parameters>           ::= <identifier> {"," <identifier>}
 

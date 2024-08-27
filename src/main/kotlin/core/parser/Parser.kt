@@ -21,19 +21,13 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
 
     private fun declaration(): Stmt? {
         try {
-            if (match(TokenType.CLASS)) {
-                return classDeclaration()
+            return when {
+                match(TokenType.CLASS) -> classDeclaration()
+                match(TokenType.FUN) -> function("function")
+                match(TokenType.LET) -> variableDeclaration()
+                match(TokenType.CONST) -> constantDeclaration()
+                else -> statement()
             }
-
-            if (match(TokenType.FUN)) {
-                return function("function")
-            }
-
-            if (match(TokenType.LET)) {
-                return variableDeclaration()
-            }
-
-            return statement()
         } catch (error: ParseError) {
             synchronize()
             return null
@@ -89,6 +83,18 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
 
         consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
         return Stmt.VariableDeclaration(name, initializer)
+    }
+
+    private fun constantDeclaration(): Stmt {
+        val name = consume(TokenType.IDENTIFIER, "Expect constant name.")
+
+        var initializer: Expr = Expr.Literal(Undefined)
+        if (match(TokenType.EQUAL)) {
+            initializer = expression()
+        }
+
+        consume(TokenType.SEMICOLON, "Expect ';' after constant declaration.")
+        return Stmt.ConstantDeclaration(name, initializer)
     }
 
     private fun statement(): Stmt {
@@ -407,6 +413,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
                     paren = Token(TokenType.LEFT_PAREN, "("),
                     arguments = listOf(index, or())
                 )
+
                 else -> Expr.Call(
                     callee = Expr.Get(expr, Token(TokenType.IDENTIFIER, "get")),
                     paren = Token(TokenType.LEFT_PAREN, "("),

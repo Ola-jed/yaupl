@@ -183,6 +183,12 @@ class Resolver(
         define(stmt.name)
     }
 
+    override fun visitConstantDeclarationStmt(stmt: Stmt.ConstantDeclaration) {
+        declare(stmt.name)
+        resolve(stmt.initializer)
+        define(stmt.name)
+    }
+
     override fun visitWhileStmt(stmt: Stmt.While) {
         resolve(stmt.condition)
         resolve(stmt.body)

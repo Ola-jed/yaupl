@@ -27,8 +27,8 @@ class Interpreter(
     private val locals = mutableMapOf<Expr, Int>()
 
     init {
-        globals.define(Clock.token, Clock)
-        globals.define(Array.token, Array)
+        globals.define(Clock.token, Clock, constant = true)
+        globals.define(Array.token, Array, constant = true)
     }
 
     fun interpret(statements: List<Stmt>) {
@@ -111,6 +111,11 @@ class Interpreter(
     override fun visitVariableDeclarationStmt(stmt: Stmt.VariableDeclaration) {
         val value = evaluate(stmt.initializer)
         environment.define(stmt.name, value)
+    }
+
+    override fun visitConstantDeclarationStmt(stmt: Stmt.ConstantDeclaration) {
+        val value = evaluate(stmt.initializer)
+        environment.define(stmt.name, value, constant = true)
     }
 
     override fun visitWhileStmt(stmt: Stmt.While) {
