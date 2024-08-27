@@ -17,4 +17,4 @@ java -jar yaupl.main.jar <options>
 - [Grammar](https://github.com/Ola-jed/yaupl/blob/master/grammar.md)
 - Native functions :
   - `Clock` : Get the current timestamp in seconds 
-  - `Array` : Create a fixed size array of the given length, the supported operations are `get`, `set` and `size`  
+  - `Array` : Create a fixed size array of the given length, the supported operations are `get`, `set` and `size`. Array literals are also supported

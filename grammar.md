@@ -44,7 +44,8 @@
 <factor>               ::= <exponent>   { "/" | "*" | "%" <exponent>}
 <exponent>             ::= <unary>      { "^" <unary>}
 <unary>                ::= ( "!" | "-") <unary> | <call>
-<call>                 ::= <primary> { "(" [<arguments>] ")" | "." <identifier> }
+<call>                 ::= <subscript> { "(" [<arguments>] ")" | "." <identifier> }
+<subscript>            ::= <primary> { "[" <or> "]"}
 <primary>              ::= "true"       | "false"              | "null"
                          | "this"       | <number>             | <string>
                          | <identifier> | "(" <expression> ")" | "super" "." <identifier>

@@ -7,6 +7,7 @@ import core.`object`.Undefined
 import core.scanner.Token
 import core.error.reporter.ErrorReporter
 import core.error.types.ParseError
+import kotlin.math.exp
 
 
 class Parser(private val tokens: List<Token>, private val errorReporter: ErrorReporter, private var current: Int = 0) {
@@ -376,16 +377,42 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     }
 
     private fun call(): Expr {
-        var expr = primary()
+        var expr = subscript()
 
         while (true) {
-            if (match(TokenType.LEFT_PAREN)) {
-                expr = finishCall(expr)
-            } else if (match(TokenType.DOT)) {
-                val name = consume(TokenType.IDENTIFIER, "Expect property name after '.'.")
-                expr = Expr.Get(expr, name)
-            } else {
-                break
+            expr = when {
+                match(TokenType.LEFT_PAREN) -> finishCall(expr)
+                match(TokenType.DOT) -> Expr.Get(
+                    obj = expr,
+                    name = consume(TokenType.IDENTIFIER, "Expect property name after '.' .")
+                )
+
+                else -> break
+            }
+        }
+
+        return expr
+    }
+
+    private fun subscript(): Expr {
+        var expr = primary()
+
+        if (match(TokenType.LEFT_SQUARE_BRACKET)) {
+            val index = or()
+            consume(TokenType.RIGHT_SQUARE_BRACKET, "Expect ']' after index.")
+
+            // Handle both set and get
+            expr = when {
+                match(TokenType.EQUAL) -> Expr.Call(
+                    callee = Expr.Get(expr, Token(TokenType.IDENTIFIER, "set")),
+                    paren = Token(TokenType.LEFT_PAREN, "("),
+                    arguments = listOf(index, or())
+                )
+                else -> Expr.Call(
+                    callee = Expr.Get(expr, Token(TokenType.IDENTIFIER, "get")),
+                    paren = Token(TokenType.LEFT_PAREN, "("),
+                    arguments = listOf(index)
+                )
             }
         }
 
