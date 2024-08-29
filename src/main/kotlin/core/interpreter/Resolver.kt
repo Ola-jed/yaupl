@@ -48,6 +48,10 @@ class Resolver(
         // Nothing
     }
 
+    override fun visitStringLiteralExpr(expr: Expr.StringLiteral) {
+        // Nothing
+    }
+
     override fun visitLogicalExpr(expr: Expr.Logical) {
         resolve(expr.left)
         resolve(expr.right)

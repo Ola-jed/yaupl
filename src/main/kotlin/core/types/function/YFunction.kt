@@ -1,12 +1,13 @@
-package core.types.native
+package core.types.function
 
 import ast.Stmt
 import core.enum.TokenType
-import core.types.YCallable
 import core.interpreter.Interpreter
 import core.`object`.Return
 import core.runtime.Environment
 import core.scanner.Token
+import core.types.YCallable
+import core.types.classes.YInstance
 
 
 class YFunction(

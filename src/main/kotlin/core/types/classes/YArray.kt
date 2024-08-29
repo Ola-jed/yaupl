@@ -1,4 +1,4 @@
-package core.types.native
+package core.types.classes
 
 import core.error.types.RuntimeError
 import core.interpreter.Interpreter
@@ -26,10 +26,10 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
                         throw RuntimeError(name, "Array index $index is out of bounds.")
                     }
 
-                    if (index < 0) {
-                        return elements[elements.size + index]
+                    return if (index < 0) {
+                        elements[elements.size + index]
                     } else {
-                        return elements[index]
+                        elements[index]
                     }
                 }
             }
@@ -51,7 +51,7 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
                 }
             }
 
-            "size" -> return elements.size
+            "length" -> return elements.size
             else -> throw RuntimeError(name, "Undefined Array property ${name.lexeme}.")
         }
     }

@@ -1,8 +1,12 @@
-let arr = [1, 2, 3,];
-print arr;
+let arr = Array(3);
+arr.set(0, 1);
+arr.set(1, 1);
+arr.set(2, 1);
 
-arr[0] = -1;
-print arr[0];
+// Equivalent to
+let literal = [1, 1, 1];
 
-arr[2] = 42;
-print arr;
+print arr; // Will show "Array [1, 1, 1]"
+print literal[0]; // Will show "1"
+print literal.get(0); // Will show "1"
+print literal.length; // Will show "3"

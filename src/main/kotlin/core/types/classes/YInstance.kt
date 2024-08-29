@@ -1,4 +1,4 @@
-package core.types.native
+package core.types.classes
 
 import core.error.types.RuntimeError
 import core.scanner.Token

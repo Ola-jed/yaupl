@@ -447,7 +447,8 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
             match(TokenType.FALSE) -> return Expr.Literal(false)
             match(TokenType.TRUE) -> return Expr.Literal(true)
             match(TokenType.NULL) -> return Expr.Literal(null)
-            match(TokenType.NUMBER, TokenType.STRING) -> return Expr.Literal(previous().literal)
+            match(TokenType.NUMBER) -> return Expr.Literal(previous().literal)
+            match(TokenType.STRING) -> return Expr.StringLiteral(previous().literal.toString())
             match(TokenType.THIS) -> return Expr.This(previous())
             match(TokenType.IDENTIFIER) -> return Expr.Variable(previous())
             match(TokenType.SUPER) -> {

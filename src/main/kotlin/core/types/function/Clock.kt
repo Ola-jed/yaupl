@@ -1,9 +1,9 @@
-package core.types.native
+package core.types.function
 
 import core.enum.TokenType
 import core.scanner.Token
-import core.types.YCallable
 import core.interpreter.Interpreter
+import core.types.YCallable
 
 object Clock : YCallable {
     val token = Token(type = TokenType.FUN, line = 0, lexeme = "Clock", literal = null)

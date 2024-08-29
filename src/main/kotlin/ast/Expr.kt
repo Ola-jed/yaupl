@@ -10,6 +10,7 @@ sealed class Expr {
         fun visitGetExpr(expr: Get): R
         fun visitGroupingExpr(expr: Grouping): R
         fun visitLiteralExpr(expr: Literal): R
+        fun visitStringLiteralExpr(expr: StringLiteral): R
         fun visitLogicalExpr(expr: Logical): R
         fun visitSetExpr(expr: Set): R
         fun visitSuperExpr(expr: Super): R
@@ -61,6 +62,12 @@ sealed class Expr {
         val value: Any?,
     ) : Expr() {
         override fun <R> accept(visitor: Visitor<R>) = visitor.visitLiteralExpr(this)
+    }
+
+    class StringLiteral(
+        val value: String,
+    ) : Expr() {
+        override fun <R> accept(visitor: Visitor<R>) = visitor.visitStringLiteralExpr(this)
     }
 
     class Logical(

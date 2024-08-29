@@ -24,6 +24,10 @@ class ReversePolishConverter : Expr.Visitor<String> {
         return if (expr.value == null) "null" else expr.value.toString()
     }
 
+    override fun visitStringLiteralExpr(expr: Expr.StringLiteral): String {
+        return expr.value
+    }
+
     override fun visitLogicalExpr(expr: Expr.Logical): String {
         return "${expr.left.accept(this)} ${expr.right.accept(this)} ${expr.operator.lexeme}"
     }

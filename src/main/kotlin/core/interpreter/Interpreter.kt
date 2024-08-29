@@ -9,8 +9,9 @@ import core.error.reporter.ErrorReporter
 import core.error.types.RuntimeError
 import core.runtime.Environment
 import core.`object`.Return
-import core.types.native.*
-import core.types.native.Array
+import core.types.classes.*
+import core.types.function.Clock
+import core.types.function.YFunction
 import utils.Stringifier
 import kotlin.math.pow
 
@@ -28,7 +29,8 @@ class Interpreter(
 
     init {
         globals.define(Clock.token, Clock, constant = true)
-        globals.define(Array.token, Array, constant = true)
+        globals.define(ArrayConstructor.token, ArrayConstructor, constant = true)
+        globals.define(StringConstructor.token, StringConstructor, constant = true)
     }
 
     fun interpret(statements: List<Stmt>) {
@@ -197,7 +199,7 @@ class Interpreter(
                 return if (left is Number && right is Number) {
                     (left as Double) + (right as Double)
                 } else {
-                    "${Stringifier.stringify(left)}${Stringifier.stringify(right)}"
+                    YString("${Stringifier.stringify(left)}${Stringifier.stringify(right)}")
                 }
             }
 
@@ -276,6 +278,10 @@ class Interpreter(
 
     override fun visitLiteralExpr(expr: Expr.Literal): Any? {
         return expr.value
+    }
+
+    override fun visitStringLiteralExpr(expr: Expr.StringLiteral): Any {
+        return YString(expr.value)
     }
 
     override fun visitLogicalExpr(expr: Expr.Logical): Any? {
@@ -372,7 +378,7 @@ class Interpreter(
         return value
     }
 
-    override fun visitSuperExpr(expr: Expr.Super): Any? {
+    override fun visitSuperExpr(expr: Expr.Super): Any {
         val distance = locals[expr]!!
         val superClass = environment.get(Token(lexeme = "super", type = TokenType.SUPER), distance) as YClass
         val instance = environment.get(Token(lexeme = "this", type = TokenType.THIS), distance - 1) as YInstance
@@ -403,7 +409,7 @@ class Interpreter(
         return lookUpVariable(expr.name, expr)
     }
 
-    override fun visitArrayLiteralExpr(expr: Expr.ArrayLiteral): Any? {
+    override fun visitArrayLiteralExpr(expr: Expr.ArrayLiteral): Any {
         val arrayElements = expr.elements.map { it?.let(this::evaluate) }.toTypedArray()
         return YArray(arrayElements)
     }

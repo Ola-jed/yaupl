@@ -1,11 +1,11 @@
-package core.types.native
+package core.types.classes
 
 import core.enum.TokenType
 import core.interpreter.Interpreter
 import core.scanner.Token
 import core.types.YCallable
 
-object Array : YCallable {
+object ArrayConstructor : YCallable {
     val token = Token(type = TokenType.FUN, line = 0, lexeme = "Array", literal = null)
 
     override val arity: Int

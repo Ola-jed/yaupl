@@ -1,0 +1,17 @@
+let str = String("Hello World");
+
+print str;
+print str.length();
+print str.lowercase();
+
+let a = "lorem";
+let b = "ispum";
+
+print a.length();
+print b.chars();
+
+let c = a + " " + b;
+print c.uppercase();
+
+let d = String(2);
+print d.chars();
