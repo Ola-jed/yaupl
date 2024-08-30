@@ -1,9 +1,11 @@
 package core.types.classes
 
+import core.enum.TokenType
 import core.error.types.RuntimeError
 import core.interpreter.Interpreter
 import core.scanner.Token
 import core.types.YCallable
+import utils.yToInt
 
 class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     constructor(yString: YString) : this(yString.str)
@@ -26,6 +28,10 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
             "chars" -> chars
             "substring" -> substring
             "repeat" -> repeat
+            "padStart" -> padStart
+            "padEnd" -> padEnd
+            "contains" -> contains
+            "charAt" -> charAt
             else -> throw RuntimeError(name, "Undefined String property ${name.lexeme}.")
         }
     }
@@ -33,8 +39,6 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     override fun set(name: Token, value: Any?) {
         throw RuntimeError(name, "Cannot add properties to strings.")
     }
-
-    override fun toString(): String = str
 
     private val length = object : YCallable {
         override val arity: Int
@@ -131,7 +135,7 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
             get() = 1
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
-            val separator = arguments.first() as String
+            val separator = arguments.first().toString()
             val splitResult = str.split(separator)
             return YArray(splitResult.toTypedArray())
         }
@@ -142,7 +146,7 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
             get() = 1
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
-            val prefix = arguments.first() as String
+            val prefix = arguments.first().toString()
             return str.startsWith(prefix)
         }
     }
@@ -152,7 +156,7 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
             get() = 1
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
-            val suffix = arguments.first() as String
+            val suffix = arguments.first().toString()
             return str.endsWith(suffix)
         }
     }
@@ -172,7 +176,7 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
             get() = 2
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
-            val result = str.substring(arguments[0] as Int, arguments[1] as Int)
+            val result = str.substring(arguments[0]!!.yToInt(), arguments[1]!!.yToInt())
             return YString(result)
         }
     }
@@ -182,7 +186,96 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
             get() = 1
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
-            return YString(str.repeat(arguments[0] as Int))
+            val times = arguments[0]!!.yToInt()
+            if (times < 0) {
+                throw RuntimeError(
+                    Token(TokenType.STRING, times.toString()),
+                    "Invalid value for String.repeat ."
+                )
+            }
+
+            return YString(str.repeat(arguments[0]!!.yToInt()))
         }
+    }
+
+    private val padStart = object : YCallable {
+        override val arity: Int
+            get() = 2
+
+        override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
+            val len = arguments[0]!!.yToInt()
+            val paddingChar = arguments[1].toString()
+
+            if (paddingChar.length > 1) {
+                throw RuntimeError(
+                    Token(TokenType.STRING, paddingChar),
+                    "The value used for the padding should be a character."
+                )
+            }
+
+            return YString(str.padStart(len, paddingChar[0]))
+        }
+    }
+
+    private val padEnd = object : YCallable {
+        override val arity: Int
+            get() = 2
+
+        override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
+            val len = arguments[0]!!.yToInt()
+            val paddingChar = arguments[1].toString()
+
+            if (paddingChar.length > 1) {
+                throw RuntimeError(
+                    Token(TokenType.STRING, paddingChar),
+                    "The value used for the padding should be a character."
+                )
+            }
+
+            return YString(str.padEnd(len, paddingChar[0]))
+        }
+    }
+
+    private val contains = object : YCallable {
+        override val arity: Int
+            get() = 1
+
+        override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
+            val test = arguments[0].toString()
+            return str.contains(test)
+        }
+    }
+
+    private val charAt = object : YCallable {
+        override val arity: Int
+            get() = 1
+
+        override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
+            val position = arguments[0]!!.yToInt()
+            val len = str.length
+
+            if (position >= len || position < -1 * len) {
+                throw RuntimeError(
+                    Token(TokenType.STRING, position.toString()),
+                    "Position for charAt out of the string length range."
+                )
+            }
+
+            return if (position >= 0) YString("${str[position]}") else YString("${str[position + len]}")
+        }
+    }
+
+    override fun toString(): String = str
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is YString) {
+            return false
+        }
+
+        return str == other.str
+    }
+
+    override fun hashCode(): Int {
+        return str.hashCode()
     }
 }

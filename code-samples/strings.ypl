@@ -1,17 +1,9 @@
-let str = String("Hello World");
+let a = "hello world";
 
-print str;
-print str.length();
-print str.lowercase();
+print a.charAt(0);
+print a.repeat(3);
+print a.startsWith("he");
+print a.endsWith("world");
 
-let a = "lorem";
-let b = "ispum";
 
-print a.length();
-print b.chars();
-
-let c = a + " " + b;
-print c.uppercase();
-
-let d = String(2);
-print d.chars();
+print "2".padStart(4, "0");

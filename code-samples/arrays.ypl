@@ -10,3 +10,12 @@ print arr; // Will show "Array [1, 1, 1]"
 print literal[0]; // Will show "1"
 print literal.get(0); // Will show "1"
 print literal.length; // Will show "3"
+
+
+print [1, 2, 3].concat([4, 5, 6]);
+
+let s = Array(10);
+s.fill(42);
+print s;
+print [1, 2, 3].concat([4, 5, 6]).reverse();
+print [1, 2, 3].concat([4, 5, 6]).contains(52);
