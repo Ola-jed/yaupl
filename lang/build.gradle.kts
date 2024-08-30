@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm") version "1.9.23"
-    application
 }
 
 group = "com.ola"
@@ -20,14 +19,10 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.getByName<JavaExec>("run") {
-    standardInput = System.`in`
-}
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 
-application {
-    mainClass = "MainKt"
-}
-
-kotlin {
-    jvmToolchain(17)
+    withSourcesJar()
 }
