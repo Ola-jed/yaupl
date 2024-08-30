@@ -10,7 +10,6 @@ A small interpreted language written in Kotlin
 
 The root repertory is a gradle multi-module project
 
-- `ast-gen` (Gradle sub-project) : Util module to automate the generation of the classes for the ast  
 - `code-samples` : Some samples illustrating the features of the language
 - `lang` (Gradle sub-project) : Class library which contains all the code responsible for lexing, parsing and interpreting the language
 - `runner` (Gradle sub-project) : Application that runs yaupl programs from the source code or in REPL mode
@@ -18,14 +17,19 @@ The root repertory is a gradle multi-module project
 - `virtual-machine` (C++ project) : An implementation of a compiler using a VM written in C++
 
 
-## Run
+## Setup
 
 ```shell
 git clone https://github.com/Ola-jed/yaupl
 cd yaupl
 ./gradlew :runner:run --console=plain --args="[file.y]"
+
 # Or run the jar directly at the repository's root
 java -jar yaupl.main.jar <options>
+
+# The ast classes are created by the gradle task "astGen" defined in the lang's build.gradle.kts
+# To regen the ast, run
+./gradlew :lang:astGen
 ```
 
 ## Language description
