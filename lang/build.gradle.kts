@@ -127,6 +127,7 @@ tasks.register("astGen") {
                 "DoWhile : Expr condition, Stmt body",
                 "Break: Token item",
                 "Continue: Token item",
+                "Import : Token keyword, String path"
             )
         )
     }

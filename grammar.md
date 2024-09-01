@@ -17,7 +17,7 @@
 <statement>            ::= <expression-statement> | <for-statement>    | <if-statement>
                          | <print-statement>      | <return-statement> | <while-statement>
                          | <do-while-statement>   | <break-statement>  | <continue-statement>
-                         | <statement-block>
+                         | <import-statement>     | <statement-block>
 <expression-statement> ::= <expression> ";"
 <for-statement>        ::= "for" "(" <variable-declaration>
                                   | <expression-statement> ";"
@@ -30,6 +30,7 @@
 <do-while-statement>   ::= "do" <statement> "while" "(" <expression> ")"
 <break-statement>      ::= "break;"
 <continue-statement>   ::= "continue;"
+<import-statement>     ::= "import" <string> ";"
 <statement-block>      ::= "{" {<declaration>} "}"
 
 

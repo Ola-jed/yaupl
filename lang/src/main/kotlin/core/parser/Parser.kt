@@ -101,6 +101,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         return when {
             peek().type == TokenType.BREAK -> breakStatement()
             peek().type == TokenType.CONTINUE -> continueStatement()
+            match(TokenType.IMPORT) -> importStatement()
             match(TokenType.FOR) -> forStatement()
             match(TokenType.IF) -> ifStatement()
             match(TokenType.WHILE) -> whileStatement()
@@ -218,6 +219,18 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         val value = expression()
         consume(TokenType.SEMICOLON, "Expect ; after the value.")
         return Stmt.Expression(value)
+    }
+
+    private fun importStatement(): Stmt {
+        val keyword = previous()
+        if(!match(TokenType.STRING)) {
+            throw error(keyword, "Invalid import value.")
+        }
+
+        val fileImported = previous().literal.toString()
+        consume(TokenType.SEMICOLON, "Expect ';' after import statement.")
+
+        return Stmt.Import(keyword, fileImported)
     }
 
     private fun expression(): Expr {

@@ -1,0 +1,9 @@
+fun plus(a, b) {
+    return a + b;
+}
+
+class Bacon {
+    eat() {
+        print "Crunch crunch crunch!";
+    }
+}

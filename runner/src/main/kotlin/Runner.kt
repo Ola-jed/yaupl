@@ -3,6 +3,7 @@ import core.scanner.Scanner
 import core.error.reporter.ErrorReporter
 import core.interpreter.Interpreter
 import core.interpreter.Resolver
+import io.FilePathResolver
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -11,12 +12,24 @@ class Runner(private val errorReporter: ErrorReporter) {
     private var hadRuntimeError: Boolean = false
 
     fun runFile(path: String) {
-        val content = File(path).readText()
+        val file = File(path)
+
+        if(!file.exists())  {
+            throw Exception("The file at the path $path does not exists.")
+        }
+
+        if (!file.canRead()) {
+            throw Exception("The file at the path $path cannot be read.")
+        }
+
+        val content = file.readText()
         val scanner = Scanner(source = content, errorReporter = errorReporter)
+
         val interpreter = Interpreter(
             errorReporter = errorReporter,
             onRuntimeErrorReported = { hadRuntimeError = true },
-            replMode = false
+            replMode = false,
+            filePathResolver = FilePathResolver(path)
         )
 
         val resolver = Resolver(
@@ -49,7 +62,8 @@ class Runner(private val errorReporter: ErrorReporter) {
         val interpreter = Interpreter(
             errorReporter = errorReporter,
             onRuntimeErrorReported = { hadRuntimeError = true },
-            replMode = true
+            replMode = true,
+            filePathResolver = FilePathResolver("")
         )
 
         val resolver = Resolver(
@@ -74,10 +88,6 @@ class Runner(private val errorReporter: ErrorReporter) {
 
             hadError = false
         }
-    }
-
-    fun error(line: Int, message: String) {
-        report(line, message)
     }
 
     private fun report(line: Int, message: String) {

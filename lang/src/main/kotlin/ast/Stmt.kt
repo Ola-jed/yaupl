@@ -17,6 +17,7 @@ sealed class Stmt {
         fun visitDoWhileStmt(stmt: DoWhile): R
         fun visitBreakStmt(stmt: Break): R
         fun visitContinueStmt(stmt: Continue): R
+        fun visitImportStmt(stmt: Import): R
     }
 
     abstract fun <R> accept(visitor: Visitor<R>): R
@@ -108,6 +109,13 @@ sealed class Stmt {
         val item: Token,
     ) : Stmt() {
         override fun <R> accept(visitor: Visitor<R>) = visitor.visitContinueStmt(this)
+    }
+
+    class Import(
+        val keyword: Token,
+        val path: String,
+    ) : Stmt() {
+        override fun <R> accept(visitor: Visitor<R>) = visitor.visitImportStmt(this)
     }
 
 }

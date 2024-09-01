@@ -1,0 +1,4 @@
+import "import.second.ypl";
+
+print fib(5);
+Bacon().eat();

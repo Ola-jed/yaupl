@@ -26,6 +26,7 @@ object Keywords {
         "while" to TokenType.WHILE,
         "do" to TokenType.DO,
         "break" to TokenType.BREAK,
-        "continue" to TokenType.CONTINUE
+        "continue" to TokenType.CONTINUE,
+        "import" to TokenType.IMPORT,
     )
 }

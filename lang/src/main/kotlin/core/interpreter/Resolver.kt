@@ -211,6 +211,10 @@ class Resolver(
         // Nothing
     }
 
+    override fun visitImportStmt(stmt: Stmt.Import) {
+        // Nothing
+    }
+
     private fun beginScope() {
         scopes.push(mutableMapOf())
     }

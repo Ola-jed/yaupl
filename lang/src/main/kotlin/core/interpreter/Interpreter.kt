@@ -12,6 +12,8 @@ import core.`object`.Return
 import core.types.classes.*
 import core.types.function.Clock
 import core.types.function.YFunction
+import io.FilePathResolver
+import io.ImportHandler
 import utils.Stringifier
 import kotlin.math.pow
 
@@ -19,7 +21,8 @@ import kotlin.math.pow
 class Interpreter(
     private val errorReporter: ErrorReporter,
     private val onRuntimeErrorReported: () -> Unit,
-    private val replMode: Boolean
+    private val replMode: Boolean,
+    private val filePathResolver: FilePathResolver
 ) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
     private var globals = Environment()
     private var environment = globals
@@ -32,6 +35,8 @@ class Interpreter(
         globals.define(ArrayConstructor.token, ArrayConstructor, constant = true)
         globals.define(StringConstructor.token, StringConstructor, constant = true)
     }
+
+    fun getEnvironment() = environment
 
     fun interpret(statements: List<Stmt>) {
         try {
@@ -150,6 +155,14 @@ class Interpreter(
         }
 
         continueFound = true
+    }
+
+    override fun visitImportStmt(stmt: Stmt.Import) {
+        val filePath = filePathResolver.inferFileAbsolutePath(stmt.path)
+            ?: throw RuntimeError(stmt.keyword, "Import path is not resolvable.")
+
+        val importHandler = ImportHandler(filePath, stmt.keyword, errorReporter, this)
+        importHandler.handle()
     }
 
     override fun visitAssignExpr(expr: Expr.Assign): Any? {

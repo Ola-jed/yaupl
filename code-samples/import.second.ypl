@@ -1,0 +1,8 @@
+import "import.third.ypl";
+
+fun fib(n) {
+    if (n <= 1) return n;
+    let nMinus2 = fib(n - 2);
+    let nMinus1 = fib(n - 1);
+    return plus(nMinus1, nMinus2);
+}

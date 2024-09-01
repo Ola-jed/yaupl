@@ -32,13 +32,7 @@ java -jar yaupl.main.jar <options>
 ./gradlew :lang:astGen
 ```
 
-## Language description
-
-- [Grammar](https://github.com/Ola-jed/yaupl/blob/master/grammar.md)
-
-### Native functions
-
-- `Clock` : Get the current timestamp in seconds
+## [Grammar](https://github.com/Ola-jed/yaupl/blob/master/grammar.md)
 
 ### Native classes
 
@@ -72,3 +66,15 @@ java -jar yaupl.main.jar <options>
   print(str.lowercase()); // Will show "hello world"
   print(str.uppercase()); // Will show "HELLO WORLD"
   ```
+
+### Native functions
+
+- `Clock` : Get the current timestamp in seconds
+
+### Features
+- Operations (numeric, binary)
+- Output
+- Functions definition (with recursion and anonymous functions)
+- Classes definition
+- Predefined classes (`Array`, `String`)
+- Imports
