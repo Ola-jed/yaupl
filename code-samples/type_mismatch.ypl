@@ -1,0 +1,6 @@
+fun sayHello(name, title) {
+    print "Hello " + name + title;
+}
+
+let a = sayHello;
+a = []; // Error

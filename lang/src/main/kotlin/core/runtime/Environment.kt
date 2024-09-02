@@ -3,12 +3,15 @@ package core.runtime
 import core.`object`.Undefined
 import core.scanner.Token
 import core.error.types.RuntimeError
+import utils.TypeFormatter
 
 class Environment(
     val outer: Environment? = null,
     private val bindings: MutableMap<String, Any?> = mutableMapOf(),
     private val constants: MutableSet<String> = mutableSetOf()
 ) {
+    private val typeMappings: MutableMap<String, Any?> = mutableMapOf()
+
     fun get(name: Token): Any? {
         if (bindings.containsKey(name.lexeme)) {
             if (bindings[name.lexeme] == Undefined) {
@@ -35,6 +38,10 @@ class Environment(
         }
 
         bindings[name.lexeme] = value
+        if (value != Undefined && value != null) {
+            typeMappings[name.lexeme] = TypeFormatter.formatToReadable(value)
+        }
+
         if (constant) {
             constants.add(name.lexeme)
         }
@@ -44,6 +51,20 @@ class Environment(
         if (constants.contains(name.lexeme)) {
             throw RuntimeError(name, "Cannot reassign constant ${name.lexeme}.")
         } else if (bindings.containsKey(name.lexeme)) {
+            if (typeMappings.containsKey(name.lexeme)) {
+                val initialType = typeMappings[name.lexeme]
+                val actualTypeStr = if (value == null) "" else TypeFormatter.formatToReadable(value)
+
+                if (value != null && actualTypeStr != initialType) {
+                    throw RuntimeError(
+                        name,
+                        "Cannot assign value of type $actualTypeStr to a variable of type $initialType"
+                    )
+                }
+            } else if (value != null) {
+                typeMappings[name.lexeme] = TypeFormatter.formatToReadable(value)
+            }
+
             bindings[name.lexeme] = value
         } else if (outer != null) {
             outer.assign(name, value)
