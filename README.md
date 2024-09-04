@@ -47,10 +47,10 @@ java -jar yaupl.main.jar <options>
   // Equivalent to
   let literal = [1, 1, 1];
   
-  print arr; // Will show "Array [1, 1, 1]"
-  print literal[0]; // Will show "1"
-  print literal.get(0); // Will show "1"
-  print literal.length; // Will show "3"
+  print arr; // Array [1, 1, 1]
+  print literal[0]; // 1
+  print literal.get(0); // 1
+  print literal.length; // 3
   ```
 - `List` : Dynamic lists
   ```
@@ -80,9 +80,9 @@ java -jar yaupl.main.jar <options>
   // Equivalent to
   let literal = "Hello world";
   
-  print(str.length()); // Will show "11"
-  print(str.lowercase()); // Will show "hello world"
-  print(str.uppercase()); // Will show "HELLO WORLD"
+  print(str.length()); // 11
+  print(str.lowercase()); // hello world
+  print(str.uppercase()); // HELLO WORLD
   ```
 
 ### Native functions

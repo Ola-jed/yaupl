@@ -4,6 +4,7 @@ import core.error.types.RuntimeError
 import core.interpreter.Interpreter
 import core.scanner.Token
 import core.types.YCallable
+import utils.FunctionArities
 import utils.Stringifier
 
 class YList() : YInstance(YClass("List", null, mapOf())) {
@@ -36,8 +37,8 @@ class YList() : YInstance(YClass("List", null, mapOf())) {
 
     private val add = fun(_: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 1
+            override val arity: Set<Int>
+                get() = FunctionArities.UNARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>) {
                 val element = arguments[0]
@@ -48,8 +49,8 @@ class YList() : YInstance(YClass("List", null, mapOf())) {
 
     private val getIndex = fun(_: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 1
+            override val arity: Set<Int>
+                get() = FunctionArities.UNARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any? {
                 val index = (arguments[0] as Double).toInt()
@@ -60,8 +61,8 @@ class YList() : YInstance(YClass("List", null, mapOf())) {
 
     private val setIndex = fun(_: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 2
+            override val arity: Set<Int>
+                get() = FunctionArities.BINARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any? {
                 val index = (arguments[0] as Double).toInt()
@@ -75,8 +76,8 @@ class YList() : YInstance(YClass("List", null, mapOf())) {
 
     private val remove = fun(_: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 1
+            override val arity: Set<Int>
+                get() = FunctionArities.UNARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>) {
                 val index = (arguments[0] as Double).toInt()
@@ -87,8 +88,8 @@ class YList() : YInstance(YClass("List", null, mapOf())) {
 
     private val concat = fun(name: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 1
+            override val arity: Set<Int>
+                get() = FunctionArities.UNARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
                 val arg = arguments[0] as? YList
@@ -103,8 +104,8 @@ class YList() : YInstance(YClass("List", null, mapOf())) {
 
     private val fill = fun(_: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 1
+            override val arity: Set<Int>
+                get() = FunctionArities.UNARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>) {
                 val value = arguments[0]
@@ -115,8 +116,8 @@ class YList() : YInstance(YClass("List", null, mapOf())) {
 
     private val find = fun(_: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 1
+            override val arity: Set<Int>
+                get() = FunctionArities.UNARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any? {
                 val value = arguments[0]
@@ -127,8 +128,8 @@ class YList() : YInstance(YClass("List", null, mapOf())) {
 
     private val reverse = fun(_: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 0
+            override val arity: Set<Int>
+                get() = FunctionArities.ZERO_PARAMETERS
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
                 return YList(elements.reversed())
@@ -138,8 +139,8 @@ class YList() : YInstance(YClass("List", null, mapOf())) {
 
     private val contains = fun(_: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 1
+            override val arity: Set<Int>
+                get() = FunctionArities.UNARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
                 val value = arguments[0]
@@ -150,8 +151,8 @@ class YList() : YInstance(YClass("List", null, mapOf())) {
 
     private val clear = fun(_: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 0
+            override val arity: Set<Int>
+                get() = FunctionArities.ZERO_PARAMETERS
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>) {
                 elements.clear()

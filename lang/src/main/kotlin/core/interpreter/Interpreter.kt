@@ -265,11 +265,11 @@ class Interpreter(
         }
 
         if (callee !is YCallable) {
-            throw RuntimeError(expr.paren, "Code block not callable")
+            throw RuntimeError(expr.paren, "Code block not callable.")
         }
 
-        if (callee.arity != arguments.size) {
-            throw RuntimeError(expr.paren, "Expected ${callee.arity} arguments but got ${arguments.size} arguments")
+        if (!callee.arity.contains(arguments.size)) {
+            throw RuntimeError(expr.paren, "Function cannot be called with ${arguments.size} arguments.")
         }
 
         return callee.call(this, arguments)

@@ -5,11 +5,10 @@ import core.error.types.RuntimeError
 import core.interpreter.Interpreter
 import core.scanner.Token
 import core.types.YCallable
+import utils.FunctionArities
 import utils.yToInt
 
 class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
-    constructor(yString: YString) : this(yString.str)
-
     override fun get(name: Token): Any {
         return when (name.lexeme) {
             "length" -> length
@@ -41,8 +40,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val length = object : YCallable {
-        override val arity: Int
-            get() = 0
+        override val arity: Set<Int>
+            get() = FunctionArities.ZERO_PARAMETERS
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             return str.length
@@ -50,8 +49,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val isEmpty = object : YCallable {
-        override val arity: Int
-            get() = 0
+        override val arity: Set<Int>
+            get() = FunctionArities.ZERO_PARAMETERS
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             return str.isEmpty()
@@ -59,8 +58,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val isNotEmpty = object : YCallable {
-        override val arity: Int
-            get() = 0
+        override val arity: Set<Int>
+            get() = FunctionArities.ZERO_PARAMETERS
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             return str.isNotEmpty()
@@ -68,8 +67,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val isBlank = object : YCallable {
-        override val arity: Int
-            get() = 0
+        override val arity: Set<Int>
+            get() = FunctionArities.ZERO_PARAMETERS
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             return str.isBlank()
@@ -77,8 +76,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val isNotBlank = object : YCallable {
-        override val arity: Int
-            get() = 0
+        override val arity: Set<Int>
+            get() = FunctionArities.ZERO_PARAMETERS
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             return str.isNotBlank()
@@ -86,8 +85,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val lowercase = object : YCallable {
-        override val arity: Int
-            get() = 0
+        override val arity: Set<Int>
+            get() = FunctionArities.ZERO_PARAMETERS
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             return str.lowercase()
@@ -95,8 +94,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val uppercase = object : YCallable {
-        override val arity: Int
-            get() = 0
+        override val arity: Set<Int>
+            get() = FunctionArities.ZERO_PARAMETERS
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             return str.uppercase()
@@ -104,8 +103,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val trim = object : YCallable {
-        override val arity: Int
-            get() = 0
+        override val arity: Set<Int>
+            get() = FunctionArities.ZERO_PARAMETERS
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             return str.trim()
@@ -113,8 +112,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val trimStart = object : YCallable {
-        override val arity: Int
-            get() = 0
+        override val arity: Set<Int>
+            get() = FunctionArities.ZERO_PARAMETERS
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             return str.trimStart()
@@ -122,8 +121,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val trimEnd = object : YCallable {
-        override val arity: Int
-            get() = 0
+        override val arity: Set<Int>
+            get() = FunctionArities.ZERO_PARAMETERS
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             return str.trimEnd()
@@ -131,8 +130,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val split = object : YCallable {
-        override val arity: Int
-            get() = 1
+        override val arity: Set<Int>
+            get() = FunctionArities.UNARY
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             val separator = arguments.first().toString()
@@ -142,8 +141,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val startsWith = object : YCallable {
-        override val arity: Int
-            get() = 1
+        override val arity: Set<Int>
+            get() = FunctionArities.UNARY
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             val prefix = arguments.first().toString()
@@ -152,8 +151,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val endsWith = object : YCallable {
-        override val arity: Int
-            get() = 1
+        override val arity: Set<Int>
+            get() = FunctionArities.UNARY
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             val suffix = arguments.first().toString()
@@ -162,8 +161,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val chars = object : YCallable {
-        override val arity: Int
-            get() = 0
+        override val arity: Set<Int>
+            get() = FunctionArities.ZERO_PARAMETERS
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             val charsExtracted = str.toCharArray().map { YString("$it") as Any? }.toTypedArray()
@@ -172,8 +171,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val substring = object : YCallable {
-        override val arity: Int
-            get() = 2
+        override val arity: Set<Int>
+            get() = FunctionArities.BINARY
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             val result = str.substring(arguments[0]!!.yToInt(), arguments[1]!!.yToInt())
@@ -182,8 +181,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val repeat = object : YCallable {
-        override val arity: Int
-            get() = 1
+        override val arity: Set<Int>
+            get() = FunctionArities.UNARY
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             val times = arguments[0]!!.yToInt()
@@ -199,8 +198,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val padStart = object : YCallable {
-        override val arity: Int
-            get() = 2
+        override val arity: Set<Int>
+            get() = FunctionArities.BINARY
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             val len = arguments[0]!!.yToInt()
@@ -218,8 +217,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val padEnd = object : YCallable {
-        override val arity: Int
-            get() = 2
+        override val arity: Set<Int>
+            get() = FunctionArities.BINARY
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             val len = arguments[0]!!.yToInt()
@@ -237,8 +236,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val contains = object : YCallable {
-        override val arity: Int
-            get() = 1
+        override val arity: Set<Int>
+            get() = FunctionArities.UNARY
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             val test = arguments[0].toString()
@@ -247,8 +246,8 @@ class YString(val str: String) : YInstance(YClass("String", null, mapOf())) {
     }
 
     private val charAt = object : YCallable {
-        override val arity: Int
-            get() = 1
+        override val arity: Set<Int>
+            get() = FunctionArities.UNARY
 
         override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
             val position = arguments[0]!!.yToInt()

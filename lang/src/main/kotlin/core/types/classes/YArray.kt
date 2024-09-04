@@ -4,6 +4,7 @@ import core.error.types.RuntimeError
 import core.interpreter.Interpreter
 import core.scanner.Token
 import core.types.YCallable
+import utils.FunctionArities
 import utils.Stringifier
 import kotlin.Array
 
@@ -34,8 +35,8 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
 
     private val getIndex = fun(name: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 1
+            override val arity: Set<Int>
+                get() = FunctionArities.UNARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any? {
                 val index = (arguments[0] as Double).toInt()
@@ -54,8 +55,8 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
 
     private val setIndex = fun(name: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 2
+            override val arity: Set<Int>
+                get() = FunctionArities.BINARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any? {
                 val index = (arguments[0] as Double).toInt()
@@ -73,8 +74,8 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
 
     private val concat = fun(name: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 1
+            override val arity: Set<Int>
+                get() = FunctionArities.UNARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
                 val arg = arguments[0] as? YArray
@@ -90,8 +91,8 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
 
     private val fill = fun(_: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 1
+            override val arity: Set<Int>
+                get() = FunctionArities.UNARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>) {
                 val value = arguments[0]
@@ -102,8 +103,8 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
 
     private val find = fun(_: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 1
+            override val arity: Set<Int>
+                get() = FunctionArities.UNARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any? {
                 val value = arguments[0]
@@ -114,8 +115,8 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
 
     private val reverse = fun(_: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 0
+            override val arity: Set<Int>
+                get() = FunctionArities.ZERO_PARAMETERS
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
                 return YArray(elements.reversedArray())
@@ -125,8 +126,8 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
 
     private val contains = fun(_: Token): YCallable {
         return object : YCallable {
-            override val arity: Int
-                get() = 1
+            override val arity: Set<Int>
+                get() = FunctionArities.UNARY
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
                 val value = arguments[0]

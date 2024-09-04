@@ -15,8 +15,8 @@ class YFunction(
     private val closure: Environment,
     private val isInitializer: Boolean
 ) : YCallable {
-    override val arity: Int
-        get() = declaration.params.size
+    override val arity: Set<Int>
+        get() = setOf(declaration.params.size)
 
     fun bind(instance: YInstance): YFunction {
         val env = Environment(closure)

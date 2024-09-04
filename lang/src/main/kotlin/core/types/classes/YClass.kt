@@ -3,11 +3,12 @@ package core.types.classes
 import core.interpreter.Interpreter
 import core.types.YCallable
 import core.types.function.YFunction
+import utils.FunctionArities
 
 class YClass(val name: String, private val superclass: YClass?, private val methods: Map<String, YFunction>) :
     YCallable {
-    override val arity: Int
-        get() = findMethod("init")?.arity ?: 0
+    override val arity: Set<Int>
+        get() = findMethod("init")?.arity ?: FunctionArities.ZERO_PARAMETERS
 
     fun findMethod(name: String): YFunction? {
         return methods[name] ?: superclass?.findMethod(name)
