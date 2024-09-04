@@ -2,7 +2,7 @@ package cmd
 
 class ArgsParser(private val args: Array<String>) {
     fun getFileToRun(): String? {
-        return args.firstOrNull { !it.startsWith("--") }
+        return args.firstOrNull { it[0] != '-' || it[1] != '-' }
     }
 
     fun hasOption(option: String): Boolean {

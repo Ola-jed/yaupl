@@ -43,7 +43,13 @@ class ImportHandler(
             val parser = Parser(tokens, errorReporter)
             // Filter out all statements except definitions (variables, constants, functions and classes)
             val statements = parser.parse()
-                .filter { (it is Stmt.VariableDeclaration) || (it is Stmt.ConstantDeclaration) || (it is Stmt.Function) || (it is Stmt.Class) || (it is Stmt.Import) }
+                .filter {
+                    it is Stmt.VariableDeclaration
+                            || it is Stmt.ConstantDeclaration
+                            || it is Stmt.Function
+                            || it is Stmt.Class
+                            || it is Stmt.Import
+                }
             resolver.resolve(statements)
             interpreter.interpret(statements)
         } catch (ex: Exception) {

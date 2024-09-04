@@ -3,4 +3,4 @@ fun sayHello(name, title) {
 }
 
 let a = sayHello;
-a = []; // Error
+a = List(); // Error

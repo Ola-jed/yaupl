@@ -46,22 +46,18 @@ class Scanner(
             '!' -> addToken(if (match('=')) TokenType.BANG_EQUAL else TokenType.BANG)
             '=' -> addToken(if (match('=')) TokenType.EQUAL_EQUAL else TokenType.EQUAL)
             '>' -> addToken(
-                if (match('=')) {
-                    TokenType.GREATER_EQUAL
-                } else if (match('>')) {
-                    TokenType.RSHIFT
-                } else {
-                    TokenType.GREATER
+                when {
+                    match('=') -> TokenType.GREATER_EQUAL
+                    match('>') -> TokenType.RSHIFT
+                    else -> TokenType.GREATER
                 }
             )
 
             '<' -> addToken(
-                if (match('=')) {
-                    TokenType.LESS_EQUAL
-                } else if (match('<')) {
-                    TokenType.LSHIFT
-                } else {
-                    TokenType.LESS
+                when {
+                    match('=') -> TokenType.LESS_EQUAL
+                    match('<') -> TokenType.LSHIFT
+                    else -> TokenType.LESS
                 }
             )
 
@@ -153,12 +149,8 @@ class Scanner(
     }
 
     private fun peekNext(): Char {
-        return peekNextNth(1)
-    }
-
-    private fun peekNextNth(nth: Int): Char {
-        if (current + nth >= source.length) return 0.toChar()
-        return source[current + nth]
+        if (current + 1 >= source.length) return 0.toChar()
+        return source[current + 1]
     }
 
     private fun string() {

@@ -7,7 +7,6 @@ class FilePathResolver(scriptPath: String) {
     private val scriptAbsolutePath: String = File(scriptPath).absolutePath
 
     fun inferFileAbsolutePath(relativePath: String): String? {
-
         try {
             val pathStack = Stack<String>()
             pathStack.addAll(scriptAbsolutePath.split(File.separator))

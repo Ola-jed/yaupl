@@ -94,5 +94,5 @@ java -jar yaupl.main.jar <options>
 - Output
 - Functions definition (with recursion and anonymous functions)
 - Classes definition
-- Predefined classes (`Array`, `String`)
+- Predefined classes (`Array`,  `List`, `String`)
 - Imports
