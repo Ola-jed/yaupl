@@ -22,7 +22,9 @@ The root repertory is a gradle multi-module project
 ```shell
 git clone https://github.com/Ola-jed/yaupl
 cd yaupl
-./gradlew :runner:run --console=plain --args="[file.y]"
+./gradlew :runner:run --console=plain --args="[file.y] [--help] [--print-ast-only] [--error-log=logfile.log]"
+
+# The --print-ast-only allows to only print the generated ast in the console without running the code
 
 # Or run the jar directly at the repository's root
 java -jar yaupl.main.jar <options>
