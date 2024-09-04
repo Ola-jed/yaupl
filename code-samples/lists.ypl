@@ -1,0 +1,16 @@
+let list = List();
+
+list.add(0);
+list.add(1);
+list.add(2);
+
+
+print list; // List[0, 1, 2]
+
+list.remove(0);
+print list; // List[1, 2]
+
+print list.reverse(); // List[2, 1]
+
+list.fill(99);
+print list;

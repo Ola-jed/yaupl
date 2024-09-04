@@ -1,9 +1,9 @@
 # Grammar of the yaupl language (EBNF Notation)
 
-```
-<program> ::= {<declaration>} EOF
+```bnf
+<program>              ::= {<declaration>} EOF
 
-<declaration>          ::= <class-declaration> | <function-declaration> | <variable-declaration> | <statement>
+<declaration>          ::= <class-declaration> | <function-declaration> | <variable-declaration> | <constant-declaration> | <statement>
 <class-declaration>    ::= "class" <identifier> [" : " <identifier>] | "{" {<function>} "}"
 <function-declaration> ::= "fun" <function>
 <variable-declaration> ::= "let"   <identifier> [ "="  <expression> ] ";"

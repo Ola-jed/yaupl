@@ -33,10 +33,9 @@ class Interpreter(
     init {
         globals.define(Clock.token, Clock, constant = true)
         globals.define(ArrayConstructor.token, ArrayConstructor, constant = true)
+        globals.define(ListConstructor.token, ListConstructor, constant = true)
         globals.define(StringConstructor.token, StringConstructor, constant = true)
     }
-
-    fun getEnvironment() = environment
 
     fun interpret(statements: List<Stmt>) {
         try {

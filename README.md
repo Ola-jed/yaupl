@@ -52,7 +52,25 @@ java -jar yaupl.main.jar <options>
   print literal.get(0); // Will show "1"
   print literal.length; // Will show "3"
   ```
+- `List` : Dynamic lists
+  ```
+  let list = List();
 
+  list.add(0);
+  list.add(1);
+  list.add(2);
+  
+  
+  print list; // List[0, 1, 2]
+  
+  list.remove(0);
+  print list; // List[1, 2]
+  
+  print list.reverse(); // List[2, 1]
+  
+  list.fill(99);
+  print list; // List[99, 99]
+  ```
 
 - `String` : Strings instances created from the given string literal. Literal strings are supported so the use of the `String()`
   constructor is mainly for casting purposes

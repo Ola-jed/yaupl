@@ -5,17 +5,17 @@ import core.interpreter.Interpreter
 import core.scanner.Token
 import core.types.YCallable
 import utils.Stringifier
-import kotlin.Array
 
-class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
-    val elements: Array<Any?> = Array(size) { null }
+class YList() : YInstance(YClass("List", null, mapOf())) {
+    private var elements: MutableList<Any?> = mutableListOf()
 
-    constructor(elements: Array<Any?>) : this(elements.size) {
-        elements.copyInto(this.elements)
+    constructor(elements: List<Any?>) : this() {
+        this.elements = elements.toMutableList()
     }
 
     override fun get(name: Token): Any {
         return when (name.lexeme) {
+            "add" -> add(name)
             "get" -> getIndex(name)
             "set" -> setIndex(name)
             "concat" -> concat(name)
@@ -23,8 +23,10 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
             "find" -> find(name)
             "reverse" -> reverse(name)
             "contains" -> contains(name)
+            "clear" -> clear(name)
+            "remove" -> remove(name)
             "length" -> length
-            else -> throw RuntimeError(name, "Undefined Array property ${name.lexeme}.")
+            else -> throw RuntimeError(name, "Undefined List property ${name.lexeme}.")
         }
     }
 
@@ -32,41 +34,53 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
         throw RuntimeError(name, "Cannot add properties to arrays.")
     }
 
-    private val getIndex = fun(name: Token): YCallable {
+    private val add = fun(_: Token): YCallable {
+        return object : YCallable {
+            override val arity: Int
+                get() = 1
+
+            override fun call(interpreter: Interpreter, arguments: List<Any?>) {
+                val element = arguments[0]
+                elements.add(element)
+            }
+        }
+    }
+
+    private val getIndex = fun(_: Token): YCallable {
         return object : YCallable {
             override val arity: Int
                 get() = 1
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any? {
                 val index = (arguments[0] as Double).toInt()
-                if (index >= elements.size) {
-                    throw RuntimeError(name, "Array index $index is out of bounds.")
-                }
-
-                return if (index < 0) {
-                    elements[elements.size + index]
-                } else {
-                    elements[index]
-                }
+                return elements[index]
             }
         }
     }
 
-    private val setIndex = fun(name: Token): YCallable {
+    private val setIndex = fun(_: Token): YCallable {
         return object : YCallable {
             override val arity: Int
                 get() = 2
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any? {
                 val index = (arguments[0] as Double).toInt()
-                if (index >= elements.size) {
-                    throw RuntimeError(name, "Array index $index is out of bounds.")
-                }
-
                 val value = arguments[1]
-                elements[index] = value
 
+                elements[index] = value
                 return elements[index]
+            }
+        }
+    }
+
+    private val remove = fun(_: Token): YCallable {
+        return object : YCallable {
+            override val arity: Int
+                get() = 1
+
+            override fun call(interpreter: Interpreter, arguments: List<Any?>) {
+                val index = (arguments[0] as Double).toInt()
+                elements.removeAt(index)
             }
         }
     }
@@ -77,13 +91,12 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
                 get() = 1
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
-                val arg = arguments[0] as? YArray
-                    ?: throw RuntimeError(name, "Argument for Array.concat should be an Array.")
+                val arg = arguments[0] as? YList
+                    ?: throw RuntimeError(name, "Argument for List.concat should be a List.")
 
-                val resultArray = arrayOfNulls<Any?>(elements.size + arg.elements.size)
-                System.arraycopy(elements, 0, resultArray, 0, elements.size)
-                System.arraycopy(arg.elements, 0, resultArray, elements.size, arg.elements.size)
-                return YArray(resultArray)
+                val copy = elements.toMutableList()
+                copy.addAll(arg.elements)
+                return YList(copy)
             }
         }
     }
@@ -107,7 +120,7 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any? {
                 val value = arguments[0]
-                return elements.find { it -> it == value }
+                return elements.find { it == value }
             }
         }
     }
@@ -118,7 +131,7 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
                 get() = 0
 
             override fun call(interpreter: Interpreter, arguments: List<Any?>): Any {
-                return YArray(elements.reversedArray())
+                return YList(elements.reversed())
             }
         }
     }
@@ -135,11 +148,22 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
         }
     }
 
+    private val clear = fun(_: Token): YCallable {
+        return object : YCallable {
+            override val arity: Int
+                get() = 0
+
+            override fun call(interpreter: Interpreter, arguments: List<Any?>) {
+                elements.clear()
+            }
+        }
+    }
+
     private val length = elements.size
 
     override fun toString(): String {
         val stringBuilder = StringBuilder()
-        stringBuilder.append("Array [")
+        stringBuilder.append("List [")
         for ((index, element) in elements.withIndex()) {
             stringBuilder.append(Stringifier.stringify(element))
 
@@ -153,7 +177,7 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other !is YArray) {
+        if (other !is YList) {
             return false
         }
 
@@ -171,6 +195,6 @@ class YArray(size: Int) : YInstance(YClass("Array", null, mapOf())) {
     }
 
     override fun hashCode(): Int {
-        return elements.contentHashCode()
+        return elements.hashCode()
     }
 }
