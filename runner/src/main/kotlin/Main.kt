@@ -11,18 +11,13 @@ fun main(args: Array<String>) {
         val argParser = ArgsParser(args)
         if (argParser.hasOption(ArgsParser.OPTION_HELP)) {
             // To Improve
-            println("Usage : yaupl [script] [--help] [--error-log=logfile.log]")
+            println("Usage : yaupl [script] [--help] [--print-ast-only] [--error-log=logfile.log]")
             exitProcess(0)
         }
 
         val errorLogFile = argParser.getOptionValue(ArgsParser.OPTION_ERROR_LOG)
-        val errorReporter = if (errorLogFile != null) {
-            FileErrorReporter(errorLogFile)
-        } else {
-            ConsoleErrorReporter()
-        }
-
-        val runner = Runner(errorReporter)
+        val errorReporter = if (errorLogFile != null) FileErrorReporter(errorLogFile) else ConsoleErrorReporter()
+        val runner = Runner(errorReporter, argParser.hasOption(ArgsParser.PRINT_AST_ONLY))
         val fileToRun = argParser.getFileToRun()
 
         if (fileToRun == null) {

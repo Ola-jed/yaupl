@@ -16,5 +16,6 @@ class ArgsParser(private val args: Array<String>) {
     companion object {
         const val OPTION_HELP = "help"
         const val OPTION_ERROR_LOG = "error-log"
+        const val PRINT_AST_ONLY = "print-ast-only"
     }
 }
