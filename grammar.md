@@ -42,10 +42,10 @@
 <nor>                  ::= <nand>       { "nor"  <nand>}
 <nand>                 ::= <equality>   { "nand" <equality>}
 <equality>             ::= <comparison> { "==" | "!=" <comparison> }
-<comparison>           ::= <bitwise>    { ">" | ">=" | "<" | "<=" <bitwise>}
-<bitwise>              ::= <term>       { "+" | "-" <term>}
-<term>                 ::= <factor>     { "+" | "-" <factor>}
-<factor>               ::= <exponent>   { "/" | "*" | "%" <exponent>}
+<comparison>           ::= <bitwise>    { ">"  | ">=" | "<" | "<=" <bitwise>}
+<bitwise>              ::= <term>       { "<<" | ">>" <term>}
+<term>                 ::= <factor>     { "+"  | "-"  <factor>}
+<factor>               ::= <exponent>   { "/"  | "*" | "%" <exponent>}
 <exponent>             ::= <unary>      { "^" <unary>}
 <unary>                ::= ( "!" | "-") <unary> | <call>
 <call>                 ::= <subscript> { "(" [<arguments>] ")" | "." <identifier> }
