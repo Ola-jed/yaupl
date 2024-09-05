@@ -1,24 +1,20 @@
 package core.error.reporter
 
+import utils.Context
 import java.io.File
 
 class FileErrorReporter(filepath: String) : ErrorReporter {
     private val file: File = File(filepath)
 
     init {
-        if(!file.exists()) {
+        if (!file.exists()) {
             file.createNewFile()
         }
     }
 
     override fun report(line: Int?, message: String, where: String) {
-        var out = ""
-        if (line != null) {
-            out += "[line ${line + 1}] "
-        }
-
-        out += "$where Error : $message"
-
-        file.appendText(out)
+        val fileInfo = if (Context.currentFile.isNotEmpty()) "Error in file '${Context.currentFile}'" else "Error"
+        val lineInfo = line?.let { "at line ${it + 1} :" } ?: ":"
+        file.appendText("$fileInfo $lineInfo $message")
     }
 }

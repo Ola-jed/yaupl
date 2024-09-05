@@ -8,6 +8,7 @@ import core.interpreter.Resolver
 import core.parser.Parser
 import core.scanner.Scanner
 import core.scanner.Token
+import utils.Context
 import java.io.File
 
 class ImportHandler(
@@ -38,7 +39,9 @@ class ImportHandler(
             onRuntimeErrorReported = { hadRuntimeError = true }
         )
 
+        val currentFile = Context.currentFile
         try {
+            Context.currentFile = filePath
             val tokens = scanner.scanTokens()
             val parser = Parser(tokens, errorReporter)
             // Filter out all statements except definitions (variables, constants, functions and classes)
@@ -54,10 +57,12 @@ class ImportHandler(
             interpreter.interpret(statements)
         } catch (ex: Exception) {
             hadError = true
+        } finally {
+            Context.currentFile = currentFile
         }
 
         if (hadError || hadRuntimeError) {
-            throw RuntimeError(importToken, "Error while interpreting file $filePath's content")
+            throw RuntimeError(importToken, "Error while interpreting file $filePath's content.")
         }
     }
 }
