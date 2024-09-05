@@ -108,7 +108,7 @@ class AstPrinter : Expr.Visitor<String>, Stmt.Visitor<String> {
         val sb = StringBuilder()
         sb.append("class (${stmt.name.lexeme}")
         if(stmt.superclass != null) {
-            sb.append("extends ${stmt.superclass.name}")
+            sb.append(" extends ${stmt.superclass.name.lexeme}")
         }
         sb.append(")")
         return sb.toString()
@@ -128,12 +128,12 @@ class AstPrinter : Expr.Visitor<String>, Stmt.Visitor<String> {
 
     override fun visitIfStmt(stmt: Stmt.If): String {
         val sb = StringBuilder()
-        sb.appendLine(parenthesize("if", stmt.condition))
-        sb.append("then : ")
-        sb.appendLine(stmt.thenBranch.accept(this))
+        sb.append(parenthesize("if", stmt.condition))
+        sb.append(" then : ")
+        sb.append(stmt.thenBranch.accept(this))
         if (stmt.elseBranch != null) {
             sb.append("else : ")
-            sb.appendLine(stmt.elseBranch.accept(this))
+            sb.append(stmt.elseBranch.accept(this))
         }
 
         return sb.toString()
@@ -156,11 +156,11 @@ class AstPrinter : Expr.Visitor<String>, Stmt.Visitor<String> {
     }
 
     override fun visitWhileStmt(stmt: Stmt.While): String {
-        return parenthesize("while", stmt.condition) + stmt.body.accept(this)
+        return "${parenthesize("while", stmt.condition)} ${stmt.body.accept(this)}"
     }
 
     override fun visitDoWhileStmt(stmt: Stmt.DoWhile): String {
-        return parenthesize("do while", stmt.condition) + stmt.body.accept(this)
+        return "${parenthesize("do while", stmt.condition)} ${stmt.body.accept(this)}"
     }
 
     override fun visitBreakStmt(stmt: Stmt.Break): String {
