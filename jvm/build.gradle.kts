@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     implementation(project(":lang"))
+    implementation("net.bytebuddy:byte-buddy:1.15.1")
 }
 
 tasks.getByName<JavaExec>("run") {

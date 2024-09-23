@@ -13,7 +13,7 @@ The root repertory is a gradle multi-module project
 - `code-samples` : Some samples illustrating the features of the language
 - `lang` (Gradle sub-project) : Class library which contains all the code responsible for lexing, parsing and interpreting the language
 - `runner` (Gradle sub-project) : Application that runs yaupl programs from the source code or in REPL mode
-- `jvm` (Gradle sub-project) : Application that allows compiling yaupl code to jvm bytecode (TODO)
+- `jvm` (Gradle sub-project) : Application that allows compiling yaupl code to jvm bytecode (In progress)
 - `virtual-machine` (C++ project) : An implementation of a compiler using a VM written in C++
 
 
@@ -32,6 +32,9 @@ java -jar yaupl.main.jar <options>
 # The ast classes are created by the gradle task "astGen" defined in the lang's build.gradle.kts
 # To regen the ast, run
 ./gradlew :lang:astGen
+
+# Compile the file to a jar
+./gradlew :jvm:run --console=plain --args="file.y [--help] [--help] [--package=com.foo.bar] [--output-jar=name] [--error-log=logfile.log]"
 ```
 
 ## [Grammar](https://github.com/Ola-jed/yaupl/blob/master/grammar.md)
@@ -98,3 +101,4 @@ java -jar yaupl.main.jar <options>
 - Classes definition
 - Predefined classes (`Array`,  `List`, `String`)
 - Imports
+- Compilation to jvm bytecode (In progress)
