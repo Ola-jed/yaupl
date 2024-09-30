@@ -1,9 +1,6 @@
 package utils
 
-import core.types.classes.YArray
-import core.types.classes.YClass
-import core.types.classes.YList
-import core.types.classes.YString
+import core.types.classes.*
 import core.types.function.YFunction
 
 object TypeFormatter {
@@ -11,6 +8,8 @@ object TypeFormatter {
         return when (val str = x::class.simpleName) {
             YArray::class.simpleName -> "Array"
             YList::class.simpleName -> "List"
+            YSet::class.simpleName -> "Set"
+            YFile::class.simpleName -> "File"
             YString::class.simpleName -> "String"
             YFunction::class.simpleName -> "Function"
             YClass::class.simpleName -> "Class"

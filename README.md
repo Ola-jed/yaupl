@@ -66,15 +66,15 @@ java -jar yaupl.main.jar <options>
   list.add(2);
   
   
-  print list; // List[0, 1, 2]
+  print list; // List [0, 1, 2]
   
   list.remove(0);
-  print list; // List[1, 2]
+  print list; // List [1, 2]
   
-  print list.reverse(); // List[2, 1]
+  print list.reverse(); // List [2, 1]
   
   list.fill(99);
-  print list; // List[99, 99]
+  print list; // List [99, 99]
   ```
 
 - `Set` : Collection of unique elements with efficient adding, removing, and checking for the presence of items, with no guaranteed order.
@@ -98,6 +98,17 @@ java -jar yaupl.main.jar <options>
   print set.union(Set(1, 2, 3)); // Set {1, 2, 3} (Note that the order is not guaranteed to be the same)
   print set.difference(Set(1, 2, 3)); // Set {}
   print Set(1, 2, 3).difference(set); // Set {1, 2, 3} (Note that the order is not guaranteed to be the same)
+  ```
+
+- `File` : Represents files or directories in the filesystem
+  ```
+  let file = File("test.ypl");
+  
+  file.create();
+  file.write("print x");
+  print file.exists(); // true
+  print file.read(); // print x
+  print file.readLines(); // List [print x]
   ```
 
 - `String` : Strings instances created from the given string literal. Literal strings are supported so the use of the
@@ -124,6 +135,6 @@ java -jar yaupl.main.jar <options>
 - Output
 - Functions definition (with recursion and anonymous functions)
 - Classes definition
-- Predefined classes (`Array`, `List`, `Set`, `String`)
+- Predefined classes (`Array`, `List`, `Set`, `String`, `File`)
 - Imports
 - Compilation to jvm bytecode (In progress)

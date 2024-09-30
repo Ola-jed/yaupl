@@ -35,6 +35,7 @@ class Interpreter(
         globals.define(ArrayConstructor.token, ArrayConstructor, constant = true)
         globals.define(ListConstructor.token, ListConstructor, constant = true)
         globals.define(SetConstructor.token, SetConstructor, constant = true)
+        globals.define(FileConstructor.token, FileConstructor, constant = true)
         globals.define(StringConstructor.token, StringConstructor, constant = true)
     }
 

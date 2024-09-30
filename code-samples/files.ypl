@@ -1,0 +1,7 @@
+let file = File("test.ypl");
+
+file.create();
+file.write("print x");
+print file.exists(); // true
+print file.read(); // print x
+print file.readLines(); // List [print x]
