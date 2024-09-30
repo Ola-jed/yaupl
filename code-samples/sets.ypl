@@ -1,0 +1,19 @@
+let set = Set();
+
+set.add(0);
+set.add(1);
+set.add(2);
+set.add(2);
+
+print set; // Set {0, 1, 2} (Note that the order is not guaranteed to be the same)
+
+set.remove(0);
+print set; // Set {1, 2} (Note that the order is not guaranteed to be the same)
+
+set.clear();
+print set; // Set {}
+
+print set.intersection(Set(1, 2, 3)); // Set {}
+print set.union(Set(1, 2, 3)); // Set {1, 2, 3} (Note that the order is not guaranteed to be the same)
+print set.difference(Set(1, 2, 3)); // Set {}
+print Set(1, 2, 3).difference(set); // Set {1, 2, 3} (Note that the order is not guaranteed to be the same)

@@ -32,7 +32,7 @@ class YList() : YInstance(YClass("List", null, mapOf())) {
     }
 
     override fun set(name: Token, value: Any?) {
-        throw RuntimeError(name, "Cannot add properties to arrays.")
+        throw RuntimeError(name, "Cannot add properties to lists.")
     }
 
     private val add = fun(_: Token): YCallable {

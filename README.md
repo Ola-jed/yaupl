@@ -11,11 +11,11 @@ A small interpreted language written in Kotlin
 The root repertory is a gradle multi-module project
 
 - `code-samples` : Some samples illustrating the features of the language
-- `lang` (Gradle sub-project) : Class library which contains all the code responsible for lexing, parsing and interpreting the language
+- `lang` (Gradle sub-project) : Class library which contains all the code responsible for lexing, parsing and
+  interpreting the language
 - `runner` (Gradle sub-project) : Application that runs yaupl programs from the source code or in REPL mode
 - `jvm` (Gradle sub-project) : Application that allows compiling yaupl code to jvm bytecode (In progress)
 - `virtual-machine` (C++ project) : An implementation of a compiler using a VM written in C++
-
 
 ## Setup
 
@@ -77,7 +77,31 @@ java -jar yaupl.main.jar <options>
   print list; // List[99, 99]
   ```
 
-- `String` : Strings instances created from the given string literal. Literal strings are supported so the use of the `String()`
+- `Set` : Collection of unique elements with efficient adding, removing, and checking for the presence of items, with no guaranteed order.
+  ```
+  let set = Set();
+  
+  set.add(0);
+  set.add(1);
+  set.add(2);
+  set.add(2);
+  
+  print set; // Set {0, 1, 2} (Note that the order is not guaranteed to be the same)
+  
+  set.remove(0);
+  print set; // Set {1, 2} (Note that the order is not guaranteed to be the same)
+  
+  set.clear();
+  print set; // Set {}
+  
+  print set.intersection(Set(1, 2, 3)); // Set {}
+  print set.union(Set(1, 2, 3)); // Set {1, 2, 3} (Note that the order is not guaranteed to be the same)
+  print set.difference(Set(1, 2, 3)); // Set {}
+  print Set(1, 2, 3).difference(set); // Set {1, 2, 3} (Note that the order is not guaranteed to be the same)
+  ```
+
+- `String` : Strings instances created from the given string literal. Literal strings are supported so the use of the
+  `String()`
   constructor is mainly for casting purposes
   ```
   let str = String("Hello world");
@@ -95,10 +119,11 @@ java -jar yaupl.main.jar <options>
 - `Clock` : Get the current timestamp in seconds
 
 ### Features
+
 - Operations (numeric, binary)
 - Output
 - Functions definition (with recursion and anonymous functions)
 - Classes definition
-- Predefined classes (`Array`,  `List`, `String`)
+- Predefined classes (`Array`, `List`, `Set`, `String`)
 - Imports
 - Compilation to jvm bytecode (In progress)

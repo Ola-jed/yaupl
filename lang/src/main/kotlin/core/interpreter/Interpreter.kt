@@ -34,6 +34,7 @@ class Interpreter(
         globals.define(Clock.token, Clock, constant = true)
         globals.define(ArrayConstructor.token, ArrayConstructor, constant = true)
         globals.define(ListConstructor.token, ListConstructor, constant = true)
+        globals.define(SetConstructor.token, SetConstructor, constant = true)
         globals.define(StringConstructor.token, StringConstructor, constant = true)
     }
 
