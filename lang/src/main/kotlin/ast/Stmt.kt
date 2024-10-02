@@ -32,6 +32,7 @@ sealed class Stmt {
         val name: Token,
         val superclass: Expr.Variable?,
         val methods: List<Stmt.Function>,
+        val staticMethods: List<Stmt.Function>,
     ) : Stmt() {
         override fun <R> accept(visitor: Visitor<R>) = visitor.visitClassStmt(this)
     }

@@ -3,7 +3,7 @@ package core.types.classes
 import core.error.types.RuntimeError
 import core.scanner.Token
 
-open class YInstance(private val clazz: YClass) {
+open class YInstance(private val clazz: YClassInterface) {
     private val fields = mutableMapOf<String, Any?>()
 
     open fun get(name: Token): Any? {

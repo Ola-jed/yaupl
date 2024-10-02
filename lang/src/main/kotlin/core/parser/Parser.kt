@@ -45,12 +45,17 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
 
         consume(TokenType.LEFT_BRACE, "Expect '{' before class body.")
         val methods = mutableListOf<Stmt.Function>()
+        val staticMethods = mutableListOf<Stmt.Function>()
         while (!checkType(TokenType.RIGHT_BRACE) && !isAtEnd()) {
-            methods.add(function("method"))
+            if (match(TokenType.STATIC)) {
+                staticMethods.add(function("method"))
+            } else {
+                methods.add(function("method"))
+            }
         }
 
         consume(TokenType.RIGHT_BRACE, "'Expect ']' after class body.")
-        return Stmt.Class(name, superclass, methods)
+        return Stmt.Class(name, superclass, methods, staticMethods)
     }
 
     private fun function(kind: String): Stmt.Function {
@@ -223,7 +228,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
 
     private fun importStatement(): Stmt {
         val keyword = previous()
-        if(!match(TokenType.STRING)) {
+        if (!match(TokenType.STRING)) {
             throw error(keyword, "Invalid import value.")
         }
 
@@ -544,6 +549,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         if (isAtEnd()) {
             return false
         }
+
         return peek().type == type
     }
 
@@ -551,6 +557,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         if (!isAtEnd()) {
             current++
         }
+
         return previous()
     }
 

@@ -77,7 +77,6 @@ class YSet() : YInstance(YClass("Set", null, mapOf())) {
         }
     }
 
-
     private val clear = fun(_: Token): YCallable {
         return object : YCallable {
             override val arity: Set<Int>

@@ -4,12 +4,14 @@
 <program>              ::= {<declaration>} EOF
 
 <declaration>          ::= <class-declaration> | <function-declaration> | <variable-declaration> | <constant-declaration> | <statement>
-<class-declaration>    ::= "class" <identifier> [" : " <identifier>] | "{" {<function>} "}"
+<class-declaration>    ::= "class" <identifier> [" : " <identifier>] "{" {<method> | <static-method>} "}"
 <function-declaration> ::= "fun" <function>
 <variable-declaration> ::= "let"   <identifier> [ "="  <expression> ] ";"
 <constant-declaration> ::= "const" <identifier> [ "="  <expression> ] ";"
 
 
+<method>               ::= <function>
+<static-method>        ::= "static" <function>
 <function>             ::= <identifier> "(" [parameters] ")" <statement-block>
 <parameters>           ::= <identifier> {"," <identifier>}
 

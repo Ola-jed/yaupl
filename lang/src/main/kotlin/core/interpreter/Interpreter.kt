@@ -74,7 +74,14 @@ class Interpreter(
             methods[method.name.lexeme] = function
         }
 
-        val clazz = YClass(stmt.name.lexeme, superClass as? YClass, methods)
+        environment.undef(Token(type = TokenType.SUPER, lexeme = "super"))
+        val staticMethods = mutableMapOf<String, YFunction>()
+        for (method in stmt.staticMethods) {
+            val function = YFunction(method, environment, false)
+            staticMethods[method.name.lexeme] = function
+        }
+
+        val clazz = YClass(stmt.name.lexeme, superClass as? YClass, methods, staticMethods)
         if (superClass != null) {
             environment = environment.outer!!
         }

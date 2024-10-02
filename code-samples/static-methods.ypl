@@ -1,0 +1,19 @@
+const PI = 22/7;
+
+class Circle {
+    init(radius) {
+        this.radius = radius;
+    }
+
+    area() {
+        return PI * this.radius ^ 2;
+    }
+}
+
+class CircleBuilder {
+    static build(r) {
+        return Circle(r);
+    }
+}
+
+print CircleBuilder.build(3).area();

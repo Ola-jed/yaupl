@@ -126,7 +126,6 @@ class Resolver(
 
         beginScope()
         scopes.peek()["this"] = true
-
         for (method in stmt.methods) {
             var declaration = FunctionType.METHOD
             if (method.name.lexeme == "init") {
@@ -136,8 +135,18 @@ class Resolver(
             resolveFunction(method, declaration)
         }
 
-        endScope()
+        scopes.peek().remove("this")
+        for (method in stmt.staticMethods) {
+            if (method.name.lexeme == "init") {
+                errorReporter.reportTokenError(method.name, "Class initializer can't be static.")
+                onRuntimeErrorReported()
+            }
 
+            val declaration = FunctionType.METHOD
+            resolveFunction(method, declaration)
+        }
+
+        endScope()
         if (stmt.superclass != null) {
             endScope()
         }

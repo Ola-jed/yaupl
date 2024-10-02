@@ -28,5 +28,6 @@ object Keywords {
         "break" to TokenType.BREAK,
         "continue" to TokenType.CONTINUE,
         "import" to TokenType.IMPORT,
+        "static" to TokenType.STATIC,
     )
 }

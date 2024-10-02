@@ -47,6 +47,11 @@ class Environment(
         }
     }
 
+    fun undef(name: Token) {
+        bindings.remove(name.lexeme)
+        constants.remove(name.lexeme)
+    }
+
     fun assign(name: Token, value: Any?) {
         if (constants.contains(name.lexeme)) {
             throw RuntimeError(name, "Cannot reassign constant ${name.lexeme}.")
