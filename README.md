@@ -136,5 +136,6 @@ java -jar yaupl.main.jar <options>
 - Functions definition (with recursion and anonymous functions)
 - Classes definition
 - Predefined classes (`Array`, `List`, `Set`, `String`, `File`)
+- Static methods support (with the `static` keyword)
 - Imports
 - Compilation to jvm bytecode (In progress)
