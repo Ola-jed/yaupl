@@ -11,6 +11,7 @@ import core.runtime.Environment
 import core.`object`.Return
 import core.types.classes.*
 import core.types.function.Clock
+import core.types.function.Type
 import core.types.function.YFunction
 import io.FilePathResolver
 import io.ImportHandler
@@ -32,6 +33,7 @@ class Interpreter(
 
     init {
         globals.define(Clock.token, Clock, constant = true)
+        globals.define(Type.token, Type, constant = true)
         globals.define(ArrayConstructor.token, ArrayConstructor, constant = true)
         globals.define(ListConstructor.token, ListConstructor, constant = true)
         globals.define(SetConstructor.token, SetConstructor, constant = true)

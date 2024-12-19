@@ -1,0 +1,7 @@
+print Type(0);
+print Type(true);
+print Type("hello world");
+print Type([]);
+print Type(Set());
+print Type(List());
+print Type(File(""));
