@@ -3,8 +3,8 @@ package utils
 import core.types.classes.*
 import core.types.function.YFunction
 
-object TypeFormatter {
-    fun formatToReadable(x: Any): String {
+object TypeDeducter {
+    fun inferTypeName(x: Any): String {
         return when (val str = x::class.simpleName) {
             YArray::class.simpleName -> "Array"
             YList::class.simpleName -> "List"

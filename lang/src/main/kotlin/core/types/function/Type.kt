@@ -5,7 +5,7 @@ import core.interpreter.Interpreter
 import core.scanner.Token
 import core.types.YCallable
 import utils.FunctionArities
-import utils.TypeFormatter
+import utils.TypeDeducter
 
 object Type : YCallable {
     val token = Token(type = TokenType.FUN, line = 0, lexeme = "Type", literal = null)
@@ -15,7 +15,7 @@ object Type : YCallable {
 
     override fun call(interpreter: Interpreter, arguments: List<Any?>): Any? {
         val argument = arguments.first()!!
-        return TypeFormatter.formatToReadable(argument)
+        return TypeDeducter.inferTypeName(argument)
     }
 
     override fun toString(): String {

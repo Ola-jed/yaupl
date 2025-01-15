@@ -3,7 +3,7 @@ package core.runtime
 import core.`object`.Undefined
 import core.scanner.Token
 import core.error.types.RuntimeError
-import utils.TypeFormatter
+import utils.TypeDeducter
 
 class Environment(
     val outer: Environment? = null,
@@ -39,7 +39,7 @@ class Environment(
 
         bindings[name.lexeme] = value
         if (value != Undefined && value != null) {
-            typeMappings[name.lexeme] = TypeFormatter.formatToReadable(value)
+            typeMappings[name.lexeme] = TypeDeducter.inferTypeName(value)
         }
 
         if (constant) {
@@ -58,7 +58,7 @@ class Environment(
         } else if (bindings.containsKey(name.lexeme)) {
             if (typeMappings.containsKey(name.lexeme)) {
                 val initialType = typeMappings[name.lexeme]
-                val actualTypeStr = if (value == null) "" else TypeFormatter.formatToReadable(value)
+                val actualTypeStr = if (value == null) "" else TypeDeducter.inferTypeName(value)
 
                 if (value != null && actualTypeStr != initialType) {
                     throw RuntimeError(
@@ -67,7 +67,7 @@ class Environment(
                     )
                 }
             } else if (value != null) {
-                typeMappings[name.lexeme] = TypeFormatter.formatToReadable(value)
+                typeMappings[name.lexeme] = TypeDeducter.inferTypeName(value)
             }
 
             bindings[name.lexeme] = value
