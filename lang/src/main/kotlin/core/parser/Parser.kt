@@ -28,7 +28,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
                 match(TokenType.CONST) -> constantDeclaration()
                 else -> statement()
             }
-        } catch (error: ParseError) {
+        } catch (_: ParseError) {
             synchronize()
             return null
         }
@@ -46,7 +46,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         consume(TokenType.LEFT_BRACE, "Expect '{' before class body.")
         val methods = mutableListOf<Stmt.Function>()
         val staticMethods = mutableListOf<Stmt.Function>()
-        while (!checkType(TokenType.RIGHT_BRACE) && !isAtEnd()) {
+        while (!peekType(TokenType.RIGHT_BRACE) && !isAtEnd()) {
             if (match(TokenType.STATIC)) {
                 staticMethods.add(function("method"))
             } else {
@@ -54,7 +54,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
             }
         }
 
-        consume(TokenType.RIGHT_BRACE, "'Expect ']' after class body.")
+        consume(TokenType.RIGHT_BRACE, "'Expect '}' after class body.")
         return Stmt.Class(name, superclass, methods, staticMethods)
     }
 
@@ -62,7 +62,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         val name = consume(TokenType.IDENTIFIER, "Expect $kind name.")
         consume(TokenType.LEFT_PAREN, "Expect '(' after $kind name.")
         val parameters = mutableListOf<Token>()
-        if (!checkType(TokenType.RIGHT_PAREN)) {
+        if (!peekType(TokenType.RIGHT_PAREN)) {
             do {
                 if (parameters.size >= 255) {
                     error(peek(), "Can't have more than 255 parameters.")
@@ -129,9 +129,9 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
             expressionStatement()
         }
 
-        val condition: Expr = if (!checkType(TokenType.SEMICOLON)) expression() else Expr.Literal(true)
+        val condition: Expr = if (!peekType(TokenType.SEMICOLON)) expression() else Expr.Literal(true)
         consume(TokenType.SEMICOLON, "Expect ';' after loop's condition.")
-        val increment: Expr? = if (!checkType(TokenType.RIGHT_PAREN)) expression() else null
+        val increment: Expr? = if (!peekType(TokenType.RIGHT_PAREN)) expression() else null
         consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.")
         var body = statement()
         if (increment != null) {
@@ -201,7 +201,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     private fun returnStatement(): Stmt {
         val keyword = previous()
         var value: Expr? = null
-        if (!checkType(TokenType.SEMICOLON)) {
+        if (!peekType(TokenType.SEMICOLON)) {
             value = expression()
         }
 
@@ -212,7 +212,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     private fun statementsBlock(): Stmt {
         val statements = mutableListOf<Stmt>()
 
-        while (!checkType(TokenType.RIGHT_BRACE) && !isAtEnd()) {
+        while (!peekType(TokenType.RIGHT_BRACE) && !isAtEnd()) {
             declaration()?.let { statements.add(it) }
         }
 
@@ -446,7 +446,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     private fun finishCall(callee: Expr): Expr {
         val arguments = mutableListOf<Expr>()
 
-        if (!checkType(TokenType.RIGHT_PAREN)) {
+        if (!peekType(TokenType.RIGHT_PAREN)) {
             do {
                 if (arguments.size >= 255) {
                     error(peek(), "Can't have more than 255 arguments.")
@@ -503,7 +503,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
     }
 
     private fun consume(tokenType: TokenType, message: String): Token {
-        if (checkType(tokenType)) {
+        if (peekType(tokenType)) {
             return advance()
         }
 
@@ -536,7 +536,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
 
     private fun match(vararg tokenTypes: TokenType): Boolean {
         for (tokenType in tokenTypes) {
-            if (checkType(tokenType)) {
+            if (peekType(tokenType)) {
                 advance()
                 return true
             }
@@ -545,7 +545,7 @@ class Parser(private val tokens: List<Token>, private val errorReporter: ErrorRe
         return false
     }
 
-    private fun checkType(type: TokenType): Boolean {
+    private fun peekType(type: TokenType): Boolean {
         if (isAtEnd()) {
             return false
         }
