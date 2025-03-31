@@ -7,7 +7,7 @@
 
 namespace Runner
 {
-    std::string readFile(const std::string_view &path)
+    inline std::string readFile(const std::string_view &path)
     {
         std::ifstream ifs{path.data()};
 
@@ -22,12 +22,12 @@ namespace Runner
         return oss.str();
     }
 
-    InterpretResult interpret(const std::string &source)
+    inline InterpretResult interpret(const std::string &source)
     {
         return InterpretResult::OK;
     }
 
-    void repl()
+    inline void repl()
     {
         std::string line;
 
@@ -44,10 +44,10 @@ namespace Runner
         }
     }
 
-    void runFile(const std::string_view &path)
+    inline void runFile(const std::string_view &path)
     {
-        auto source = readFile(path);
-        auto result = interpret(source);
+        const auto source = readFile(path);
+        const auto result = interpret(source);
 
         if (result == InterpretResult::COMPILE_ERROR)
         {

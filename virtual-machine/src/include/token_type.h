@@ -1,6 +1,7 @@
 #ifndef TOKEN_TYPE_H
 #define TOKEN_TYPE_H
 
+#include <iostream>
 enum class TokenType
 {
     // Single-character tokens.
@@ -22,7 +23,8 @@ enum class TokenType
     // NULL became NIL because NULL is reserved in c++
     AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
     NAND, NOR, XOR, PRINT, RETURN, SUPER, THIS, TRUE,
-    LET, WHILE, BREAK, CONTINUE, DO,
+    LET, WHILE, BREAK, CONTINUE, DO, CONST, IMPORT,
+    STATIC,
 
     // A special one
     // EOF became FILE_EOF because EOF is reserved
@@ -85,6 +87,9 @@ inline std::ostream &operator<<(std::ostream &os, const TokenType type)
         case TokenType::BREAK: return os << "BREAK";
         case TokenType::CONTINUE: return os << "CONTINUE";
         case TokenType::DO: return os << "DO";
+        case TokenType::CONST: return os << "CONST";
+        case TokenType::IMPORT: return os << "IMPORT";
+        case TokenType::STATIC: return os << "STATIC";
         case TokenType::FILE_EOF: return os << "EOF";
         default: return os << "UNKNOWN";
     }

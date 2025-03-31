@@ -15,7 +15,7 @@ namespace Compiler
 
         for (;;)
         {
-            auto token = scanner.scanToken();
+            const auto token = scanner.scanToken();
 
             if (token.line != line)
             {
