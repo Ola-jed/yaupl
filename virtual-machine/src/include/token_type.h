@@ -2,6 +2,7 @@
 #define TOKEN_TYPE_H
 
 #include <iostream>
+
 enum class TokenType
 {
     // Single-character tokens.
@@ -31,7 +32,10 @@ enum class TokenType
     FILE_EOF,
 
     // Used to signify that an error occurred
-    ERROR
+    ERROR,
+
+    // Dummy value to track the count of elements in the enum
+    COUNT
 };
 
 inline std::ostream &operator<<(std::ostream &os, const TokenType type)
@@ -94,6 +98,4 @@ inline std::ostream &operator<<(std::ostream &os, const TokenType type)
         default: return os << "UNKNOWN";
     }
 }
-
-
 #endif //TOKEN_TYPE_H

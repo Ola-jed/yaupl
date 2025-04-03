@@ -2,8 +2,6 @@
 
 #include "runner.h"
 #include "src/include/chunk.h"
-#include "src/include/opcode.h"
-#include "src/include/scanner.h"
 #include "src/include/vm.h"
 
 int main(const int argc, const char *argv[])

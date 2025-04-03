@@ -1,24 +1,29 @@
 #ifndef VM_H
 #define VM_H
 #include <functional>
+#include <memory>
 
 #include "chunk.h"
+#include "compiler.h"
 #include "interpret_result.h"
 
 struct VM
 {
     static constexpr int STACK_MAX = 256;
-
-    Chunk *chunk;
+    Compiler compiler{};
+    std::unique_ptr<Chunk> chunk;
     uint8_t *instructionPointer;
     Value stack[STACK_MAX];
     Value *stackTop;
 
-    VM();
+    VM(): chunk(std::make_unique<Chunk>())
+    {
+        resetStack();
+    }
 
     ~VM();
 
-    InterpretResult interpret(Chunk *chunk);
+    InterpretResult interpret(const std::string &source);
 
     InterpretResult run();
 

@@ -6,14 +6,18 @@
 
 struct Token
 {
-    TokenType type;
     std::string_view lexeme;
     int line;
+    TokenType type;
 
     Token(const TokenType type, const std::string_view &lexeme, const int line)
-        : type(type),
-          lexeme(lexeme),
-          line(line)
+        : lexeme(lexeme),
+          line(line),
+          type(type)
+    {
+    }
+
+    Token(): line(0), type(TokenType::FILE_EOF)
     {
     }
 };

@@ -6,21 +6,22 @@
 #include <iostream>
 #include <valarray>
 
-VM::VM()
-{
-    resetStack();
-}
+#include "../include/compiler.h"
 
-VM::~VM()
-{
-}
+VM::~VM() = default;
 
-
-InterpretResult VM::interpret(Chunk *chunk)
+InterpretResult VM::interpret(const std::string &source)
 {
-    this->chunk = chunk;
+    chunk = std::make_unique<Chunk>();
     instructionPointer = chunk->code;
-    return run();
+    if (!compiler.compile(source, chunk.get()))
+    {
+        return InterpretResult::COMPILE_ERROR;
+    }
+
+    this->instructionPointer = chunk->code;
+    auto const result = run();
+    return result;
 }
 
 InterpretResult VM::run()
@@ -84,14 +85,16 @@ InterpretResult VM::run()
             }
             case static_cast<uint8_t>(OpCode::OP_LSHIFT):
             {
-                binaryOp([](auto a, auto b) {
+                binaryOp([](auto a, auto b)
+                {
                     return static_cast<double>(static_cast<long>(a) << static_cast<long>(b));
                 });
                 break;
             }
             case static_cast<uint8_t>(OpCode::OP_RSHIFT):
             {
-                binaryOp([](auto a, auto b) {
+                binaryOp([](auto a, auto b)
+                {
                     return static_cast<double>(static_cast<long>(a) >> static_cast<long>(b));
                 });
                 break;

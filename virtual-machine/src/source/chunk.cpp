@@ -5,7 +5,7 @@
 #include <iostream>
 
 
-Chunk::Chunk(): count(0), capacity(0), code(nullptr), lines(nullptr)
+Chunk::Chunk(): code(nullptr), lines(nullptr), count(0), capacity(0)
 {
     constants = ValueArray{};
 }

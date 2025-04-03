@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include "src/include/interpret_result.h"
+#include "src/include/vm.h"
 
 namespace Runner
 {
@@ -24,7 +25,8 @@ namespace Runner
 
     inline InterpretResult interpret(const std::string &source)
     {
-        return InterpretResult::OK;
+        VM vm{};
+        return vm.interpret(source);
     }
 
     inline void repl()
@@ -33,7 +35,7 @@ namespace Runner
 
         for (;;)
         {
-            std::cout << std::endl << "ypl++ : ";
+            std::cout << std::endl << "ypl++ :  ";
             if (!std::getline(std::cin, line))
             {
                 std::cout << std::endl;
