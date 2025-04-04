@@ -33,22 +33,15 @@ struct VM
 
     Value pop();
 
-    uint8_t readByte()
-    {
-        return *instructionPointer++;
-    }
+    Value peek(int distance) const;
 
-    Value readConstant()
-    {
-        return chunk->constants.values[readByte()];
-    }
+    uint8_t readByte();
 
-    void binaryOp(const std::function<Value(Value, Value)> &op)
-    {
-        const Value b = pop();
-        const Value a = pop();
-        push(op(a, b));
-    }
+    Value readConstant();
+
+    bool binaryOp(const std::function<double(double, double)> &op);
+
+    void runtimeError(const std::string&);
 };
 
 #endif //VM_H

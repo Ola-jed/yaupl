@@ -3,6 +3,7 @@
 #include "../include/util.h"
 #include "../include/vm.h"
 
+#include <format>
 #include <iostream>
 #include <valarray>
 
@@ -34,7 +35,7 @@ InterpretResult VM::run()
         for (auto slot = stack; slot < stackTop; slot++)
         {
             std::cout << "[  ";
-            std::cout << *slot << " ";
+            util::printValue(*slot);
             std::cout << "  ]";
         }
 
@@ -55,55 +56,112 @@ InterpretResult VM::run()
             }
             case static_cast<uint8_t>(OpCode::OP_NEGATE):
             {
-                push(-pop());
+                if (!std::holds_alternative<double>(peek(0)))
+                {
+                    runtimeError("Operand must be a number.");
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
+                push(-std::get<double>(pop()));
                 break;
             }
             case static_cast<uint8_t>(OpCode::OP_ADD):
             {
-                binaryOp([](auto a, auto b) { return a + b; });
+                const auto result = binaryOp([](const double a, const double b) { return a + b; });
+                if (!result)
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
                 break;
             }
             case static_cast<uint8_t>(OpCode::OP_SUBTRACT):
             {
-                binaryOp([](auto a, auto b) { return a - b; });
+                const auto result = binaryOp([](const double a, const double b) { return a - b; });
+                if (!result)
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
                 break;
             }
             case static_cast<uint8_t>(OpCode::OP_MULTIPLY):
             {
-                binaryOp([](auto a, auto b) { return a * b; });
+                const auto result = binaryOp([](const double a, const double b) { return a * b; });
+                if (!result)
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
                 break;
             }
             case static_cast<uint8_t>(OpCode::OP_DIVIDE):
             {
-                binaryOp([](auto a, auto b) { return a / b; });
+                const auto result = binaryOp([](const double a, const double b) { return a / b; });
+                if (!result)
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
                 break;
             }
             case static_cast<uint8_t>(OpCode::OP_EXPONENT):
             {
-                binaryOp([](auto a, auto b) { return std::pow(a, b); });
+                const auto result = binaryOp([](const double a, const double b)
+                {
+                    return std::pow(a, b);
+                });
+
+                if (!result)
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
                 break;
             }
             case static_cast<uint8_t>(OpCode::OP_LSHIFT):
             {
-                binaryOp([](auto a, auto b)
+                const auto result = binaryOp([](const double a, const double b)
                 {
                     return static_cast<double>(static_cast<long>(a) << static_cast<long>(b));
                 });
+
+                if (!result)
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
                 break;
             }
             case static_cast<uint8_t>(OpCode::OP_RSHIFT):
             {
-                binaryOp([](auto a, auto b)
+                const auto result = binaryOp([](const double a, const double b)
                 {
                     return static_cast<double>(static_cast<long>(a) >> static_cast<long>(b));
                 });
+
+                if (!result)
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
                 break;
             }
             case static_cast<uint8_t>(OpCode::OP_MODULO):
             {
-                binaryOp([](auto a, auto b) { return static_cast<long>(a) % static_cast<long>(b); });
+                const auto result = binaryOp([](const double a, const double b)
+                {
+                    return static_cast<double>(static_cast<long>(a) % static_cast<long>(b));
+                });
+
+                if (!result)
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
                 break;
             }
+
             case static_cast<uint8_t>(OpCode::OP_RETURN):
             {
                 util::printValue(pop());
@@ -130,4 +188,43 @@ Value VM::pop()
 {
     stackTop--;
     return *stackTop;
+}
+
+Value VM::peek(const int distance) const
+{
+    return stackTop[-1 - distance];
+}
+
+uint8_t VM::readByte()
+{
+    return *instructionPointer++;
+}
+
+Value VM::readConstant()
+{
+    return chunk->constants.values[readByte()];
+}
+
+bool VM::binaryOp(const std::function<double(double, double)> &op)
+{
+    if (!std::holds_alternative<double>(peek(0)) || !std::holds_alternative<double>(peek(1)))
+    {
+        runtimeError("Operands must be numbers.");
+        return false;
+    }
+
+    const Value b = pop();
+    const Value a = pop();
+    push(op(std::get<double>(a), std::get<double>(b)));
+    return true;
+}
+
+void VM::runtimeError(const std::string &message)
+{
+    std::cerr << message << "\n";
+
+    const auto instruction = instructionPointer - chunk->code - 1;
+    int line = chunk->lines[instruction];
+    std::cerr << std::format("[line {}] in script\n", line); // C++20
+    resetStack();
 }

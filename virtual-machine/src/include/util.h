@@ -9,7 +9,18 @@ namespace util
 {
     inline void printValue(const Value value)
     {
-        std::cout << value << " ";
+        if (std::holds_alternative<double>(value))
+        {
+            std::cout << std::get<double>(value) << " ";
+        }
+        else if (std::holds_alternative<bool>(value))
+        {
+            std::cout << std::get<bool>(value) << " ";
+        }
+        else
+        {
+            std::cout << "NULL ";
+        }
     }
 }
 

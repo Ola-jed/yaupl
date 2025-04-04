@@ -1,8 +1,10 @@
 #ifndef VALUE_H
 #define VALUE_H
+#include <variant>
+
 #include "memory.h"
 
-using Value = double;
+using Value = std::variant<std::monostate, double, bool>;
 
 struct ValueArray
 {
@@ -14,7 +16,7 @@ struct ValueArray
     {
     }
 
-    void write(const Value value)
+    void write(const Value &value)
     {
         if (capacity < count + 1)
         {
