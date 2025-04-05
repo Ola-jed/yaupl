@@ -12,7 +12,6 @@ Token Scanner::scanToken()
     }
 
     auto const c = advance();
-
     if (isLetterOrUnderscore(c))
     {
         return identifier();
@@ -180,102 +179,34 @@ Token Scanner::identifier()
     return makeToken(identifierType());
 }
 
-TokenType Scanner::identifierType()
+TokenType Scanner::identifierType() const
 {
-    switch (source[current])
-    {
-        case 'a': return checkKeyword(1, "nd", TokenType::AND);
-        case 'b': return checkKeyword(1, "reak", TokenType::BREAK);
-        case 'c':
-            if (current - start > 1)
-            {
-                switch (source[current + 1])
-                {
-                    case 'l': return checkKeyword(2, "ass", TokenType::CLASS);
-                    case 'o': return checkKeyword(2, "ntinue", TokenType::CONTINUE);
-                    default: break;
-                }
-            }
-            break;
-        case 'd': return checkKeyword(1, "o", TokenType::DO);
-        case 'e': return checkKeyword(1, "lse", TokenType::ELSE);
-        case 'f':
-            if (current - start > 1)
-            {
-                switch (source[current + 1])
-                {
-                    case 'a': return checkKeyword(2, "lse", TokenType::FALSE);
-                    case 'o': return checkKeyword(2, "r", TokenType::FOR);
-                    case 'u': return checkKeyword(2, "n", TokenType::FUN);
-                    default: break;
-                }
-            }
-            break;
-        case 'i':
-            if (current - start > 1)
-            {
-                switch (source[current + 1])
-                {
-                    case 'f': return TokenType::IF;
-                    case 'm': return checkKeyword(2, "port", TokenType::IMPORT);
-                    default: break;
-                }
-            }
-            break;
+    const std::string_view lexeme(&source[start], current - start);
 
-        case 'l': return checkKeyword(1, "et", TokenType::LET);
-        case 'n':
-            if (current - start > 1)
-            {
-                switch (source[current + 1])
-                {
-                    case 'a': return checkKeyword(2, "nd", TokenType::NAND);
-                    case 'o': return checkKeyword(2, "r", TokenType::NOR);
-                    case 'u': return checkKeyword(2, "ll", TokenType::NIL);
-                    default: break;
-                }
-            }
-            break;
-        case 'o': return checkKeyword(1, "r", TokenType::OR);
-        case 'p': return checkKeyword(1, "rint", TokenType::PRINT);
-        case 'r': return checkKeyword(1, "eturn", TokenType::RETURN);
-        case 's':
-            if (current - start > 1)
-            {
-                switch (source[current + 1])
-                {
-                    case 't': return checkKeyword(2, "atic", TokenType::STATIC);
-                    case 'u': return checkKeyword(2, "per", TokenType::SUPER);
-                    default: break;
-                }
-            }
-            break;
-        case 't':
-            if (current - start > 1)
-            {
-                switch (source[current + 1])
-                {
-                    case 'r': return checkKeyword(2, "ue", TokenType::TRUE);
-                    case 'h': return checkKeyword(2, "is", TokenType::THIS);
-                    default: break;
-                }
-            }
-            break;
-        case 'w': return checkKeyword(1, "r", TokenType::WHILE);
-        case 'x': return checkKeyword(1, "or", TokenType::XOR);
-        default: break;
-    }
-
-    return TokenType::IDENTIFIER;
-}
-
-TokenType Scanner::checkKeyword(const int start, const std::string &rest, const TokenType type) const
-{
-    if (source.length() - current + 1 >= rest.length()
-        && std::memcmp(source.data() + current + start, rest.data(), rest.length()) == 0)
-    {
-        return type;
-    }
+    if (lexeme == "and") return TokenType::AND;
+    if (lexeme == "break") return TokenType::BREAK;
+    if (lexeme == "class") return TokenType::CLASS;
+    if (lexeme == "continue") return TokenType::CONTINUE;
+    if (lexeme == "do") return TokenType::DO;
+    if (lexeme == "else") return TokenType::ELSE;
+    if (lexeme == "false") return TokenType::FALSE;
+    if (lexeme == "for") return TokenType::FOR;
+    if (lexeme == "fun") return TokenType::FUN;
+    if (lexeme == "if") return TokenType::IF;
+    if (lexeme == "import") return TokenType::IMPORT;
+    if (lexeme == "let") return TokenType::LET;
+    if (lexeme == "nand") return TokenType::NAND;
+    if (lexeme == "nor") return TokenType::NOR;
+    if (lexeme == "null") return TokenType::NIL;
+    if (lexeme == "or") return TokenType::OR;
+    if (lexeme == "print") return TokenType::PRINT;
+    if (lexeme == "return") return TokenType::RETURN;
+    if (lexeme == "static") return TokenType::STATIC;
+    if (lexeme == "super") return TokenType::SUPER;
+    if (lexeme == "this") return TokenType::THIS;
+    if (lexeme == "true") return TokenType::TRUE;
+    if (lexeme == "while") return TokenType::WHILE;
+    if (lexeme == "xor") return TokenType::XOR;
 
     return TokenType::IDENTIFIER;
 }

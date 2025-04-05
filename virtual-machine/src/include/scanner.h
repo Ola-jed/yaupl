@@ -41,7 +41,7 @@ private:
 
     [[nodiscard]] Token identifier();
 
-    [[nodiscard]] TokenType identifierType();
+    [[nodiscard]] TokenType identifierType() const;
 
     [[nodiscard]] TokenType checkKeyword(int, const std::string&, TokenType) const;
 

@@ -75,11 +75,11 @@ void Chunk::disassemble(const std::string &name) const
         case static_cast<uint8_t>(OpCode::OP_CONSTANT):
             return constantInstruction("OP_CONSTANT", offset);
         case static_cast<uint8_t>(OpCode::OP_NULL):
-            return constantInstruction("OP_NULL", offset);
+            return simpleInstruction("OP_NULL", offset);
         case static_cast<uint8_t>(OpCode::OP_TRUE):
-            return constantInstruction("OP_TRUE", offset);
+            return simpleInstruction("OP_TRUE", offset);
         case static_cast<uint8_t>(OpCode::OP_FALSE):
-            return constantInstruction("OP_FALSE", offset);
+            return simpleInstruction("OP_FALSE", offset);
         case static_cast<uint8_t>(OpCode::OP_ADD):
             return constantInstruction("OP_ADD", offset);
         case static_cast<uint8_t>(OpCode::OP_SUBTRACT):

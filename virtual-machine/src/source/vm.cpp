@@ -56,7 +56,6 @@ InterpretResult VM::run()
             }
             case static_cast<uint8_t>(OpCode::OP_NULL):
             {
-                auto const constant = readConstant();
                 push(std::monostate{});
                 break;
             }
