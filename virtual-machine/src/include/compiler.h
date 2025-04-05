@@ -30,6 +30,8 @@ class Compiler
 
     void binary();
 
+    void literal();
+
     void consume(TokenType, const std::string &);
 
     void errorAtCurrent(const std::string &);
@@ -55,41 +57,41 @@ class Compiler
     [[ nodiscard]] ParseRule getRule(TokenType) const;
 
     std::array<ParseRule, static_cast<std::underlying_type_t<TokenType>>(TokenType::COUNT)> rules = {
-        ParseRule{grouping, nullptr, Precedence::None}, // Left paren
+        ParseRule{&Compiler::grouping, nullptr, Precedence::None}, // Left paren
         ParseRule{nullptr, nullptr, Precedence::None}, // Right paren
         ParseRule{nullptr, nullptr, Precedence::None}, // Left brace
         ParseRule{nullptr, nullptr, Precedence::None}, // Right brace
         ParseRule{nullptr, nullptr, Precedence::None}, // Comma
         ParseRule{nullptr, nullptr, Precedence::None}, // Dot
-        ParseRule{unary, binary, Precedence::Term}, // Minus
-        ParseRule{nullptr, binary, Precedence::Term}, // Plus
+        ParseRule{&Compiler::unary, &Compiler::binary, Precedence::Term}, // Minus
+        ParseRule{nullptr, &Compiler::binary, Precedence::Term}, // Plus
         ParseRule{nullptr, nullptr, Precedence::None}, // Semicolon
-        ParseRule{nullptr, binary, Precedence::Factor}, // Slash
-        ParseRule{nullptr, binary, Precedence::Factor}, // Star
-        ParseRule{nullptr, binary, Precedence::Exponent}, // Exponent
-        ParseRule{nullptr, binary, Precedence::Factor}, // Modulo
+        ParseRule{nullptr, &Compiler::binary, Precedence::Factor}, // Slash
+        ParseRule{nullptr, &Compiler::binary, Precedence::Factor}, // Star
+        ParseRule{nullptr, &Compiler::binary, Precedence::Exponent}, // Exponent
+        ParseRule{nullptr, &Compiler::binary, Precedence::Factor}, // Modulo
         ParseRule{nullptr, nullptr, Precedence::None}, // Colon
-        ParseRule{nullptr, nullptr, Precedence::None}, // Bang
-        ParseRule{nullptr, nullptr, Precedence::None}, // Bang equal
+        ParseRule{&Compiler::unary, nullptr, Precedence::None}, // Bang
+        ParseRule{nullptr, &Compiler::binary, Precedence::Equality}, // Bang equal
         ParseRule{nullptr, nullptr, Precedence::None}, // Equal
-        ParseRule{nullptr, nullptr, Precedence::None}, // Equal equal
-        ParseRule{nullptr, nullptr, Precedence::None}, // Greater
-        ParseRule{nullptr, nullptr, Precedence::None}, // Greater equal
-        ParseRule{nullptr, nullptr, Precedence::None}, // Less
-        ParseRule{nullptr, nullptr, Precedence::None}, // Less equal
+        ParseRule{nullptr, &Compiler::binary, Precedence::Equality}, // Equal equal
+        ParseRule{nullptr, &Compiler::binary, Precedence::Comparison}, // Greater
+        ParseRule{nullptr, &Compiler::binary, Precedence::Comparison}, // Greater equal
+        ParseRule{nullptr, &Compiler::binary, Precedence::Comparison}, // Less
+        ParseRule{nullptr, &Compiler::binary, Precedence::Comparison}, // Less equal
         ParseRule{nullptr, nullptr, Precedence::None}, // Left shift
         ParseRule{nullptr, nullptr, Precedence::None}, // Right shift
         ParseRule{nullptr, nullptr, Precedence::None}, // Identifier
         ParseRule{nullptr, nullptr, Precedence::None}, // String
-        ParseRule{number, nullptr, Precedence::None}, // Number
+        ParseRule{&Compiler::number, nullptr, Precedence::None}, // Number
         ParseRule{nullptr, nullptr, Precedence::None}, // And
         ParseRule{nullptr, nullptr, Precedence::None}, // Class
         ParseRule{nullptr, nullptr, Precedence::None}, // Else
-        ParseRule{nullptr, nullptr, Precedence::None}, // False
+        ParseRule{&Compiler::literal, nullptr, Precedence::None}, // False
         ParseRule{nullptr, nullptr, Precedence::None}, // For
         ParseRule{nullptr, nullptr, Precedence::None}, // Fun
         ParseRule{nullptr, nullptr, Precedence::None}, // If
-        ParseRule{nullptr, nullptr, Precedence::None}, // Nil
+        ParseRule{&Compiler::literal, nullptr, Precedence::None}, // Nil
         ParseRule{nullptr, nullptr, Precedence::None}, // Or
         ParseRule{nullptr, nullptr, Precedence::None}, // Nand
         ParseRule{nullptr, nullptr, Precedence::None}, // Nor
@@ -98,7 +100,7 @@ class Compiler
         ParseRule{nullptr, nullptr, Precedence::None}, // Return
         ParseRule{nullptr, nullptr, Precedence::None}, // Super
         ParseRule{nullptr, nullptr, Precedence::None}, // This
-        ParseRule{nullptr, nullptr, Precedence::None}, // True
+        ParseRule{&Compiler::literal, nullptr, Precedence::None}, // True
         ParseRule{nullptr, nullptr, Precedence::None}, // Let
         ParseRule{nullptr, nullptr, Precedence::None}, // While
         ParseRule{nullptr, nullptr, Precedence::None}, // Break

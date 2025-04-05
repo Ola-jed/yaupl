@@ -6,6 +6,41 @@
 
 using Value = std::variant<std::monostate, double, bool>;
 
+inline bool valuesEqual(const Value x, const Value y)
+{
+    if (std::holds_alternative<std::monostate>(x) && std::holds_alternative<std::monostate>(y))
+    {
+        return true;
+    }
+
+    if (std::holds_alternative<bool>(x) && std::holds_alternative<bool>(y))
+    {
+        return std::get<bool>(x) == std::get<bool>(y);
+    }
+
+    if (std::holds_alternative<double>(x) && std::holds_alternative<double>(y))
+    {
+        return std::get<double>(x) == std::get<double>(y);
+    }
+
+    return false;
+}
+
+inline bool isFalsey(const Value value)
+{
+    if (std::holds_alternative<std::monostate>(value))
+    {
+        return true;
+    }
+
+    if (std::holds_alternative<bool>(value))
+    {
+        return !std::get<bool>(value);
+    }
+
+    return false;
+}
+
 struct ValueArray
 {
     int capacity;

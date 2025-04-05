@@ -29,19 +29,19 @@ struct VM
 
     void resetStack();
 
-    void push(Value value);
+    void push(Value);
 
     Value pop();
 
-    Value peek(int distance) const;
+    [[nodiscard]] Value peek(int) const;
 
-    uint8_t readByte();
+    [[nodiscard]] uint8_t readByte();
 
-    Value readConstant();
+    [[nodiscard]] Value readConstant();
 
-    bool binaryOp(const std::function<double(double, double)> &op);
+    [[nodiscard]] bool binaryOp(const std::function<Value(double, double)> &op);
 
-    void runtimeError(const std::string&);
+    void runtimeError(const std::string &);
 };
 
 #endif //VM_H

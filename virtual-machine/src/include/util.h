@@ -15,7 +15,7 @@ namespace util
         }
         else if (std::holds_alternative<bool>(value))
         {
-            std::cout << std::get<bool>(value) << " ";
+            std::cout << std::boolalpha << std::get<bool>(value) << " ";
         }
         else
         {

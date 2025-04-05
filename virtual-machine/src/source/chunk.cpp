@@ -74,6 +74,12 @@ void Chunk::disassemble(const std::string &name) const
             return simpleInstruction("OP_NEGATE", offset);
         case static_cast<uint8_t>(OpCode::OP_CONSTANT):
             return constantInstruction("OP_CONSTANT", offset);
+        case static_cast<uint8_t>(OpCode::OP_NULL):
+            return constantInstruction("OP_NULL", offset);
+        case static_cast<uint8_t>(OpCode::OP_TRUE):
+            return constantInstruction("OP_TRUE", offset);
+        case static_cast<uint8_t>(OpCode::OP_FALSE):
+            return constantInstruction("OP_FALSE", offset);
         case static_cast<uint8_t>(OpCode::OP_ADD):
             return constantInstruction("OP_ADD", offset);
         case static_cast<uint8_t>(OpCode::OP_SUBTRACT):
@@ -90,9 +96,17 @@ void Chunk::disassemble(const std::string &name) const
             return constantInstruction("OP_RSHIFT", offset);
         case static_cast<uint8_t>(OpCode::OP_MODULO):
             return constantInstruction("OP_MODULO", offset);
+        case static_cast<uint8_t>(OpCode::OP_NOT):
+            return constantInstruction("OP_NOT", offset);
+        case static_cast<uint8_t>(OpCode::OP_EQUAL):
+            return constantInstruction("OP_EQUAL", offset);
+        case static_cast<uint8_t>(OpCode::OP_GREATER):
+            return constantInstruction("OP_GREATER", offset);
+        case static_cast<uint8_t>(OpCode::OP_LESS):
+            return constantInstruction("OP_LESS", offset);
         default:
             std::cout << "Unknown opcode " << instruction << "\n";
-        return offset + 1;
+            return offset + 1;
     }
 }
 

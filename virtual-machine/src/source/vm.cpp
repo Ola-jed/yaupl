@@ -54,6 +54,27 @@ InterpretResult VM::run()
                 std::cout << "\n";
                 break;
             }
+            case static_cast<uint8_t>(OpCode::OP_NULL):
+            {
+                auto const constant = readConstant();
+                push(std::monostate{});
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_TRUE):
+            {
+                push(true);
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_FALSE):
+            {
+                push(false);
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_NOT):
+            {
+                push(isFalsey(pop()));
+                break;
+            }
             case static_cast<uint8_t>(OpCode::OP_NEGATE):
             {
                 if (!std::holds_alternative<double>(peek(0)))
@@ -161,7 +182,41 @@ InterpretResult VM::run()
 
                 break;
             }
+            case static_cast<uint8_t>(OpCode::OP_EQUAL):
+            {
+                const auto a = pop();
+                const auto b = pop();
+                push(valuesEqual(a, b));
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_GREATER):
+            {
+                const auto result = binaryOp([](const double a, const double b)
+                {
+                    return a > b;
+                });
 
+                if (!result)
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_LESS):
+            {
+                const auto result = binaryOp([](const double a, const double b)
+                {
+                    return a < b;
+                });
+
+                if (!result)
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
+                break;
+            }
             case static_cast<uint8_t>(OpCode::OP_RETURN):
             {
                 util::printValue(pop());
@@ -205,7 +260,7 @@ Value VM::readConstant()
     return chunk->constants.values[readByte()];
 }
 
-bool VM::binaryOp(const std::function<double(double, double)> &op)
+bool VM::binaryOp(const std::function<Value(double, double)> &op)
 {
     if (!std::holds_alternative<double>(peek(0)) || !std::holds_alternative<double>(peek(1)))
     {

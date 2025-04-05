@@ -57,13 +57,15 @@ void Compiler::unary()
 {
     const auto operatorType = parser.previous.type;
     expression();
+    parsePrecedence(Precedence::Unary);
     switch (operatorType)
     {
+        case TokenType::BANG:
+            emitByte(static_cast<uint8_t>(OpCode::OP_NOT));
+            break;
         case TokenType::MINUS:
-            parsePrecedence(Precedence::Unary);
             emitByte(static_cast<uint8_t>(OpCode::OP_NEGATE));
             break;
-
         default:
             break;
     }
@@ -94,6 +96,41 @@ void Compiler::binary()
             break;
         case TokenType::EXPONENT:
             emitByte(static_cast<uint8_t>(OpCode::OP_EXPONENT));
+            break;
+        case TokenType::BANG_EQUAL:
+            emitByte(static_cast<uint8_t>(OpCode::OP_EQUAL), static_cast<uint8_t>(OpCode::OP_NOT));
+            break;
+        case TokenType::EQUAL_EQUAL:
+            emitByte(static_cast<uint8_t>(OpCode::OP_EQUAL));
+            break;
+        case TokenType::GREATER:
+            emitByte(static_cast<uint8_t>(OpCode::OP_GREATER));
+            break;
+        case TokenType::GREATER_EQUAL:
+            emitByte(static_cast<uint8_t>(OpCode::OP_LESS), static_cast<uint8_t>(OpCode::OP_NOT));
+            break;
+        case TokenType::LESS:
+            emitByte(static_cast<uint8_t>(OpCode::OP_LESS));
+            break;
+        case TokenType::LESS_EQUAL:
+            emitByte(static_cast<uint8_t>(OpCode::OP_GREATER), static_cast<uint8_t>(OpCode::OP_NOT));
+            break;
+        default: break;
+    }
+}
+
+void Compiler::literal()
+{
+    switch (parser.previous.type)
+    {
+        case TokenType::FALSE:
+            emitByte(static_cast<uint8_t>(OpCode::OP_FALSE));
+            break;
+        case TokenType::TRUE:
+            emitByte(static_cast<uint8_t>(OpCode::OP_TRUE));
+            break;
+        case TokenType::NIL:
+            emitByte(static_cast<uint8_t>(OpCode::OP_NULL));
             break;
         default: break;
     }
