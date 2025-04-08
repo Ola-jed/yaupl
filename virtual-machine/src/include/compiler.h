@@ -32,6 +32,8 @@ class Compiler
 
     void literal();
 
+    void string();
+
     void consume(TokenType, const std::string &);
 
     void errorAtCurrent(const std::string &);
@@ -82,7 +84,7 @@ class Compiler
         ParseRule{nullptr, nullptr, Precedence::None}, // Left shift
         ParseRule{nullptr, nullptr, Precedence::None}, // Right shift
         ParseRule{nullptr, nullptr, Precedence::None}, // Identifier
-        ParseRule{nullptr, nullptr, Precedence::None}, // String
+        ParseRule{&Compiler::string, nullptr, Precedence::None}, // String
         ParseRule{&Compiler::number, nullptr, Precedence::None}, // Number
         ParseRule{nullptr, nullptr, Precedence::None}, // And
         ParseRule{nullptr, nullptr, Precedence::None}, // Class

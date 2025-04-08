@@ -4,29 +4,24 @@
 
 #include "memory.h"
 
-using Value = std::variant<std::monostate, double, bool>;
+using Value = std::variant<std::monostate, double, bool, std::string>;
 
-inline bool valuesEqual(const Value x, const Value y)
+inline bool valuesEqual(const Value &x, const Value &y)
 {
-    if (std::holds_alternative<std::monostate>(x) && std::holds_alternative<std::monostate>(y))
+    return std::visit([]<typename U, typename V>(const U &a, const V &b) -> bool
     {
-        return true;
-    }
-
-    if (std::holds_alternative<bool>(x) && std::holds_alternative<bool>(y))
-    {
-        return std::get<bool>(x) == std::get<bool>(y);
-    }
-
-    if (std::holds_alternative<double>(x) && std::holds_alternative<double>(y))
-    {
-        return std::get<double>(x) == std::get<double>(y);
-    }
-
-    return false;
+        if constexpr (std::is_same_v<U, V> || std::is_arithmetic_v<U> && std::is_arithmetic_v<V>)
+        {
+            return a == b;
+        }
+        else
+        {
+            return false;
+        }
+    }, x, y);
 }
 
-inline bool isFalsey(const Value value)
+inline bool isFalsey(const Value &value)
 {
     if (std::holds_alternative<std::monostate>(value))
     {

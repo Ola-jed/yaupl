@@ -136,6 +136,12 @@ void Compiler::literal()
     }
 }
 
+void Compiler::string()
+{
+    const auto contentString = std::string(parser.previous.lexeme.data() + 1, parser.previous.lexeme.length() - 2);
+    emitConstant(contentString);
+}
+
 void Compiler::consume(TokenType type, const std::string &message)
 {
     if (parser.current.type == type)

@@ -24,4 +24,5 @@ add_executable(virtual_machine main.cpp
         src/include/parser.h
         src/include/precedence.h
         src/include/parse_rule.h
+        src/include/object.h
 )
