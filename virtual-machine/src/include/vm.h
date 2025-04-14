@@ -7,6 +7,9 @@
 #include "compiler.h"
 #include "interpret_result.h"
 
+template<typename T>
+concept AllowedType = std::same_as<T, double> || std::same_as<T, std::string> || std::same_as<T, bool>;
+
 struct VM
 {
     static constexpr int STACK_MAX = 256;
@@ -29,7 +32,7 @@ struct VM
 
     void resetStack();
 
-    void push(Value);
+    void push(const Value &);
 
     Value pop();
 
@@ -39,7 +42,8 @@ struct VM
 
     [[nodiscard]] Value readConstant();
 
-    [[nodiscard]] bool binaryOp(const std::function<Value(double, double)> &op);
+    template<AllowedType T>
+    [[nodiscard]] bool binaryOp(const std::function<Value(T, T)> &op);
 
     void runtimeError(const std::string &);
 };

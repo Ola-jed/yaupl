@@ -87,7 +87,19 @@ InterpretResult VM::run()
             }
             case static_cast<uint8_t>(OpCode::OP_ADD):
             {
-                const auto result = binaryOp([](const double a, const double b) { return a + b; });
+                auto result = false;
+                if (std::holds_alternative<double>(peek(0)) && std::holds_alternative<double>(peek(1)))
+                {
+                    result = binaryOp<double>([](const double a, const double b) { return a + b; });
+                }
+                else if (std::holds_alternative<std::string>(peek(0)) && std::holds_alternative<std::string>(peek(1)))
+                {
+                    result = binaryOp<std::string>([](const std::string &a, const std::string &b)
+                    {
+                        return a + b;
+                    });
+                }
+
                 if (!result)
                 {
                     return InterpretResult::RUNTIME_ERROR;
@@ -97,7 +109,7 @@ InterpretResult VM::run()
             }
             case static_cast<uint8_t>(OpCode::OP_SUBTRACT):
             {
-                const auto result = binaryOp([](const double a, const double b) { return a - b; });
+                const auto result = binaryOp<double>([](const double a, const double b) { return a - b; });
                 if (!result)
                 {
                     return InterpretResult::RUNTIME_ERROR;
@@ -107,7 +119,7 @@ InterpretResult VM::run()
             }
             case static_cast<uint8_t>(OpCode::OP_MULTIPLY):
             {
-                const auto result = binaryOp([](const double a, const double b) { return a * b; });
+                const auto result = binaryOp<double>([](const double a, const double b) { return a * b; });
                 if (!result)
                 {
                     return InterpretResult::RUNTIME_ERROR;
@@ -117,7 +129,7 @@ InterpretResult VM::run()
             }
             case static_cast<uint8_t>(OpCode::OP_DIVIDE):
             {
-                const auto result = binaryOp([](const double a, const double b) { return a / b; });
+                const auto result = binaryOp<double>([](const double a, const double b) { return a / b; });
                 if (!result)
                 {
                     return InterpretResult::RUNTIME_ERROR;
@@ -127,7 +139,7 @@ InterpretResult VM::run()
             }
             case static_cast<uint8_t>(OpCode::OP_EXPONENT):
             {
-                const auto result = binaryOp([](const double a, const double b)
+                const auto result = binaryOp<double>([](const double a, const double b)
                 {
                     return std::pow(a, b);
                 });
@@ -141,7 +153,7 @@ InterpretResult VM::run()
             }
             case static_cast<uint8_t>(OpCode::OP_LSHIFT):
             {
-                const auto result = binaryOp([](const double a, const double b)
+                const auto result = binaryOp<double>([](const double a, const double b)
                 {
                     return static_cast<double>(static_cast<long>(a) << static_cast<long>(b));
                 });
@@ -155,7 +167,7 @@ InterpretResult VM::run()
             }
             case static_cast<uint8_t>(OpCode::OP_RSHIFT):
             {
-                const auto result = binaryOp([](const double a, const double b)
+                const auto result = binaryOp<double>([](const double a, const double b)
                 {
                     return static_cast<double>(static_cast<long>(a) >> static_cast<long>(b));
                 });
@@ -169,7 +181,7 @@ InterpretResult VM::run()
             }
             case static_cast<uint8_t>(OpCode::OP_MODULO):
             {
-                const auto result = binaryOp([](const double a, const double b)
+                const auto result = binaryOp<double>([](const double a, const double b)
                 {
                     return static_cast<double>(static_cast<long>(a) % static_cast<long>(b));
                 });
@@ -190,7 +202,7 @@ InterpretResult VM::run()
             }
             case static_cast<uint8_t>(OpCode::OP_GREATER):
             {
-                const auto result = binaryOp([](const double a, const double b)
+                const auto result = binaryOp<bool>([](const double a, const double b)
                 {
                     return a > b;
                 });
@@ -204,7 +216,7 @@ InterpretResult VM::run()
             }
             case static_cast<uint8_t>(OpCode::OP_LESS):
             {
-                const auto result = binaryOp([](const double a, const double b)
+                const auto result = binaryOp<bool>([](const double a, const double b)
                 {
                     return a < b;
                 });
@@ -232,7 +244,7 @@ void VM::resetStack()
     stackTop = stack;
 }
 
-void VM::push(const Value value)
+void VM::push(const Value &value)
 {
     *stackTop = value;
     stackTop++;
@@ -259,17 +271,35 @@ Value VM::readConstant()
     return chunk->constants.values[readByte()];
 }
 
-bool VM::binaryOp(const std::function<Value(double, double)> &op)
+
+template<AllowedType T>
+bool VM::binaryOp(const std::function<Value(T, T)> &op)
 {
-    if (!std::holds_alternative<double>(peek(0)) || !std::holds_alternative<double>(peek(1)))
+    if (!std::holds_alternative<T>(peek(0)) || !std::holds_alternative<T>(peek(1)))
     {
-        runtimeError("Operands must be numbers.");
+        if (std::is_same_v<T, double>)
+        {
+            runtimeError("Operands must be numbers.");
+        }
+        if (std::is_same_v<T, bool>)
+        {
+            runtimeError("Operands must be numbers.");
+        }
+        else if (std::is_same_v<T, std::string>)
+        {
+            runtimeError("Operands must be strings.");
+        }
+        else
+        {
+            runtimeError("Operands must be of the correct type.");
+        }
+
         return false;
     }
 
     const Value b = pop();
     const Value a = pop();
-    push(op(std::get<double>(a), std::get<double>(b)));
+    push(op(std::get<T>(a), std::get<T>(b)));
     return true;
 }
 
