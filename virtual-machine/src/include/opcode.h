@@ -21,7 +21,12 @@ enum class OpCode: uint8_t
     OP_EXPONENT = 14,
     OP_LSHIFT = 15,
     OP_RSHIFT = 16,
-    OP_MODULO = 17
+    OP_MODULO = 17,
+    OP_PRINT = 18,
+    OP_POP = 19,
+    OP_DEFINE_GLOBAL = 20,
+    OP_DEFINE_CONSTANT = 21,
+    OP_GET_GLOBAL = 22
 };
 
 #endif //OPCODE_H

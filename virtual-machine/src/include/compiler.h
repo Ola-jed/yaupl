@@ -20,6 +20,18 @@ class Compiler
 
     void advance();
 
+    void declaration();
+
+    void statement();
+
+    void variableDeclaration();
+
+    void constantDeclaration();
+
+    void printStatement();
+
+    void expressionStatement();
+
     void expression();
 
     void number();
@@ -34,7 +46,15 @@ class Compiler
 
     void string();
 
+    void variable();
+
+    void namedVariable(const Token &);
+
     void consume(TokenType, const std::string &);
+
+    [[nodiscard]] bool match(TokenType);
+
+    [[nodiscard]] bool check(TokenType) const;
 
     void errorAtCurrent(const std::string &);
 
@@ -42,19 +62,29 @@ class Compiler
 
     void errorAt(const Token &, const std::string &);
 
-    void emitByte(uint8_t byte) const;
+    void emitByte(uint8_t) const;
 
-    void emitByte(uint8_t byte1, uint8_t byte2) const;
+    void emitByte(uint8_t, uint8_t) const;
 
-    void emitConstant(Value value);
+    void emitConstant(const Value&);
 
-    [[ nodiscard]] uint8_t makeConstant(Value value);
+    [[ nodiscard]] uint8_t makeConstant(const Value &);
 
     void endCompiler() const;
+
+    void synchronize();
 
     void emitReturn() const;
 
     void parsePrecedence(Precedence);
+
+    void defineVariable(uint8_t) const;
+
+    void defineConstant(uint8_t) const;
+
+    uint8_t parseVariable(const std::string &);
+
+    uint8_t identifierConstant(const Token &);
 
     [[ nodiscard]] ParseRule getRule(TokenType) const;
 
@@ -83,7 +113,7 @@ class Compiler
         ParseRule{nullptr, &Compiler::binary, Precedence::Comparison}, // Less equal
         ParseRule{nullptr, nullptr, Precedence::None}, // Left shift
         ParseRule{nullptr, nullptr, Precedence::None}, // Right shift
-        ParseRule{nullptr, nullptr, Precedence::None}, // Identifier
+        ParseRule{&Compiler::variable, nullptr, Precedence::None}, // Identifier
         ParseRule{&Compiler::string, nullptr, Precedence::None}, // String
         ParseRule{&Compiler::number, nullptr, Precedence::None}, // Number
         ParseRule{nullptr, nullptr, Precedence::None}, // And

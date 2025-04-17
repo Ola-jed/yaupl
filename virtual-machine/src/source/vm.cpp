@@ -228,10 +228,76 @@ InterpretResult VM::run()
 
                 break;
             }
-            case static_cast<uint8_t>(OpCode::OP_RETURN):
+            case static_cast<uint8_t>(OpCode::OP_PRINT):
             {
                 util::printValue(pop());
                 std::cout << "\n";
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_POP):
+            {
+                pop();
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_DEFINE_GLOBAL):
+            {
+                auto constant = chunk->constants.values[readByte()];
+                if (!std::holds_alternative<std::string>(constant))
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
+                const auto name = std::get<std::string>(constant);
+                const auto declarationSuccess = env.declare(name, peek());
+                if (!declarationSuccess)
+                {
+                    runtimeError(std::format("Cannot redeclare variable {}.", name));
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
+                pop();
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_DEFINE_CONSTANT):
+            {
+                auto constant = chunk->constants.values[readByte()];
+                if (!std::holds_alternative<std::string>(constant))
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
+                const auto name = std::get<std::string>(constant);
+                const auto declarationSuccess = env.declare(name, peek(), true);
+                if (!declarationSuccess)
+                {
+                    runtimeError(std::format("Cannot redeclare variable {}.", name));
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
+                pop();
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_GET_GLOBAL):
+            {
+                auto constant = chunk->constants.values[readByte()];
+                if (!std::holds_alternative<std::string>(constant))
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
+                const auto name = std::get<std::string>(constant);
+                const auto retrievedValue = env.get(name);
+                if (!retrievedValue.has_value())
+                {
+                    runtimeError(std::format("Undefined variable {}.", name));
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
+                push(retrievedValue.value());
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_RETURN):
+            {
                 return InterpretResult::OK;
             }
             default: ;

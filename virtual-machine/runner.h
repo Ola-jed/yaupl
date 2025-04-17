@@ -1,35 +1,21 @@
 #ifndef RUNNER_H
 #define RUNNER_H
 #include <fstream>
-#include <sstream>
 
 #include "src/include/interpret_result.h"
 #include "src/include/vm.h"
 
-namespace Runner
+class Runner
 {
-    inline std::string readFile(const std::string_view &path)
+    VM vm{};
+
+public:
+    InterpretResult interpret(const std::string &source)
     {
-        std::ifstream ifs{path.data()};
-
-        if (!ifs.good())
-        {
-            std::cerr << "Failed to open file " << path << std::endl;
-            exit(74);
-        }
-
-        std::ostringstream oss;
-        oss << ifs.rdbuf();
-        return oss.str();
-    }
-
-    inline InterpretResult interpret(const std::string &source)
-    {
-        VM vm{};
         return vm.interpret(source);
     }
 
-    inline void repl()
+    void repl()
     {
         std::string line;
 
@@ -46,9 +32,9 @@ namespace Runner
         }
     }
 
-    inline void runFile(const std::string_view &path)
+    void runFile(const std::string_view &path)
     {
-        const auto source = readFile(path);
+        const auto source = util::readFile(path);
         const auto result = interpret(source);
 
         if (result == InterpretResult::COMPILE_ERROR)
@@ -61,6 +47,6 @@ namespace Runner
             exit(70);
         }
     }
-}
+};
 
 #endif //RUNNER_H

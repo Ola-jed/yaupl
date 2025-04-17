@@ -15,8 +15,11 @@ bool Compiler::compile(const std::string &source, Chunk *chunk)
     parser.panicMode = false;
     parser.hadError = false;
     advance();
-    expression();
-    consume(TokenType::FILE_EOF, "Expect end of expression.");
+    while (!match(TokenType::FILE_EOF))
+    {
+        declaration();
+    }
+
     endCompiler();
     return !parser.hadError;
 }
@@ -32,8 +35,80 @@ void Compiler::advance()
             break;
         }
 
-        errorAtCurrent(parser.current.lexeme.data());
+        errorAtCurrent(std::string{parser.current.lexeme});
     }
+}
+
+void Compiler::declaration()
+{
+    if (match(TokenType::LET))
+    {
+        variableDeclaration();
+    }
+    else if (match(TokenType::CONST))
+    {
+        constantDeclaration();
+    }
+    else
+    {
+        statement();
+    }
+
+    if (parser.panicMode)
+    {
+        synchronize();
+    }
+}
+
+void Compiler::statement()
+{
+    if (match(TokenType::PRINT))
+    {
+        printStatement();
+    }
+    else
+    {
+        expressionStatement();
+    }
+}
+
+void Compiler::variableDeclaration()
+{
+    auto const variableName = parseVariable("Expect variable name.");
+    if (match(TokenType::EQUAL))
+    {
+        expression();
+    }
+    else
+    {
+        emitByte(static_cast<uint8_t>(OpCode::OP_NULL));
+    }
+
+    consume(TokenType::SEMICOLON, "Expect ';' after variable declaration");
+    defineVariable(variableName);
+}
+
+void Compiler::constantDeclaration()
+{
+    auto const variableName = parseVariable("Expect variable name.");
+    consume(TokenType::EQUAL, "Expected '=' after constant");
+    expression();
+    consume(TokenType::SEMICOLON, "Expect ';' after constant declaration");
+    defineConstant(variableName);
+}
+
+void Compiler::printStatement()
+{
+    expression();
+    consume(TokenType::SEMICOLON, "Expect ';' after value.");
+    emitByte(static_cast<uint8_t>(OpCode::OP_PRINT));
+}
+
+void Compiler::expressionStatement()
+{
+    expression();
+    consume(TokenType::SEMICOLON, "Expect ';' after expression.");
+    emitByte(static_cast<uint8_t>(OpCode::OP_POP));
 }
 
 void Compiler::expression()
@@ -43,7 +118,7 @@ void Compiler::expression()
 
 void Compiler::number()
 {
-    const auto value = std::strtod(parser.previous.lexeme.data(), nullptr);
+    const auto value = std::strtod({parser.previous.lexeme.data()}, nullptr);
     emitConstant(value);
 }
 
@@ -142,6 +217,17 @@ void Compiler::string()
     emitConstant(contentString);
 }
 
+void Compiler::variable()
+{
+    namedVariable(parser.previous);
+}
+
+void Compiler::namedVariable(const Token &name)
+{
+    const auto argument = identifierConstant(name);
+    emitByte(static_cast<uint8_t>(OpCode::OP_GET_GLOBAL), argument);
+}
+
 void Compiler::consume(TokenType type, const std::string &message)
 {
     if (parser.current.type == type)
@@ -151,6 +237,22 @@ void Compiler::consume(TokenType type, const std::string &message)
     }
 
     errorAtCurrent(message);
+}
+
+bool Compiler::match(const TokenType type)
+{
+    if (!check(type))
+    {
+        return false;
+    }
+
+    advance();
+    return true;
+}
+
+bool Compiler::check(const TokenType type) const
+{
+    return parser.current.type == type;
 }
 
 void Compiler::errorAtCurrent(const std::string &message)
@@ -191,12 +293,12 @@ void Compiler::emitByte(const uint8_t byte1, const uint8_t byte2) const
     emitByte(byte2);
 }
 
-void Compiler::emitConstant(Value value)
+void Compiler::emitConstant(const Value &value)
 {
     emitByte(static_cast<uint8_t>(OpCode::OP_CONSTANT), makeConstant(value));
 }
 
-uint8_t Compiler::makeConstant(const Value value)
+uint8_t Compiler::makeConstant(const Value &value)
 {
     auto const constant = compilingChunk->addConstant(value);
     if (constant > UINT8_MAX)
@@ -218,6 +320,36 @@ void Compiler::endCompiler() const
         compilingChunk->disassemble("code");
     }
 #endif
+}
+
+void Compiler::synchronize()
+{
+    parser.panicMode = false;
+    while (parser.current.type != TokenType::FILE_EOF)
+    {
+        if (parser.previous.type == TokenType::SEMICOLON)
+        {
+            return;
+        }
+
+        switch (parser.previous.type)
+        {
+            case TokenType::CLASS:
+            case TokenType::FUN:
+            case TokenType::LET:
+            case TokenType::CONST:
+            case TokenType::FOR:
+            case TokenType::IF:
+            case TokenType::WHILE:
+            case TokenType::PRINT:
+            case TokenType::RETURN:
+                return;
+
+            default: break;
+        }
+
+        advance();
+    }
 }
 
 void Compiler::emitReturn() const
@@ -242,6 +374,28 @@ void Compiler::parsePrecedence(Precedence precedence)
         const auto infixRule = getRule(parser.previous.type).infix;
         (this->*infixRule)();
     }
+}
+
+void Compiler::defineVariable(const uint8_t global) const
+{
+    emitByte(static_cast<uint8_t>(OpCode::OP_DEFINE_GLOBAL), global);
+}
+
+void Compiler::defineConstant(const uint8_t global) const
+{
+    emitByte(static_cast<uint8_t>(OpCode::OP_DEFINE_CONSTANT), global);
+}
+
+uint8_t Compiler::parseVariable(const std::string &errorMessage)
+{
+    consume(TokenType::IDENTIFIER, errorMessage);
+    return identifierConstant(parser.previous);
+}
+
+uint8_t Compiler::identifierConstant(const Token &token)
+{
+    const auto content = std::string{token.lexeme};
+    return makeConstant(content);
 }
 
 ParseRule Compiler::getRule(const TokenType type) const

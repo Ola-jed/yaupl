@@ -6,14 +6,18 @@
 
 int main(const int argc, const char *argv[])
 {
-    VM vm{};
+    Runner runner{};
     if (argc == 1)
     {
-        Runner::repl();
+        runner.repl();
+    }
+    else if (argc == 2)
+    {
+        runner.runFile(argv[1]);
     }
     else
     {
-        std::cerr << "Usage : yaupl++ [path]" << std::endl;
+        std::cerr << "Usage : yaupl [path]" << std::endl;
         exit(64);
     }
 

@@ -104,6 +104,16 @@ void Chunk::disassemble(const std::string &name) const
             return constantInstruction("OP_GREATER", offset);
         case static_cast<uint8_t>(OpCode::OP_LESS):
             return constantInstruction("OP_LESS", offset);
+        case static_cast<uint8_t>(OpCode::OP_PRINT):
+            return simpleInstruction("OP_PRINT", offset);
+        case static_cast<uint8_t>(OpCode::OP_POP):
+            return simpleInstruction("OP_POP", offset);
+        case static_cast<uint8_t>(OpCode::OP_DEFINE_GLOBAL):
+            return constantInstruction("OP_DEFINE_GLOBAL", offset);
+        case static_cast<uint8_t>(OpCode::OP_DEFINE_CONSTANT):
+            return constantInstruction("OP_DEFINE_CONSTANT", offset);
+        case static_cast<uint8_t>(OpCode::OP_GET_GLOBAL):
+            return constantInstruction("OP_GET_GLOBAL", offset);
         default:
             std::cout << "Unknown opcode " << instruction << "\n";
             return offset + 1;

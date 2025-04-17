@@ -5,6 +5,7 @@
 
 #include "chunk.h"
 #include "compiler.h"
+#include "environment.h"
 #include "interpret_result.h"
 
 template<typename T>
@@ -14,6 +15,7 @@ struct VM
 {
     static constexpr int STACK_MAX = 256;
     Compiler compiler{};
+    Environment env{};
     std::unique_ptr<Chunk> chunk;
     uint8_t *instructionPointer;
     Value stack[STACK_MAX];
@@ -36,7 +38,7 @@ struct VM
 
     Value pop();
 
-    [[nodiscard]] Value peek(int) const;
+    [[nodiscard]] Value peek(int distance = 0) const;
 
     [[nodiscard]] uint8_t readByte();
 

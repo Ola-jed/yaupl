@@ -195,6 +195,7 @@ TokenType Scanner::identifierType() const
     if (lexeme == "if") return TokenType::IF;
     if (lexeme == "import") return TokenType::IMPORT;
     if (lexeme == "let") return TokenType::LET;
+    if (lexeme == "const") return TokenType::CONST;
     if (lexeme == "nand") return TokenType::NAND;
     if (lexeme == "nor") return TokenType::NOR;
     if (lexeme == "null") return TokenType::NIL;
