@@ -1,11 +1,16 @@
 #ifndef ENVIRONMENT_H
 #define ENVIRONMENT_H
+
 #include <optional>
 #include <unordered_map>
 #include <string>
 #include <unordered_set>
 
 #include "value.h"
+
+enum class EnvironmentSetResult { OK, NOT_DEFINED, CONSTANT_NOT_REASSIGNABLE, TYPE_MISMATCH };
+
+enum class EnvironmentDeclareResult { OK, ALREADY_DEFINED };
 
 class Environment
 {
@@ -15,9 +20,9 @@ class Environment
 public:
     Environment() = default;
 
-    bool declare(const std::string &name, const Value &value, bool constant = false);
+    EnvironmentDeclareResult declare(const std::string &name, const Value &value, bool constant = false);
 
-    bool set(const std::string &name, const Value &value);
+    EnvironmentSetResult set(const std::string &name, const Value &value);
 
     std::optional<Value> get(const std::string &name) const;
 };

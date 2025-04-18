@@ -248,8 +248,8 @@ InterpretResult VM::run()
                 }
 
                 const auto name = std::get<std::string>(constant);
-                const auto declarationSuccess = env.declare(name, peek());
-                if (!declarationSuccess)
+                const auto declarationResult = env.declare(name, peek());
+                if (declarationResult == EnvironmentDeclareResult::ALREADY_DEFINED)
                 {
                     runtimeError(std::format("Cannot redeclare variable {}.", name));
                     return InterpretResult::RUNTIME_ERROR;
@@ -267,8 +267,8 @@ InterpretResult VM::run()
                 }
 
                 const auto name = std::get<std::string>(constant);
-                const auto declarationSuccess = env.declare(name, peek(), true);
-                if (!declarationSuccess)
+                const auto declarationResult = env.declare(name, peek(), true);
+                if (declarationResult == EnvironmentDeclareResult::ALREADY_DEFINED)
                 {
                     runtimeError(std::format("Cannot redeclare variable {}.", name));
                     return InterpretResult::RUNTIME_ERROR;
@@ -294,6 +294,35 @@ InterpretResult VM::run()
                 }
 
                 push(retrievedValue.value());
+                break;
+            }
+            case static_cast<uint8_t>(OpCode::OP_SET_GLOBAL):
+            {
+                auto constant = chunk->constants.values[readByte()];
+                if (!std::holds_alternative<std::string>(constant))
+                {
+                    return InterpretResult::RUNTIME_ERROR;
+                }
+
+                const auto &name = std::get<std::string>(constant);
+                switch (env.set(name, peek()))
+                {
+                    case EnvironmentSetResult::NOT_DEFINED:
+                        runtimeError(std::format("Undefined variable {}.", name));
+                        return InterpretResult::RUNTIME_ERROR;
+
+                    case EnvironmentSetResult::TYPE_MISMATCH:
+                        runtimeError(std::format("Type mismatch for variable {}.", name));
+                        return InterpretResult::RUNTIME_ERROR;
+
+                    case EnvironmentSetResult::CONSTANT_NOT_REASSIGNABLE:
+                        runtimeError(std::format("Constant {} cannot be reassigned.", name));
+                        return InterpretResult::RUNTIME_ERROR;
+
+                    default:
+                        break;
+                }
+
                 break;
             }
             case static_cast<uint8_t>(OpCode::OP_RETURN):

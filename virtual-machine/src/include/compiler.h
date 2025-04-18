@@ -34,21 +34,21 @@ class Compiler
 
     void expression();
 
-    void number();
+    void number(bool);
 
-    void grouping();
+    void grouping(bool);
 
-    void unary();
+    void unary(bool);
 
-    void binary();
+    void binary(bool);
 
-    void literal();
+    void literal(bool);
 
-    void string();
+    void string(bool);
 
-    void variable();
+    void variable(bool);
 
-    void namedVariable(const Token &);
+    void namedVariable(const Token &, bool);
 
     void consume(TokenType, const std::string &);
 

@@ -26,7 +26,8 @@ enum class OpCode: uint8_t
     OP_POP = 19,
     OP_DEFINE_GLOBAL = 20,
     OP_DEFINE_CONSTANT = 21,
-    OP_GET_GLOBAL = 22
+    OP_GET_GLOBAL = 22,
+    OP_SET_GLOBAL = 23
 };
 
 #endif //OPCODE_H

@@ -1,10 +1,10 @@
 #include "../include/environment.h"
 
-bool Environment::declare(const std::string &name, const Value &value, bool constant)
+EnvironmentDeclareResult Environment::declare(const std::string &name, const Value &value, bool constant)
 {
     if (bindings.contains(name))
     {
-        return false;
+        return EnvironmentDeclareResult::ALREADY_DEFINED;
     }
 
     bindings.emplace(name, value);
@@ -12,24 +12,29 @@ bool Environment::declare(const std::string &name, const Value &value, bool cons
     {
         constants.insert(name);
     }
-    return true;
+    return EnvironmentDeclareResult::OK;
 }
 
-bool Environment::set(const std::string &name, const Value &value)
+EnvironmentSetResult Environment::set(const std::string &name, const Value &value)
 {
     const auto iterator = bindings.find(name);
-    if (iterator == bindings.end() || constants.contains(name))
+    if (iterator == bindings.end())
     {
-        return false;
+        return EnvironmentSetResult::NOT_DEFINED;
+    }
+
+    if (constants.contains(name))
+    {
+        return EnvironmentSetResult::CONSTANT_NOT_REASSIGNABLE;
     }
 
     if (iterator->second.index() != value.index())
     {
-        return false;
+        return EnvironmentSetResult::TYPE_MISMATCH;
     }
 
     iterator->second = value;
-    return true;
+    return EnvironmentSetResult::OK;
 }
 
 std::optional<Value> Environment::get(const std::string &name) const

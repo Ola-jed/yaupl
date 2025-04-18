@@ -1,6 +1,5 @@
 #include "../include/compiler.h"
 
-#include <iomanip>
 #include <iostream>
 
 #include "../include/opcode.h"
@@ -116,19 +115,19 @@ void Compiler::expression()
     parsePrecedence(Precedence::Assignment);
 }
 
-void Compiler::number()
+void Compiler::number([[maybe_unused]] bool canAssign)
 {
     const auto value = std::strtod({parser.previous.lexeme.data()}, nullptr);
     emitConstant(value);
 }
 
-void Compiler::grouping()
+void Compiler::grouping([[maybe_unused]] bool canAssign)
 {
     expression();
     consume(TokenType::RIGHT_PAREN, "Expected ')' after expression.");
 }
 
-void Compiler::unary()
+void Compiler::unary([[maybe_unused]] bool canAssign)
 {
     const auto operatorType = parser.previous.type;
     expression();
@@ -146,7 +145,7 @@ void Compiler::unary()
     }
 }
 
-void Compiler::binary()
+void Compiler::binary([[maybe_unused]] bool canAssign)
 {
     const auto operatorType = parser.previous.type;
     const auto rule = getRule(operatorType);
@@ -194,7 +193,7 @@ void Compiler::binary()
     }
 }
 
-void Compiler::literal()
+void Compiler::literal([[maybe_unused]] bool canAssign)
 {
     switch (parser.previous.type)
     {
@@ -211,21 +210,29 @@ void Compiler::literal()
     }
 }
 
-void Compiler::string()
+void Compiler::string([[maybe_unused]] bool canAssign)
 {
     const auto contentString = std::string(parser.previous.lexeme.data() + 1, parser.previous.lexeme.length() - 2);
     emitConstant(contentString);
 }
 
-void Compiler::variable()
+void Compiler::variable(bool canAssign)
 {
-    namedVariable(parser.previous);
+    namedVariable(parser.previous, canAssign);
 }
 
-void Compiler::namedVariable(const Token &name)
+void Compiler::namedVariable(const Token &name, bool canAssign)
 {
     const auto argument = identifierConstant(name);
-    emitByte(static_cast<uint8_t>(OpCode::OP_GET_GLOBAL), argument);
+    if (canAssign && match(TokenType::EQUAL))
+    {
+        expression();
+        emitByte(static_cast<uint8_t>(OpCode::OP_SET_GLOBAL), argument);
+    }
+    else
+    {
+        emitByte(static_cast<uint8_t>(OpCode::OP_GET_GLOBAL), argument);
+    }
 }
 
 void Compiler::consume(TokenType type, const std::string &message)
@@ -269,16 +276,22 @@ void Compiler::errorAt(const Token &token, const std::string &message)
 {
     parser.panicMode = true;
     std::cerr << "[line " << token.line << "] Error";
-    if (token.type == TokenType::FILE_EOF)
+    switch (token.type)
     {
-        std::cerr << " at end ";
-    }
-    else if (token.type != TokenType::ERROR)
-    {
-        std::cerr << " at token " << token.type << " ";
+        case TokenType::FILE_EOF:
+            std::cerr << " at end";
+            break;
+        case TokenType::ERROR:
+            break;
+        case TokenType::IDENTIFIER:
+            std::cerr << " at token " << token.type << " (" << token.lexeme << ")";
+            break;
+        default:
+            std::cerr << " at token " << token.type;
+            break;
     }
 
-    std::cerr << message << "\n";
+    std::cerr << " " << message << "\n";
     parser.hadError = true;
 }
 
@@ -367,12 +380,18 @@ void Compiler::parsePrecedence(Precedence precedence)
         return;
     }
 
-    (this->*prefixRule)();
+    const auto canAssign = precedence <= Precedence::Assignment;
+    (this->*prefixRule)(canAssign);
     while (precedence <= getRule(parser.current.type).precedence)
     {
         advance();
         const auto infixRule = getRule(parser.previous.type).infix;
-        (this->*infixRule)();
+        (this->*infixRule)(canAssign);
+    }
+
+    if (canAssign && match(TokenType::EQUAL))
+    {
+        error("Invalid assignment target.");
     }
 }
 

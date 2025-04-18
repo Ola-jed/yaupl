@@ -65,7 +65,6 @@ void Chunk::disassemble(const std::string &name) const
         std::cout << std::setw(4) << std::setfill('0') << lines[offset] << " ";
     }
 
-
     switch (const auto instruction = code[offset])
     {
         case static_cast<uint8_t>(OpCode::OP_RETURN):
@@ -114,6 +113,8 @@ void Chunk::disassemble(const std::string &name) const
             return constantInstruction("OP_DEFINE_CONSTANT", offset);
         case static_cast<uint8_t>(OpCode::OP_GET_GLOBAL):
             return constantInstruction("OP_GET_GLOBAL", offset);
+        case static_cast<uint8_t>(OpCode::OP_SET_GLOBAL):
+            return constantInstruction("OP_SET_GLOBAL", offset);
         default:
             std::cout << "Unknown opcode " << instruction << "\n";
             return offset + 1;

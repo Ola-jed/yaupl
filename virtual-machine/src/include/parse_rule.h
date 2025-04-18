@@ -4,7 +4,7 @@
 #include "precedence.h"
 
 class Compiler;
-using ParseFn = void (Compiler::*)();
+using ParseFn = void (Compiler::*)(bool);
 
 struct ParseRule
 {
