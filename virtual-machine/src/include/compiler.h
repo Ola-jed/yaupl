@@ -4,6 +4,8 @@
 #include <string>
 
 #include "chunk.h"
+#include "common.h"
+#include "local.h"
 #include "parser.h"
 #include "parse_rule.h"
 #include "precedence.h"
@@ -18,11 +20,23 @@ class Compiler
 
     Scanner scanner{""};
 
+    std::array<Local, UINT8_COUNT> locals = {};
+
+    int localCount = 0;
+
+    int scopeDepth = 0;
+
     void advance();
 
     void declaration();
 
     void statement();
+
+    void block();
+
+    void beginScope();
+
+    void endScope();
 
     void variableDeclaration();
 
@@ -66,7 +80,7 @@ class Compiler
 
     void emitByte(uint8_t, uint8_t) const;
 
-    void emitConstant(const Value&);
+    void emitConstant(const Value &);
 
     [[ nodiscard]] uint8_t makeConstant(const Value &);
 
@@ -80,7 +94,11 @@ class Compiler
 
     void defineVariable(uint8_t) const;
 
+    void declareVariable();
+
     void defineConstant(uint8_t) const;
+
+    void addLocal(const Token&);
 
     uint8_t parseVariable(const std::string &);
 

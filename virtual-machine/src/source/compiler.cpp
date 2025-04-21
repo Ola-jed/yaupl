@@ -34,7 +34,7 @@ void Compiler::advance()
             break;
         }
 
-        errorAtCurrent(std::string{parser.current.lexeme});
+        errorAtCurrent(parser.current.lexeme);
     }
 }
 
@@ -65,9 +65,40 @@ void Compiler::statement()
     {
         printStatement();
     }
+    else if (match(TokenType::LEFT_BRACE))
+    {
+        beginScope();
+        block();
+        endScope();
+    }
     else
     {
         expressionStatement();
+    }
+}
+
+void Compiler::block()
+{
+    while (!check(TokenType::RIGHT_BRACE) && !check(TokenType::FILE_EOF))
+    {
+        declaration();
+    }
+
+    consume(TokenType::RIGHT_BRACE, "Expect '}' after block.");
+}
+
+void Compiler::beginScope()
+{
+    scopeDepth++;
+}
+
+void Compiler::endScope()
+{
+    scopeDepth--;
+    while (localCount > 0 && locals[localCount - 1].depth > scopeDepth)
+    {
+        emitByte(static_cast<uint8_t>(OpCode::OP_POP));
+        localCount--;
     }
 }
 
@@ -235,7 +266,7 @@ void Compiler::namedVariable(const Token &name, bool canAssign)
     }
 }
 
-void Compiler::consume(TokenType type, const std::string &message)
+void Compiler::consume(const TokenType type, const std::string &message)
 {
     if (parser.current.type == type)
     {
@@ -397,7 +428,38 @@ void Compiler::parsePrecedence(Precedence precedence)
 
 void Compiler::defineVariable(const uint8_t global) const
 {
+    if (scopeDepth > 0)
+    {
+        return;
+    }
+
     emitByte(static_cast<uint8_t>(OpCode::OP_DEFINE_GLOBAL), global);
+}
+
+void Compiler::declareVariable()
+{
+    if (scopeDepth == 0)
+    {
+        return;
+    }
+
+    const auto name = parser.previous;
+    for (auto i = localCount - 1; i >= 0; i--)
+    {
+        const auto local = locals[i];
+        if (local.depth != -1 && local.depth < scopeDepth)
+        {
+            break;
+        }
+
+        if (local.name == name)
+        {
+            error("Already variable with this name in this scope.");
+        }
+    }
+
+
+    addLocal(name);
 }
 
 void Compiler::defineConstant(const uint8_t global) const
@@ -405,16 +467,33 @@ void Compiler::defineConstant(const uint8_t global) const
     emitByte(static_cast<uint8_t>(OpCode::OP_DEFINE_CONSTANT), global);
 }
 
+void Compiler::addLocal(const Token &name)
+{
+    if (localCount >= UINT8_COUNT)
+    {
+        error("Too many local variables in function.");
+        return;
+    }
+
+    const Local local{name, scopeDepth};
+    locals[localCount++] = local;
+}
+
 uint8_t Compiler::parseVariable(const std::string &errorMessage)
 {
     consume(TokenType::IDENTIFIER, errorMessage);
+    declareVariable();
+    if (scopeDepth > 0)
+    {
+        return 0;
+    }
+
     return identifierConstant(parser.previous);
 }
 
 uint8_t Compiler::identifierConstant(const Token &token)
 {
-    const auto content = std::string{token.lexeme};
-    return makeConstant(content);
+    return makeConstant(token.lexeme);
 }
 
 ParseRule Compiler::getRule(const TokenType type) const

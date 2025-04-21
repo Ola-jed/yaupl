@@ -26,4 +26,5 @@ add_executable(virtual_machine main.cpp
         src/include/parse_rule.h
         src/include/environment.h
         src/source/environment.cpp
+        src/include/local.h
 )

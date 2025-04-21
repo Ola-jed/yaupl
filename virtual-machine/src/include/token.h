@@ -1,17 +1,18 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 #include <string>
+#include <utility>
 
 #include "token_type.h"
 
 struct Token
 {
-    std::string_view lexeme;
+    std::string lexeme;
     int line;
     TokenType type;
 
-    Token(const TokenType type, const std::string_view &lexeme, const int line)
-        : lexeme(lexeme),
+    Token(const TokenType type, std::string lexeme, const int line)
+        : lexeme(std::move(lexeme)),
           line(line),
           type(type)
     {
@@ -21,4 +22,9 @@ struct Token
     {
     }
 };
+
+inline bool operator==(const Token &lhs, const Token &rhs)
+{
+    return lhs.lexeme == rhs.lexeme;
+}
 #endif //TOKEN_H

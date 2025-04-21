@@ -1,13 +1,14 @@
 #ifndef SCANNER_H
 #define SCANNER_H
 #include <string>
+#include <utility>
 
 #include "token.h"
 
 class Scanner
 {
 public:
-    explicit Scanner(const std::string &source): source(source), start(0), current(0), line(1)
+    explicit Scanner(std::string source): source(std::move(source)), start(0), current(0), line(1)
     {
     }
 
@@ -27,7 +28,7 @@ private:
 
     [[nodiscard]] Token makeToken(TokenType) const;
 
-    [[nodiscard]] Token errorToken(const std::string_view &) const;
+    [[nodiscard]] Token errorToken(const std::string &) const;
 
     [[nodiscard]] bool match(char);
 

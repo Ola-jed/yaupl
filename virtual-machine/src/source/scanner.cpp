@@ -83,11 +83,11 @@ bool Scanner::isLetterOrUnderscore(const char c)
 
 Token Scanner::makeToken(const TokenType type) const
 {
-    const auto lexeme = std::string_view{source.begin() + start, source.begin() + current};
+    const auto lexeme = std::string{source.begin() + start, source.begin() + current};
     return Token{type, lexeme, line};
 }
 
-Token Scanner::errorToken(const std::string_view &message) const
+Token Scanner::errorToken(const std::string &message) const
 {
     return Token{TokenType::ERROR, message, line};
 }

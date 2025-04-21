@@ -4,7 +4,6 @@
 #include "../include/vm.h"
 
 #include <format>
-#include <iostream>
 #include <valarray>
 
 #include "../include/compiler.h"
@@ -50,8 +49,6 @@ InterpretResult VM::run()
             {
                 auto const constant = readConstant();
                 push(constant);
-                util::printValue(constant);
-                std::cout << "\n";
                 break;
             }
             case static_cast<uint8_t>(OpCode::OP_NULL):

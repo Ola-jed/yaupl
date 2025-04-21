@@ -1,5 +1,10 @@
 let a = 3;
+let d = 22;
 
-{
+const ds = 22;
+print "zzz";
+print a;
+print "End block";
 
-}
+let b = 8;
+print b;
