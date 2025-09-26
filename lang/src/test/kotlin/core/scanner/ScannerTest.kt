@@ -1,6 +1,8 @@
+package core.scanner
+
 import core.enum.TokenType
-import core.scanner.Scanner
 import core.error.reporter.EmptyErrorReporter
+import core.scanner.Scanner
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

@@ -1,8 +1,8 @@
-import cmd.ArgsParser
+package cmd
+
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-
 
 class ArgsParserTest {
     @Test

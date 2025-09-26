@@ -15,6 +15,7 @@ class YauplJvmCompiler(
 ) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
 
     fun compileBytecode(statements: List<Stmt>): DynamicType {
+
         return ByteBuddy()
             .subclass(Any::class.java)
             .name("$pkg.Main")

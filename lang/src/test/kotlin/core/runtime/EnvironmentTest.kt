@@ -1,3 +1,5 @@
+package core.runtime
+
 import core.enum.TokenType
 import core.error.types.RuntimeError
 import core.`object`.Undefined

@@ -1,3 +1,5 @@
+package core.parser
+
 import ast.Expr
 import ast.Stmt
 import core.enum.TokenType
