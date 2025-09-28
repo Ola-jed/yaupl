@@ -59,7 +59,7 @@ class ReversePolishConverter : Expr.Visitor<String> {
     }
 
     override fun visitVariableExpr(expr: Expr.Variable): String {
-        return "var(${expr.accept(this)})"
+        return "var(${expr.name.lexeme})"
     }
 
     override fun visitArrayLiteralExpr(expr: Expr.ArrayLiteral): String {
