@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     implementation(project(":lang"))
-    implementation("net.bytebuddy:byte-buddy:1.15.1")
+    implementation("com.github.javaparser:javaparser-symbol-solver-core:3.27.1")
 }
 
 tasks.getByName<JavaExec>("run") {

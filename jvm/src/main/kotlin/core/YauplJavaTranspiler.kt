@@ -4,33 +4,18 @@ import ast.Expr
 import ast.Stmt
 import core.error.reporter.ErrorReporter
 import io.FilePathResolver
-import net.bytebuddy.ByteBuddy
-import net.bytebuddy.dynamic.DynamicType
-import net.bytebuddy.implementation.MethodCall
 
-class YauplJvmCompiler(
+class YauplJavaTranspiler(
     private val pkg: String?,
     private val errorReporter: ErrorReporter,
     private val filePathResolver: FilePathResolver
 ) : Expr.Visitor<Any?>, Stmt.Visitor<Unit> {
-
-    fun compileBytecode(statements: List<Stmt>): DynamicType {
-
-        return ByteBuddy()
-            .subclass(Any::class.java)
-            .name("$pkg.Main")
-            .defineMethod(
-                "main",
-                Void.TYPE,
-                java.lang.reflect.Modifier.PUBLIC or java.lang.reflect.Modifier.STATIC
-            )
-            .withParameters(Array<String>::class.java)
-            .intercept(
-                MethodCall.invoke(System.out::class.java.getMethod("println", String::class.java))
-                    .onField(System::class.java.getField("out"))
-                    .with("Hello, World!")
-            )
-            .make()
+    fun transpile(statements: List<Stmt>): String {
+        return "public class Main { " +
+                "   public static void main(String[] args) { " +
+                "       System.out.println(\"Hello, world!\");" +
+                "   }" +
+                "}"
     }
 
     override fun visitAssignExpr(expr: Expr.Assign): Any? {
